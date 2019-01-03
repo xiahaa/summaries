@@ -1,0 +1,193 @@
+\documentclass[a4paper]{report}
+\usepackage{lipsum}
+\usepackage{tikzpagenodes}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,matrix}
+\pgfplotsset{compat=1.8}
+\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+\usepackage[colorlinks=true,citecolor=green]{hyperref}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{bm}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+Planning dynamically feasible and collision free trajectories in dense indoor environments is investigated in [Aadam Bry]. However, it requires the environment map is known.
+
+time interval of the trajectory 
+
+To demonstrate and validate the performance of the prosed method, simulations in various scenarios are conducted.
+The virtual environment are built, see Figures.
+
+Quadrotor UAVs are relatively simple, affordable and easyto-
+manipulate aerial robotic systems. Even if they have turned
+out to be reliable and efficient testbeds in both civilian and
+commercial missions in the past two decades, e.g., wildlife
+conservation [1], midair collision surveillance [2] and unknown
+environment exploration [3], the space for mounting different
+onboard sensors, payload capacity, flight time and area of a
+single quadrotor is still low.
+
+In this paper, the formation landing problem of quadrotor
+UAVs has been discussed, path planning for avoiding obstacles
+has also been involved. In literature, many algorithms can be
+
+Basically, the only interaction with external environments
+in the RRT is the collision detection of vehicle
+navigaiton, which is transferable to different situations. The
+RRT is usually considered as a versatile algorithm which can
+deal with varaint configurations.
+
+Test scenario plotted in
+
+Research on path planning can be used to tackle with this
+concern to some extent. Global path planning algorithms such as
+A*, Dijkstra or Probabilistic Roadmaps (RPM) can be used to
+generate a path between the starting point and the destination
+that avoids obstacles [14], [15]. However, vehicle model and its
+dynamics were not considered in these algorithms, so that there
+is no guarantee that these path or trajectory can be well tracked
+
+In this paper, we consider the unicycle-type mobile robot and
+propose a new trajectory generation algorithm. This algorithm
+takes vehicle model and speed limitations into consideration and
+guarantees the tractability of the generated reference trajectory.
+In addition, we also implement a control law specially designed
+for these constraints, so that an optimal trajectory tracking
+performance can be achieved. 
+
+To generate a path or a trajectory within an environment with
+constraints such as walls and obstacles, global path planning
+algorithm such as A* and D* algorithm are usually used. In A*
+algorithm, the map is modeled as a lattice of nodes 𝑛, and three
+types of cost functions $f(n)$, $g(n)$ and $h(n)$ are defined. By
+searching around the nodes and calculating these three cost
+functions iteratively, an optimal path can be determined between
+the starting and the ending points. The disadvantage of A*
+algorithm is that it works only for static maps but cannot deal
+with dynamic change in maps or obstacles. In D* (or Dynamic
+A Star) algorithm, further improvements are made in this regard.
+When the robot starts moving, the adjacent nodes along the
+optimal path are continuously observed for possible changes
+from the prior information. When changes (indicating moving
+obstacles or changes in map info) are observed, using similar
+concept as in A*, the path estimation cost function $h(n)$ is
+adjusted by a weights function $c(X,Y)$, an A*-like process is
+evaluated again for the adjacent nodes, and a new path can be
+generated.
+To further decrease the computational cost, sample-based
+planning methods such as Rapidly-exploring Random Trees
+(RRT) and Probabilistic Roadmaps (RPM) were proposed in
+[16], [17]. These methods can be viewed as growing a tree from
+a robot's starting point until one of its branches hits the goal. The
+tree branches are created by randomly sampling probabilistic
+points. Tests are run for collision-free check and an optimal path
+can be found by finding the shortest path.
+
+d the generated path may contain sharp turns,
+zig-zag path
+
+. Addressing these problems, we present an
+approach for planning safe, dynamically feasible and time
+efficient flight paths using cubic splines. Trying to reduce
+trajectory time, we consider the influence of path smoothing
+and refinement measures on the quality of the resulting flight
+paths and on the reliability of the planning procedure.
+
+For online navigation through a priori unknown environment,
+unmanned rotorcraft must be able to react instantaneously
+to the detection of obstacles. While reactive obstacle
+avoidance algorithms by themselves are inherently suboptimal
+and incomplete, it is hard to meet runtime constraints
+with more complex motion planning algorithms. Decoupling
+the planning of collision free and dynamically feasible trajectories
+into sequential planning steps is a practical solution
+to make the complex planning problem efficiently solvable
+in order to meet runtime constraints. 
+
+Setting the focus on these problems, we present a highly
+decoupled flight path planning approach for unmanned rotorcraft
+navigating in a priori unknown environment. We combine
+sampling-based path planning, cubic spline interpolation
+and path refinement techniques in order to plan safe and
+time efficient flight paths, that account for the rotorcraft’s
+kinematic constraints. While maintaining the efficiency and
+flexibility of this decoupled planning approach, we overcome
+its deficiencies through carefully separating each processing
+step and its effect on the flight path geometry. The presented
+approach utilizes the computational efficiency of samplingbased
+path planning to avoid obstacles and cubic spline
+interpolation to generate smooth paths. Iterative path refinement
+is performed in order to maintain the required obstacle
+clearance of the smoothed path and to account for the current
+
+In
+[10] an algorithm generating minimum snap trajectories for
+quad-rotors is presented allowing constraints on position,
+velocity, acceleration and control inputs while minimizing a
+cost functional. 
+
+If the smoothed path deviates too much from the
+linear path segments, the obstacle clearance may be violated
+compromising the global planner’s property of completeness.
+This may be solved through iteratively performing collision
+checks and locally restricting the smoothed path’s deviation
+by inserting support points or adjusting parameter used
+during interpolation as described in
+
+. As the focus of this work is
+set on minimizing trajectory times, the euclidean distance
+is used as a cost function approximating the traversal time
+without having to consider system dynamics.
+
+In [11] parametric cubic splines were proposed for the
+interpolation of linear paths in order to minimize trajectory
+time. 
+
+The
+choice of parametrization has a great influence on the shape
+of the resulting curve.
+
+In order to track a nonlinear flight path with an upper
+bound on the total body fixed acceleration, amax, the total
+velocity along the flight path, Vk,max, has to be restricted
+in order to be able to follow the curved path. 
+
+The deviation dspl of the smoothed path from the
+linear path segments may lead to a violation of the obstacle
+clearance dclear, which was used by the samplingbased
+planner
+
+If a spline curve is found to
+violate the deviation limit in an interval $[\tau_i
+, \tau_{i+1}]$, support
+points are inserted iteratively in this interval, following a
+strategy described below, until the violation is resolved
+
+Using these values as a starting point, we
+iteratively decrease the start point curvature, until a feasible
+velocity profile can be found.
+
+RESULTS AND DISCUSSION
+In this section simulation results of the online trajectory
+time reduction approach are presented.
+
+Experimental Setup
+
+SIMULATION PARAMETERS USED FOR BENCHMARKING
+Parameter Value
+amax 0.5 m/s
+2
+rmax 180 °/s
+Vk,xy,max 3 m/s
+Vk,z,max 1.5 m/s
+
+\end{document}

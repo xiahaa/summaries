@@ -1,0 +1,135 @@
+\documentclass[a4paper]{report}
+\usepackage{lipsum}
+\usepackage{tikzpagenodes}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,matrix}
+\pgfplotsset{compat=1.8}
+\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+\usepackage[colorlinks=true,citecolor=green]{hyperref}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{bm}
+\usepackage{pbox}
+\usepackage{siunitx,booktabs,etoolbox}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\subsection{ML Estimation}
+ The following part will show the relationship between the least square estimation and the maximum likelihood estimation.
+Since the $log$ function is a monotonic increasing function, maximum the likelihood is equivalent to maximuize the log likelihood which is further equivalent to minimize the
+
+\subsection{Cramér–Rao bound}
+The variance of any unbiased estimator $\hat{\theta }$ of $\theta$  is then bounded by the reciprocal of the Fisher information $I(\theta )$:
+\begin{equation}
+{var} ({\hat {\theta }}) \geq {\frac {1}{I(\theta )}}
+\end{equation}
+where the Fisher information $I(\theta )$ is defined by
+\begin{equation}
+I(\theta )= {E} \left[\left({\frac {\partial \ell (x;\theta )}{\partial \theta }}\right)^{2}\right]=- {E} \left[{\frac {\partial ^{2}\ell (x;\theta )}{\partial \theta ^{2}}}\right]
+\end{equation}
+and $\ell (x|\theta )=\log(f(x;\theta ))$ is the natural logarithm of the likelihood function and  ${E}$ denotes the expected value (over $x$).
+
+Extending the Cramér–Rao bound to multiple parameters, define a parameter column $
+\mathbf{\theta} = \left[ \theta_1, \theta_2, \dots, \theta_d \right]^T \in \mathbb{R}^d $
+with probability density function $f(x; \mathbf{\theta})$ which satisfies the two Regularity conditions below.
+
+The Fisher information matrix is a $d \times d$ matrix with element $I_{m, k}$ defined as
+$$
+I_{m, k}
+= {E} \left[
+\frac{\partial }{\partial \theta_m} \log f\left(x; \mathbf{\theta}\right)
+\frac{\partial }{\partial \theta_k} \log f\left(x; \mathbf{\theta}\right)
+\right] = -{E} \left[
+\frac{\partial ^2}{\partial \theta_m \partial \theta_k} \log f\left(x; \mathbf{\theta}\right)
+\right].
+$$
+
+Let $\mathbf{T}(X)$ be an estimator of any vector function of parameters, $\mathbf{T}(X) = (T_1(X), \ldots, T_d(X))^T$, and denote its expectation vector $\mathbf{E}[\mathbf{T}(X)]$ by $\mathbf{\psi}(\mathbf{\theta})$. The Cramér–Rao bound then states that the covariance matrix of $\mathbf{T}(X)$ satisfies:
+$$
+{cov}_{\mathbf{\theta}}\left(\mathbf{T}(X)\right)
+\geq
+\frac
+{\partial \mathbf{\psi} \left(\mathbf{\theta}\right)}
+{\partial \mathbf{\theta}}
+[I\left(\mathbf{\theta}\right)]^{-1}
+\left(
+\frac
+{\partial \mathbf{\psi}\left(\mathbf{\theta}\right)}
+{\partial \mathbf{\theta}}
+\right)^T
+$$
+where the matrix inequality $A \ge B$ is understood to mean that the matrix $A-B$ is [[positive semidefinite matrix|positive semidefinite]], and $\partial \mathbf{\psi}(\mathbf{\theta})/\partial \mathbf{\theta}$ is the Jacobian matrix whose $ij$ element is given by $\partial \psi_i(\mathbf{\theta})/\partial \theta_j$.
+
+If $\mathbf{T}(X)$ is an estimator bias estimator of $\mathbf{\theta}$ (i.e., $\mathbf{\psi}\left(\mathbf{\theta}\right) = \mathbf{\theta}$), then the Cramér–Rao bound reduces to: ${cov}_{\mathbf{\theta}}\left(\mathbf{T}(X)\right)
+\geq
+I\left(\mathbf{\theta}\right)^{-1}.$
+
+If it is inconvenient to compute the inverse of the Fisher information matrix,
+then one can simply take the reciprocal of the corresponding diagonal element
+to find a (possibly loose) lower bound:
+$$
+{var}_{\mathbf{\theta}}(T_m(X)) =
+\left[{cov}_{\mathbf{\theta}}\left(\mathbf{T}(X)\right)\right]_{mm}
+\geq
+\left[I\left(\mathbf{\theta}\right)^{-1}\right]_{mm}
+\geq
+\left(\left[I\left(\mathbf{\theta}\right)\right]_{mm}\right)^{-1}.
+$$
+
+=== Multivariate normal distribution ===
+For the case of a 'd''-variate normal distribution:
+$$
+\mathbf{x}
+\sim
+N_d
+\left(
+\mathbf{\mu}( \mathbf{\theta}),
+{\mathbf C} ( \mathbf{\theta})
+\right)
+$$
+the Fisher information matrix has elements:
+$$
+I_{m, k}
+= \frac{\partial \mathbf{\mu}^T}{\partial \theta_m}
+{\mathbf C}^{-1}
+\frac{\partial \mathbf{\mu}}{\partial \theta_k}
++ \frac{1}{2}{tr}
+\left(
+{\mathbf C}^{-1}
+\frac{\partial {\mathbf C}}{\partial \theta_m}
+{\mathbf C}^{-1}
+\frac{\partial {\mathbf C}}{\partial \theta_k}
+\right)
+$$
+where "tr" is the trace.
+
+For example, let $w[n]$ be a sample of $N$ independent observations with unknown mean $\theta$ and known variance $\sigma^2$:
+$$
+w[n] \sim \mathbb{N}_N \left(\theta {\mathbf 1}, \sigma^2 {\mathbf I} \right).
+$$
+Then the Fisher information is a scalar given by:
+$$
+I(\theta)=
+\left(\frac{\partial\mathbf{\mu}(\theta)}{\partial\theta}\right)^T{\mathbf C}^{-1} \left(\frac{\partial\mathbf{\mu}(\theta)}{\partial\theta}\right)
+= \sum^N_{i=1}\frac{1}{\sigma^2} = \frac{N}{\sigma^2},
+$$
+and so the Cramér–Rao bound is:
+$$
+{var}\left(\hat \theta\right)
+\geq
+\frac{\sigma^2}{N}.
+$$
+
+
+
+\end{document}

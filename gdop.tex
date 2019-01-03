@@ -1,0 +1,250 @@
+\documentclass[a4paper]{report}
+\usepackage{lipsum}
+\usepackage{tikzpagenodes}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,matrix}
+\pgfplotsset{compat=1.8}
+\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+\usepackage[colorlinks=true,citecolor=green]{hyperref}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{bm}
+\usepackage{pbox}
+\usepackage{siunitx,booktabs,etoolbox}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+\subsection{aim}:
+Geometric dilution of precision (GDOP) is often used for selecting good satellites to meet the desired positioning precision.
+\subsection{keypoints}:
+\begin{itemize}
+	\item It has been proved that increasing the number of satellites for positioning will always reduce the GDOP.
+	\item Closed form solution has been proposed for GDOP using Newton’s identities from the
+	theory of symmetric polynomials.
+\end{itemize}
+
+\subsection{Related work}
+There is one class of works which focus on improving the computation efficiency of the GDOP.
+Using the conventional LU decomposition, it takes a total of 160 floating
+point operations (add, subtract, multiply and divide) to
+invert a $4 \times 4$ matrix (Atkinson 1978). Due to limited resources associated with many handheld
+GPS devices, previous studies have tried to compute
+GDOP without resorting to the cofactors approach or
+matrix inversion. Simon and El-Sherief (1995) used a
+function approximation procedure rooted in artificial neural
+network (ANN) to compute GDOP. Extensive studies following
+this track of GDOP computation have been
+conducted elsewhere (Jwo and Chin 2002; Jwo and Lai
+2003, 2007).
+
+There are a few problems associated with the neural
+based solutions to the GDOP computation. First, a model
+must be trained with substantial computing resources.
+Second, it is well known in the machine learning field that
+the resultant model depends critically on the set of training
+data. Thus, when the GPS application is moved to a geographically
+different area, new training data must be
+collected to train a new model.
+
+A closed-form formula for four satellites is given by Zhu (1992) which requires
+39 multiplications, 34 additions, 1 division and 1 square root are needed to compute GDOP.
+
+Two types of neural based approaches have been proposed
+to handle the GDOP problem: approximation and classification
+(Simon and El-Sherief 1995; Jwo and Lai 2007). In
+the approximation approach, the GDOP is predicted from a
+trained ANN model as a real number.
+
+\subsection{Introduction}
+In GPS applications the dilution of precision (GDOP) is often used to select a subset of satellites from all visible ones.
+In order to determine the position of a receiver, pseudoranges from n (C4) satellites must be used at the same time. By linearizing the pseudorange equation with Taylor’s series expansion at the approximate (or nominal) receiver position,
+the relationship between pseudorange difference and positioning difference can be summarized as follows (Jwo
+\begin{align}
+\mathbf{\delta \rho}=
+\left[
+\begin{matrix}
+\delta {\rho_1} \\
+\delta {\rho_2} \\
+\vdots \\
+\delta{\rho_n}
+\end{matrix}\right]
+=
+\left[
+\begin{matrix}
+\frac{\partial \rho_1}{\partial x} & \frac{\partial \rho_1}{\partial y} & \frac{\partial \rho_1}{\partial z} & 1 \\
+\frac{\partial \rho_2}{\partial x} & \frac{\partial \rho_2}{\partial y} & \frac{\partial \rho_2}{\partial z} & 1 \\
+\vdots & \vdots & \vdots & \vdots \\
+\frac{\partial \rho_n}{\partial x} & \frac{\partial \rho_n}{\partial y} & \frac{\partial \rho_n}{\partial z} & 1 \\
+\end{matrix}\right]
+\left[
+\begin{matrix}
+\delta_x \\
+\delta_y \\
+\delta_z \\
+c\delta_t \\
+\end{matrix}\right]
++
+\left[
+\begin{matrix}
+v_1 \\
+v_2 \\
+\vdots \\
+v_n
+\end{matrix}\right]=\mathbf{H}\mathbf{\delta x}+\mathbf{v}
+\end{align}
+The matrix $\mathbf{H}: m \times 4$ is formed with diretion vector from the receiver to the $i^{th}$ satellite, and $\mathbf{v}$ denotes a random noise with an expected value of 0. The
+difference between the estimated and true receiver positions is given by
+\begin{equation}
+\bar{\mathbf{\delta x}}=\left(\mathbf{H^TH}\right)^{-1}\mathbf{H}^T \mathbf{\delta \rho}
+\end{equation}
+where $\mathbf{H}^T$ denotes the transpose of $\mathbf{H}$, and $\mathbf{M} = \mathbf{H}^T\mathbf{H}$, called the measurement matrix, is a $4 \times 4$ matrix no matter
+how large $n$ is. It can be shown that the measurement matrix is symmetric and nonnegative, and thus it has four nonnegative eigenvalues. The GDOP factor is defined as the square root of the trace of the inverse measurement matrix
+
+\begin{equation}
+GDOP=\sqrt{trace(\mathbf{M^{-1}})}
+\end{equation}
+Because GDOP provides a simple interpretation of how much positioning precision can be diluted by a unit of measurement error, it is desirable to choose the combination of satellites in a satellite constellation with GDOP as small as possible, which turns out to be a combinatorial optimization problem as
+\begin{align}
+\underset{\underset{s_i \neq s_j,\ s_i,\ s_j }{S=(s_1,\ s_2,\ \cdots,\ s_k)}}{\text{minimize:\ }} GDOP
+\end{align}
+Suppose that a receiver has five channels to receive signals from nine visible satellites, then a total of $C_9^{5} = 126$ GDOPs need to be computed in order to decide the best combination of satellites. This can present challenges to some real time GPS applications
+
+
+\subsection{GDOP computation methods}
+Three methods for computing the GDOP are described here.
+The first one is the traditional way:
+\begin{equation}
+\mathbf{H} \to \mathbf{M} \to \mathbf{M}^{-1} \to \sqrt{trace(\mathbf{M}^{-1})}
+\end{equation}
+The second one is the closed-form solution:
+\begin{align}
+\mathbf{M}&=\mathbf{H}^T\mathbf{H} \\
+h_1&=trace(M) \\
+h_2&=trace(M^2) \\
+h_3&=trace(M^3) \\
+h_4&=det(M)\\
+GDOP&=\sqrt{\frac{0.5h_1^3-1.5h_1h_2+h_3}{3h_4}}
+\end{align}
+
+
+\section{DOP}
+revisit the definition of GDOP:
+\begin{equation}
+GDOP = \sqrt{trace(\mathbf{M}^{-1})}=\sqrt{\frac{1}{\lambda_1}+\frac{1}{\lambda_2}+\frac{1}{\lambda_3}+\frac{1}{\lambda_4}}
+\label{eq_raw_dop1}
+\end{equation}
+where $\lambda_1,\ \lambda_2,\ \lambda_3,\ \lambda_4$ are the eigenvalue of $\mathbf{M}$. Since $\mathbf{M}$ is symmetric and positive definite, all its eigenvalues are greater than $0$. 
+
+\subsection{Closed-form solution}
+In order to solve the GDOP in closed-form, the following set of features are used:
+\begin{align}
+h_1(\mathbf{\lambda})&=\lambda_1+\lambda_2+\lambda_3+\lambda_4=trace(\mathbf{M}) \\
+h_2(\mathbf{\lambda})&=\lambda_1^2+\lambda_2^2+\lambda_3^2+\lambda_4^2=trace(\mathbf{M^2}) \\
+h_3(\mathbf{\lambda})&=\lambda_1^3+\lambda_2^3+\lambda_3^3+\lambda_4^3=trace(\mathbf{M^3}) \\
+h_4(\mathbf{\lambda})&=\lambda_1*\lambda_2*\lambda_3*\lambda_4=det(\mathbf{M})
+\end{align}
+These equalities hold because $\mathbf{M}$ and its powers are symmetric matrices (hoffman and kunze 1961). These features are firstly used by researchers for approximating the GDOP using learning based approaches, e.g. the Artificial Neural Network (ANN) and Support-Vector Regression (SVR). The recent work proposed a closed-form solution with the aforementioned features by using the property of symmetric polynomials.
+
+A symmetric polynomial is a polynomial $p(x_1,\ x_2,\ \cdots,\ x_n)$
+in $n$ variables such that when any two variables are interchanged,
+the polynomial remains the same. This can be
+more precisely defined as follows:
+\begin{equation}
+p(x_{\sigma_1},\ x_{\sigma_2},\ \cdots,\ x_{\sigma_n})=p(x_1,\ x_2,\ \cdots,\ x_n)
+\end{equation}
+where $x_{\sigma_1},\ x_{\sigma_2},\ \cdots,\ x_{\sigma_n}$ is any permuted sequence of $x_1,\ x_2,\ \cdots,\ x_n$. Two typical symmetric polynomials are:
+\begin{itemize}
+	\item Power sum symmetric polynomials: 
+	\begin{equation}
+		p_k(x_1,\ x_2,\ \cdots,\ x_n)=x_1^2+x_2^2+\cdots+x_n^2
+	\end{equation}
+	\item Elementary symmetric polynomials:
+	\begin{equation}
+		e_k(x_1,\ x_2,\ \cdots,\ x_n)=\underset{1 \leq j_1<j_2<\cdots<j_k\leq n}{\sum}{x_{j_1}x_{j_2}\cdots x_{j_k}}
+	\end{equation}
+	The 0th degree elementary symmetric polynomial is defined by $e_0(x_1,\ x_2,\ \cdots,\ x_n) = 1$.
+\end{itemize}
+The close relationship between these two types of symmetric polynomials is further
+explained by the Newton–Girard formulae.
+\begin{align}
+k(-1)^{k}&e_k(x_1,\ x_2,\ \cdots,\ x_n)+ \nonumber \\
+&\sum_{i=1}^{k}{(-1)^{i+k}e_i(x_1,\ x_2,\ \cdots,\ x_n)p_{k-i}(x_1,\ x_2,\ \cdots,\ x_n)} = 0
+\end{align}
+
+Now, revisit~\eqref{eq_raw_dop1}:
+\begin{equation}
+GDOP = \sqrt{\frac{\lambda_1\lambda_2\lambda_3+\lambda_1\lambda_2\lambda_4+\lambda_1\lambda_3\lambda_4+\lambda_2\lambda_3\lambda_4}{\lambda_1\lambda_2\lambda_3\lambda_4}}
+\end{equation}
+The numerator $\lambda_1\lambda_2\lambda_3+\lambda_1\lambda_2\lambda_4+\lambda_1\lambda_3\lambda_4+\lambda_2\lambda_3\lambda_4$ can be written as $e_4(\lambda_1,\ \lambda_2,\ \lambda_3,\ \lambda_4)$. Consequently, by applying the Newton–Girard formulae, the numerator can be computed with
+\begin{align}
+e_4(\mathbf{\lambda})&=\frac{1}{3}\left[ 
+\frac{1}{2}\left(p_1(\mathbf{\lambda})^2-p_2(\mathbf{\lambda})\right)p_1(\mathbf{\lambda})-p_1(\mathbf{\lambda})p_2(\mathbf{\lambda})+p_3(\mathbf{\lambda})
+\right] \\
+p_1(\mathbf{\lambda})&=h_1(\mathbf{\lambda}) \\
+p_2(\mathbf{\lambda})&=h_2(\mathbf{\lambda}) \\
+p_3(\mathbf{\lambda})&=h_3(\mathbf{\lambda}) \\
+&\Leftrightarrow \nonumber \\
+e_4(\mathbf{\lambda})&=\frac{0.5h_1(\mathbf{\lambda})^3-1.5h_1(\mathbf{\lambda})h_2(\mathbf{\lambda})+h_3(\mathbf{\lambda})}{3}
+\end{align}
+Overall, the GDOP can be written as
+\begin{equation}
+GDOP = \sqrt{\frac{0.5h_1(\mathbf{\lambda})^3-1.5h_1(\mathbf{\lambda})h_2(\mathbf{\lambda})+h_3(\mathbf{\lambda})}{3h_4}}
+\end{equation}
+This proposed closed-form solution needs 144 floating operations for computing the GDOP, not including the operations for computing $\mathbf{M}=\mathbf{H}^T\mathbf{H}$, dividing and the square-root.
+\subsection{Eigen Decomposition}
+Another way of computing the GDOP is to use the eigen decomposition to obtain $\mathbf{\lambda}$ and then apply~\ref{eq_raw_dop1}. Since the complexity of applying eigen decomposition is $\mathcal{O}(n^3)$ and there are only $4$ divisions, $3$ additions and $1$ square-root left for computing the GDOP, the overall complexity may be less than the previous closed-form solution (depending on the constant associated with the $\mathcal{O}(n^3)$).
+\subsection{Another closed form solution}
+Suppose the eigenvalues $\lambda_1,\ \lambda_2,\ \lambda_3,\ \lambda_4$ are known, the characteristic polynomial as
+\begin{align}
+|\mathbf{A-\lambda I}|=&(\lambda-\lambda_1)(\lambda-\lambda_2)(\lambda-\lambda_3)(\lambda-\lambda_4) \nonumber \\
+=&\lambda^4-\left(\lambda_1+\lambda_2+\lambda_3+\lambda_4\right)\lambda^3 \nonumber \\
+&+(\lambda_1\lambda_2+\lambda_1\lambda_3+\lambda_1\lambda_4+\lambda_2\lambda_3+\lambda_2\lambda_4+\lambda_3\lambda_4)\lambda^2 \nonumber \\
+&-(\lambda_1\lambda_2\lambda_3+\lambda_1\lambda_2\lambda_4+\lambda_1\lambda_3\lambda_4+\lambda_2\lambda_3\lambda_4)\lambda \nonumber \\
+& + \lambda_1\lambda_2\lambda_3\lambda_4
+\end{align}
+It is well known that $|\mathbf{A-\lambda I}|$ is a $4^{th}$ order polynomial which can be represented as 
+\begin{align}
+|\mathbf{A-\lambda I}|=p_4\lambda^4+p_3\lambda^3+p_2\lambda^2+p_1\lambda+p_0
+\end{align}
+It is easy to see that 
+\begin{equation}
+GDOP=\sqrt{\frac{-p_1}{p_0}}
+\end{equation}
+Through some symbolic computations and fully use the symmetric property, it can be concluded that it only needs around 110 floating operations to compute $p_0,\ p_1$. Theoretically speaking, this method will be the faster than the two aforementioned approaches, which can be shown in the experiment.
+
+\subsection{Experiment}
+An experiment has been done to compare the aforementioned three methods with the most traditional method $GDOP = \sqrt{trace(\mathbf{M}^{-1})}$. In this experiment, $100000$ geometric matrices $\mathbf{H}$ have been generated randomly, the mean time for each GDOP computation and the total time for $100000$ runs are shown in Table~\ref{tb:com}.
+\begin{table}[h]
+\centering
+\caption{Speed Comparison of four GDOP computation methods.}
+\label{tb:com}
+\begin{tabular}{c|c|c}
+\hline 
+\textbf{Method} & \textbf{Mean Time: (s)} & \textbf{Total Time: (s)} \\ \hline 
+Baseline & 1.1903e-05 & 1.1903 \\ \hline 
+Closed Form & 8.6366e-06 & 0.8637 \\ \hline 
+Eigen Decomposition & 6.3824e-06 & 0.6382 \\ \hline 
+Proposed & 3.3042e-06 & 0.3304 \\ \hline 
+\end{tabular}
+\end{table}
+
+\subsection{Geometric Meaning}
+Phillips (1984) proposed to select the four satellites with a
+maximum volume of tetrahedron formed by the tips of the
+unit vectors from the receiver to the satellites, i.e., vertices
+with the direction cosines $(e_{i1}, e_{i2}, e_{i3}, e_{i4}), i = 1, 2, 3, 4$. This
+is because GDOP is approximately proportional to the inverse of this volume. However, this maximum volume method may not select desired satellites with the minimum GDOP.~\cite{simon1995navigation}~\cite{doong2009closed}~\cite{teng2016closed}.
+
+\bibliography{gdop} 
+\bibliographystyle{ieeetr}
+
+\end{document}
