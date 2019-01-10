@@ -56,6 +56,12 @@ pure solution:
 	\item paper writing;
 \end{enumerate}
 
+\section{TODO KDTree}
+TODO list:
+\begin{enumerate}
+\item Iterative closet point using nanoflann;
+\end{enumerate}
+
 \section{TODO time synchronization}
 can we use TLBO or PSO to find the optimum t???
 
@@ -1063,6 +1069,36 @@ For optical flow, I use the LK tracker for constructing features correspondences
 	\item check if the forward-backward feature point corresponds to the original feature point in the last frame by checking the relative distance; 
 \end{itemize}
 This can eliminate large number of wrong tracks.
+
+\subsection{RANSAC}
+
+\subsection{Homography}
+\subsubsection{Composition}
+\subsubsection{Computation}
+\subsubsection{Tracking with special linear group}
+
+\subsection{KD-Tree}
+Since many computer vision tasks needs to find the correspondance and the low efficiency of brute-force search, KD tree is often used for boosting the searching procedure. Basically speaking, KD tree is a data structure which manages data by dividing the space into several sub-spaces. There are several stable and popular open source implementation of KD tree available on github:
+\begin{itemize}
+\item \textbf{nanoflann}\footnote{\url{https://github.com/jlblancoc/nanoflann}}
+\item \textbf{FLANN}\footnote{\url{http://www.cs.ubc.ca/research/flann/}}: ANN for C, Matlab.
+\item \textbf{kdtree}\footnote{\url{https://github.com/jtsiomb/kdtree}}: pure C implementation, I have once used this for path planning.
+\end{itemize}
+I have chosen \textbf{nanoflann} for KD tree implementation for program in \textsc{C/C++} and \textbf{FLANN} for ANN tree for program in \textsc{Matlab}.
+
+Usage of \textbf{nanoflann}:
+\begin{itemize}
+\item create a kd-tree index: must specify distance template, data source type and dimension.
+\item add points in chunks or build index;
+\item 2 types of search: find nearest neighbours and find in radius;
+\end{itemize}
+SO3 is supported with quaternion and SO2 is supported with $\theta$.
+
+
+\subsection{Feature \& Descriptor}
+A fairly simple compare of commonly used features are given by\footnote{\url{https://marcosnietoblog.wordpress.com/}}.
+I plan to try with \textbf{FAST}+\textbf{BRIEF} and \textbf{ORB}.
+It could be very beneficial to read the source code of some feature detections and feature descriptions.
 
 \chapter{Complete Solution}
 1. ~\cite{schmidt2005calibration}.

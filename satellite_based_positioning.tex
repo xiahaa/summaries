@@ -173,4 +173,290 @@ Truth & $4.099930073823621$ &   $9.693598483115005$ \\
 \end{table}
 As can be seen, the estimations of the ionospheric delay and the tropospheric delay are fairly good with the mean errors being $-6.982093895557447e-04$ m and $-0.051739902912841$ m and the standard deviation being $0.078216111070952$ m and $0.297526445119276$ m.
 
+\section{DOP}
+revisit the definition of GDOP:
+\begin{equation}
+GDOP = \sqrt{trace(\mathbf{M}^{-1})}=\sqrt{\frac{1}{\lambda_1}+\frac{1}{\lambda_2}+\frac{1}{\lambda_3}+\frac{1}{\lambda_4}}
+\label{eq_raw_dop1}
+\end{equation}
+where $\lambda_1,\ \lambda_2,\ \lambda_3,\ \lambda_4$ are the eigenvalue of $\mathbf{M}$. Since $\mathbf{M}$ is symmetric and positive definite, all its eigenvalues are greater than $0$. 
+
+\subsection{Closed-form solution}
+In order to solve the GDOP in closed-form, the following set of features are used:
+\begin{align}
+h_1(\mathbf{\lambda})&=\lambda_1+\lambda_2+\lambda_3+\lambda_4=trace(\mathbf{M}) \\
+h_2(\mathbf{\lambda})&=\lambda_1^2+\lambda_2^2+\lambda_3^2+\lambda_4^2=trace(\mathbf{M^2}) \\
+h_3(\mathbf{\lambda})&=\lambda_1^3+\lambda_2^3+\lambda_3^3+\lambda_4^3=trace(\mathbf{M^3}) \\
+h_4(\mathbf{\lambda})&=\lambda_1*\lambda_2*\lambda_3*\lambda_4=det(\mathbf{M})
+\end{align}
+These equalities hold because $\mathbf{M}$ and its powers are symmetric matrices (hoffman and kunze 1961). These features are firstly used by researchers for approximating the GDOP using learning based approaches, e.g. the Artificial Neural Network (ANN) and Support-Vector Regression (SVR). The recent work proposed a closed-form solution with the aforementioned features by using the property of symmetric polynomials.
+
+A symmetric polynomial is a polynomial $p(x_1,\ x_2,\ \cdots,\ x_n)$
+in $n$ variables such that when any two variables are interchanged,
+the polynomial remains the same. This can be
+more precisely defined as follows:
+\begin{equation}
+p(x_{\sigma_1},\ x_{\sigma_2},\ \cdots,\ x_{\sigma_n})=p(x_1,\ x_2,\ \cdots,\ x_n)
+\end{equation}
+where $x_{\sigma_1},\ x_{\sigma_2},\ \cdots,\ x_{\sigma_n}$ is any permuted sequence of $x_1,\ x_2,\ \cdots,\ x_n$. Two typical symmetric polynomials are:
+\begin{itemize}
+	\item Power sum symmetric polynomials: 
+	\begin{equation}
+		p_k(x_1,\ x_2,\ \cdots,\ x_n)=x_1^2+x_2^2+\cdots+x_n^2
+	\end{equation}
+	\item Elementary symmetric polynomials:
+	\begin{equation}
+		e_k(x_1,\ x_2,\ \cdots,\ x_n)=\underset{1 \leq j_1<j_2<\cdots<j_k\leq n}{\sum}{x_{j_1}x_{j_2}\cdots x_{j_k}}
+	\end{equation}
+	The 0th degree elementary symmetric polynomial is defined by $e_0(x_1,\ x_2,\ \cdots,\ x_n) = 1$.
+\end{itemize}
+The close relationship between these two types of symmetric polynomials is further explained by the Newton Girard formula
+%explained by the Newton–Girard formulae.
+\begin{align}
+k(-1)^{k}&e_k(x_1,\ x_2,\ \cdots,\ x_n)+ \nonumber \\
+&\sum_{i=1}^{k}{(-1)^{i+k}e_i(x_1,\ x_2,\ \cdots,\ x_n)p_{k-i}(x_1,\ x_2,\ \cdots,\ x_n)} = 0
+\end{align}
+
+Now, revisit~\eqref{eq_raw_dop1}:
+\begin{equation}
+GDOP = \sqrt{\frac{\lambda_1\lambda_2\lambda_3+\lambda_1\lambda_2\lambda_4+\lambda_1\lambda_3\lambda_4+\lambda_2\lambda_3\lambda_4}{\lambda_1\lambda_2\lambda_3\lambda_4}}
+\end{equation}
+The numerator $\lambda_1\lambda_2\lambda_3+\lambda_1\lambda_2\lambda_4+\lambda_1\lambda_3\lambda_4+\lambda_2\lambda_3\lambda_4$ can be written as $e_4(\lambda_1,\ \lambda_2,\ \lambda_3,\ \lambda_4)$. Consequently, by applying the Newton Girard formulae, the numerator can be computed with
+\begin{align}
+e_4(\mathbf{\lambda})&=\frac{1}{3}\left[ 
+\frac{1}{2}\left(p_1(\mathbf{\lambda})^2-p_2(\mathbf{\lambda})\right)p_1(\mathbf{\lambda})-p_1(\mathbf{\lambda})p_2(\mathbf{\lambda})+p_3(\mathbf{\lambda})
+\right] \\
+p_1(\mathbf{\lambda})&=h_1(\mathbf{\lambda}) \\
+p_2(\mathbf{\lambda})&=h_2(\mathbf{\lambda}) \\
+p_3(\mathbf{\lambda})&=h_3(\mathbf{\lambda}) \\
+&\Leftrightarrow \nonumber \\
+e_4(\mathbf{\lambda})&=\frac{0.5h_1(\mathbf{\lambda})^3-1.5h_1(\mathbf{\lambda})h_2(\mathbf{\lambda})+h_3(\mathbf{\lambda})}{3}
+\end{align}
+Overall, the GDOP can be written as
+\begin{equation}
+GDOP = \sqrt{\frac{0.5h_1(\mathbf{\lambda})^3-1.5h_1(\mathbf{\lambda})h_2(\mathbf{\lambda})+h_3(\mathbf{\lambda})}{3h_4}}
+\end{equation}
+This proposed closed-form solution needs 144 floating operations for computing the GDOP, not including the operations for computing $\mathbf{M}=\mathbf{H}^T\mathbf{H}$, dividing and the square-root.
+\subsection{Eigen Decomposition}
+Another way of computing the GDOP is to use the eigen decomposition to obtain $\mathbf{\lambda}$ and then apply~\ref{eq_raw_dop1}. Since the complexity of applying eigen decomposition is $\mathcal{O}(n^3)$ and there are only $4$ divisions, $3$ additions and $1$ square-root left for computing the GDOP, the overall complexity may be less than the previous closed-form solution (depending on the constant associated with the $\mathcal{O}(n^3)$).
+\subsection{Another closed form solution}
+Suppose the eigenvalues $\lambda_1,\ \lambda_2,\ \lambda_3,\ \lambda_4$ are known, the characteristic polynomial as
+\begin{align}
+|\mathbf{A-\lambda I}|=&(\lambda-\lambda_1)(\lambda-\lambda_2)(\lambda-\lambda_3)(\lambda-\lambda_4) \nonumber \\
+=&\lambda^4-\left(\lambda_1+\lambda_2+\lambda_3+\lambda_4\right)\lambda^3 \nonumber \\
+&+(\lambda_1\lambda_2+\lambda_1\lambda_3+\lambda_1\lambda_4+\lambda_2\lambda_3+\lambda_2\lambda_4+\lambda_3\lambda_4)\lambda^2 \nonumber \\
+&-(\lambda_1\lambda_2\lambda_3+\lambda_1\lambda_2\lambda_4+\lambda_1\lambda_3\lambda_4+\lambda_2\lambda_3\lambda_4)\lambda \nonumber \\
+& + \lambda_1\lambda_2\lambda_3\lambda_4
+\end{align}
+It is well known that $|\mathbf{A-\lambda I}|$ is a $4^{th}$ order polynomial which can be represented as 
+\begin{align}
+|\mathbf{A-\lambda I}|=p_4\lambda^4+p_3\lambda^3+p_2\lambda^2+p_1\lambda+p_0
+\end{align}
+It is easy to see that 
+\begin{equation}
+GDOP=\sqrt{\frac{-p_1}{p_0}}
+\end{equation}
+Through some symbolic computations and fully use the symmetric property, it can be concluded that it only needs around 110 floating operations to compute $p_0,\ p_1$. Theoretically speaking, this method will be the faster than the two aforementioned approaches, which can be shown in the experiment.
+
+\subsection{Experiment}
+An experiment has been done to compare the aforementioned three methods with the most traditional method $GDOP = \sqrt{trace(\mathbf{M}^{-1})}$. In this experiment, $100000$ geometric matrices $\mathbf{H}$ have been generated randomly, the mean time for each GDOP computation and the total time for $100000$ runs are shown in Table~\ref{tb:com}.
+\begin{table}[h]
+\centering
+\caption{Speed Comparison of four GDOP computation methods.}
+\label{tb:com}
+\begin{tabular}{c|c|c}
+\hline 
+\textbf{Method} & \textbf{Mean Time: (s)} & \textbf{Total Time: (s)} \\ \hline 
+Baseline & 1.1903e-05 & 1.1903 \\ \hline 
+Closed Form & 8.6366e-06 & 0.8637 \\ \hline 
+Eigen Decomposition & 6.3824e-06 & 0.6382 \\ \hline 
+Proposed & 3.3042e-06 & 0.3304 \\ \hline 
+\end{tabular}
+\end{table}
+
+\subsection{Geometric Meaning}
+Phillips (1984) proposed to select the four satellites with a
+maximum volume of tetrahedron formed by the tips of the
+unit vectors from the receiver to the satellites, i.e., vertices
+with the direction cosines $(e_{i1}, e_{i2}, e_{i3}, e_{i4}), i = 1, 2, 3, 4$. This
+is because GDOP is approximately proportional to the inverse of this volume. However, this maximum volume method may not select desired satellites with the minimum GDOP. 
+
+\section{Abstract}
+With the future global navigation satellite system (GNSS), the multi-GNSS constellations, 
+which are composed of various single systems, will be the main navigation method in future. 
+For the multi-GNSS constellations, the geometric dilution of precision (GDOP) is an important 
+parameter used for satellite selection and the evaluation of positioning accuracy.
+
+\textcolor{red}{\textbf{Satellite selection with an end-to-end deep learning network: ****}}
+Benefiting from multi-constellation Global Navigation Satellite Systems (GNSS), more and more 
+visible satellites can be used to improve user positioning performance. However, due to limited 
+tracking receiver channels and power consumption, and other issues, it may be not possible, 
+or desirable, to use all satellites in view for positioning. The optimal subset is generally 
+selected from all possible satellite combinations to minimize either Geometric Dilution of 
+Precision (GDOP) or weighted GDOP (WGDOP). However, this brute force approach is difficult 
+to implement in real-time applications due to the time- and power-consuming calculation of 
+the DOP values.
+
+\section{Introduction}
+\textcolor{red}{background}
+Benefiting from the modernization of the global navigation satellite system (GNSS) 
+constellations such as GPS and GLONASS as well as from the launch of new ones such as
+Galileo and Beidou (BDS or compass), GNSS users can use more satellites for obtaining 
+positioning, navigation and timing information. \\
+
+
+\textcolor{red}{Why satellite selection is needed}
+However, the computation burden increases with the number of visible satellites. If all the
+visible satellites are used for positioning, navigation and timing applications, 
+GNSS receivers will encounter a large computational complexity. Therefore, it 
+might be difficult to meet the requirements of real-time positioning. Actually, 
+for GNSS units with limited real-time processing capability, it is impossible and 
+not necessary to make use of all the visible satellites. Hence, a satellite selection 
+from all the visible satellites is necessary.\\
+
+\textcolor{red}{why use GDOP as for satellite selection}
+Since the geometric dilution of precision (GDOP) is a geometrically determined 
+factor that describes the effect of geometry on the relationship between the measurement and
+position error, it is often utilized for satellite selection. \\
+
+\textcolor{red}{Works on fast GDOP computation}
+However, the calculation of GDOP is a time-consuming and 
+power-consuming task which involves complicated transformation and inversion of 
+measurement matrices (Wu et al. 2011). Therefore, research on fast methods for
+calculating GDOP is very important.\\
+
+\textcolor{red}{Related work on fast GDOP computation}
+Besides the GDOP definition, artificial neural network (ANN) methods 
+(Simon and El-Sherief 1995; Jwo and Chin 2002; Jwo and Lai 2003, 2007), 
+closed-form formulas (Zhu 1992; Doong 2009) and numerical methods are commonly 
+utilized for GDOP calculation. When the GDOP
+definition is utilized, it not only results in a heavy computation
+burden in computing matrix components, but also
+has the problem of numerical instability. With the ANN
+methods for GDOP calculation, there are two main problems.
+The first is that a model must be trained with substantial
+computing resources, and the second is that the
+resultant model depends critically on the set of the training
+data (Doong 2009).  In single GNSS constellation, Zhu (1992) derived a 
+closed-form formula suitable for exactly
+four satellites, and Doong (2009) presented a simpler
+closed-form formula on the basis of the theories of symmetric
+polynomials and Newton's identifiers, which can be
+applied to five or more satellites. But the two closed-form
+formulas are only valid for single constellation. Numerical
+methods such as the LU decomposition, QR decomposition
+and Gaussian elimination method can decrease the computation
+burden and improve the numerical stability by
+decomposing the design or measurement matrix into some
+matrices with special characteristics.\\
+\textcolor{red}{multi-constellation benefits}
+In comparison with single constellation, the multi-GNSS
+constellations, which are composed of two or more different
+constellations, can improve the performance of positioning
+calculation and integrity monitoring (Ochieng
+et al. 2002; Hewitson and Wang 2006; Ong et al. 2009;
+Wang and Ober 2009; Yang et al. 2011; Martini et al.
+2013).
+
+\textcolor{blue}{gdop introduction}
+ The GNSS positioning is based on the measurement
+of pseudoranges which is an estimation of the
+distance between the satellite and the receiver. Each
+satellite belonging to the same constellation is or can be
+corrected to be time synchronized and its position can be
+decoded and computed from the navigation messages.
+When the GNSS positioning is based on one single constellation,
+for example, GPS (or denoted by constellation
+A), the following pseudorange equation between the ith
+satellite and the receiver is given by
+\begin{equation}
+\rho_i=||\mathbf{x}-\mathbf{x_i}||+cdT
+\label{eqq:rho1}
+\end{equation}
+where $\mathbf{x}=[x,\ y,\ z]^T$, $\mathbf{x}_i=[x_{si},\ y_{si},\ z_{si}]^T$ 
+are the $3D$ position vectors of the receiver and the $i^{th}$ satellite, 
+respectively, $cdT$ is the receiver clock bias in unit of meter, $\rho_i$ is 
+the corresponding pseudorange. 
+
+During positioning calculation a first-order Taylor expansion is 
+applied to~\eqref{eqq:rho1} around the approximate position of the receiver 
+$\mathbf{\hat{x}}=[\hat{x}, \hat{y}, \hat{z}]^T$:
+\begin{align}
+\rho_i &= ||\mathbf{\hat{x}}-x_i||+cdT + \mathbf{h}_i \Delta \mathbf{x} + c\Delta dT\\
+& \Leftrightarrow \nonumber \\
+\Delta \rho_i &= \rho_i - ||\mathbf{\hat{x}}-x_i||+cdT = \mathbf{h}_i \Delta \mathbf{x} + c\Delta dT\\
+\mathbf{h}_i  &= \left[
+\frac{\hat{x}-x_i}{||\mathbf{\hat{x}}-\mathbf{x_i}||},\ 
+\frac{\hat{y}-y_i}{||\mathbf{\hat{x}}-\mathbf{x_i}||},\ 
+\frac{\hat{z}-z_i}{||\mathbf{\hat{x}}-\mathbf{x_i}||}
+\right]
+\label{eq:nav1}
+\end{align}
+The linear measurement equation can be obtained by stacking~\eqref{eq:nav1} together:
+\begin{align}
+\left[
+\begin{matrix}
+\Delta \rho_1 \\
+\Delta \rho_2 \\
+\vdots \\
+\Delta \rho_k \\
+\end{matrix}
+\right] = 
+\underbrace{
+\left[
+\begin{matrix}
+\mathbf{h}_1 & 1 \\
+\mathbf{h}_2 & 1 \\
+\vdots & \vdots \\
+\mathbf{h}_k & 1 \\
+\end{matrix}
+\right] }_{\mathbf{H}}
+ \left[
+\begin{matrix}
+\Delta \mathbf{x} & c\Delta dT
+\end{matrix}
+\right] 
+\label{eq:lsq}
+\end{align}
+where $\mathbf{H}$ is the design matrix which captures the receiver-satellite geometry. Usually~\eqref{eq:lsq} is solved by the Gauss-Newton method. The GDOP is defined by
+\begin{equation}
+GDOP=\sqrt{trace(\mathbf{H}^T\mathbf{H})^{-1}}
+\end{equation}
+\\
+\textcolor{blue}{Maybe no use}
+However, the matrix inversion method for the calculation of GDOP in 
+presents a heavy computational burden when executed many times. \\
+The decrease in the calculation workload may not be obvious if the 
+GDOP is calculated once. But in the course of satellite selection, 
+the GDOP may be calculated over
+hundred even thousand times for selecting the subset of satellites 
+for positioning calculation. In this case, the decrease on the calculation 
+load is very obvious. As an example,
+there are nine satellites available in an multi-GNSS unit, then a 
+total of 9!/(4!5!) = 126 GDOPs need to be calculated in order to decide 
+the best combination of five satellites. Accordingly, about 15,000 multiplications 
+and 18,000 additions will be saved using the closed-form
+formula.
+
+\section{Conclusion}
+\textcolor{blue}{only as a reference}
+For satellite selection within the multi-GNSS constellations,
+the calculation of GDOP is a time-consuming and
+power-consuming task. In dealing with this problem, a
+closed-form formula for fast calculation of GDOP is presented.
+The closed-form formula is based on the Schur
+complement, and it can be applied to the multi-GNSS
+constellations, which are composed of two, three and four
+single systems. Furthermore, for the special case of only
+five satellites, the detailed expression of the closed-form
+formula can be derived. The numerical experiment and the
+discussion on the amounts of calculations have demonstrated
+the effectiveness and the feasibility of the new
+closed-form formula.\\
+In the proposed closed-form formula for the calculation
+of GDOP, the impact of the weight values of different
+satellites on the calculation of GDOP is not considered. For
+the multi-GNSS constellations, the closed-form formula for
+calculating weighted GDOP will be taken into consideration
+in future investigation.
 \end{document}

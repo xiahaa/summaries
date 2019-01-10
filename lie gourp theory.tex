@@ -23,7 +23,7 @@
 
 This section begins with the definition of the Special Orthogonal Group $\mathbb{SO}(3)$ and the Special Euclidean Group $\mathbb{SE}(3)$. The presentation is based on [][]. $\mathbb{SO}(3)$, defined with~\eqref{so3definition}, describes the group of $3D$ rotation matrices.
 \begin{equation}
-\mathbb{SO}(3)：={\bold{R} \in \mathbb{R}^{3 \times 3}|RR^T=\bold{I_{3 \times 3}},\ det(\bold{R})=1}
+\mathbb{SO}(3):={\bm{R} \in \mathbb{R}^{3 \times 3}|RR^T=\bm{I_{3 \times 3}},\ det(\bold{R})=1}
 \label{eq:SO3definition}
 \end{equation}
 $\mathbb{SE}(3)$ which represents rotation and translation is defined as follows:
@@ -52,7 +52,12 @@ $$
 Let $a \in g \subset \mathbb{R}^{n \times n}$, then we have $a^{\land}=k \in \mathbb{R}^n$. Thus, $\bold{E}_i^{\vee}=\bold{e}_i$ where $\bold{e}_i$ is the natural basis of $\mathbb{R}^n$ and $k=\sum_{i=1}^{n}{a_i \bold{E}_i}$. This will allow us to express the differential calculus of the filter computation in vector form with the minimal number of parameters $n$, as opposed to considering the matrices with $n^2$ coefficients. The link between a Lie group and its associated Lie algebra can be expressed with the exponential (exp) and logarithm (log) operations. The formula for exp, log are quite standard and they can be found for SO3 and SE3.
 
 
-The matrix exponential exp and matrix logarithm log establish a local diffeomorphism between an open neighborhood of $0_{n \times n}$ in the tangent space at the identity $T_eG$， called the Lie Algebra $g$, and an open neighborhood of $Id_{nxn}$ in G. The Lie Algebra $g$ associated to a $p$ dimensional matrix Lie group is a $p$-dimensional vector space defined by a basis consisting of real matrices.
+The matrix exponential $exp$ and matrix logarithm $log$ establish a local
+diffeomorphism between an open neighbourhood of $0_{n \times n}$ in the
+tangent space at the identity $T_eG$, called the Lie Algebra $g$, and an
+open neighbourhood of $Id_{nxn}$ in $G$. The Lie Algebra $g$ associated to a
+$p$ dimensional matrix Lie group is a $p$-dimensional vector space defined
+by a basis consisting of real matrices.
 
 
 The Lie algebra $\mathfrak{g}$ associated to a $n$-dimensional matrix Lie group is an $n$-dimensional tangent space which may be defined by a basis consisting of real matrices $\bold{E}_i$ for $i=1 \cdots n$. The link between a Lie group and its associated Lie algebra can be expressed with the exponential ($exp$) and logarithm ($log$) operations, which establish a local diffeomorphism between a neighborhood of $\bm{0}_{n \times n}$ at the identity in the tangent space to a local neighborhood of the identity on the manifold. $\mathfrak{g}$ associates to its vector space $\mathbb{R}^{n}$ by ${\cdot}^{\vee}: \mathfrak{g} \to \mathbb{R}^n$ and ${\cdot}^{\land}: \mathbb{R}^n \to \mathfrak{g}$.
@@ -186,7 +191,7 @@ A first-order approximation of the exponential map is:
 \begin{equation}
 exp(\bm{\phi}^{\land})=\bm{I}+\bm{{\phi}^{\land}}.
 \end{equation}
-The logarithm map (at the identity) associate a matrix $R \in \mathbb{SO}(3)$ to a skew symmetric matrix：
+The logarithm map (at the identity) associate a matrix $R \in \mathbb{SO}(3)$ to a skew symmetric matrix:
 \begin{equation}
 log(R)=\frac{\theta \cdot (R-R^T)}{2sin(\theta)}\ with\ \theta=cos^{-1}(\frac{trace(R)-1}{2}).
 \end{equation}
@@ -265,5 +270,8 @@ The Baker-Campbell-Haussdorff formula which expresses the group product directly
 $$
 [log_G{(exp_G)([a]^\land)exp_G([b]^\land))}]_G^\vee = a + b + O(|a,b|^2)
 $$
+
+\section{Filter on Lie Group}
+TODO add complementary filter theory on $\mathbb{SO}(3)$ and the EUROSIP journal of EKF on Lie group.
 
 \end{document}
