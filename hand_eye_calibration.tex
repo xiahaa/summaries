@@ -36,10 +36,14 @@ pure solution:
 	\item \sout{SCF solution for quaternion and Kronecker};
 	\item \sout{SE3 Gauss-Newton};
 	\item \sout{benchmark test on ETH-ASL and MIT-RGB dataset};
-	\item paper writing;
+	\item \sout{benchmark test};
+	\item \sout{paper writing};
 \end{enumerate}
-\textcolor{blue}{SCF is not comparable to SQP, so I re-modify the formulation to a SDP problem and then solve with SDR and randomization. The performance is more stable.}
-
+Note: 
+\begin{itemize}
+\item \textcolor{blue}{small motion: like relative rotation is small. This is one of the most difficult cases.};
+\item \textcolor{blue}{SCF is not comparable to SQP, so I re-modify the formulation to a SDP problem and then solve with SDR and randomization. The performance is more stable.}
+\end{itemize}
 
 \section{TODO Vision}
 TODO list:
@@ -52,9 +56,9 @@ pure solution:
 	\item \sout{homography decompsition in matlab and using opencv};
 	\item \sout{Feature detection \& matching with ORB};
 	\item \sout{Naive matching outlier removal};
+	\item \sout{$5$ point Essential and $8$ point fundamental estimation};
 	\item Motion Estimation;
 	\item Refine;
-	\item benchmark test, \textcolor{red}{small motion: like relative rotation is small. This is one of the most difficult cases.};
 	\item paper writing;
 \end{enumerate}
 
