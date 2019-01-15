@@ -16,11 +16,17 @@
 \usepackage{url}
 \usepackage{cite}
 \usepackage{bm}
+\usepackage{pbox}
+\usepackage{siunitx,booktabs,etoolbox}
+\usepackage{ulem}
+
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
 \begin{document}
 
+\chapter{Group Theory}
+\section{Lie group}
 This section begins with the definition of the Special Orthogonal Group $\mathbb{SO}(3)$ and the Special Euclidean Group $\mathbb{SE}(3)$. The presentation is based on [][]. $\mathbb{SO}(3)$, defined with~\eqref{so3definition}, describes the group of $3D$ rotation matrices.
 \begin{equation}
 \mathbb{SO}(3):={\bm{R} \in \mathbb{R}^{3 \times 3}|RR^T=\bm{I_{3 \times 3}},\ det(\bold{R})=1}
@@ -273,5 +279,42 @@ $$
 
 \section{Filter on Lie Group}
 TODO add complementary filter theory on $\mathbb{SO}(3)$ and the EUROSIP journal of EKF on Lie group.
+
+\subsection{Complementary Filter}
+~\cite{mahony2008nonlinear} propose a nonlinear complementary filter on special orthogonal group $\mathbb{SO}(3)$. 
+Serveral keypoints can be learned from this paper:
+\begin{enumerate}
+	\item From any two matrices $A,\ B\ \in \mathbb{R}^{n\times n}$, the Euclidean matrix inner product ad the Frobenius norm are defined as:
+	$$
+	\langle\langle \mathbf{A},\ \mathbf{B} \rangle\rangle=tr(\mathbf{A}^{T}\mathbf{B})=\sum_{i,\ j=1}^{n}A_{ij}B_{ij}
+	$$
+	$$
+	||\mathbf{A}||=\sqrt{\langle\langle \mathbf{A},\ \mathbf{A} \rangle\rangle}=\sqrt{\sum_{i,\ j=1}^{n}A^2_{ij}}
+	$$
+	The following identities are used:
+	\begin{align}
+	(\mathbf{Rv})^{\wedge}=\mathbf{R}\mathbf{v}^{\wedge}\mathbf{R}^T,\ \mathbf{R}\ \in\ \mathbb{SO}(3),\ \mathbf{v}\ \in\ \mathbb{R}^{3} \\
+	(\mathbf{v} \times \mathbf{w})=[\mathbf{v}^{\wedge}, \mathbf{w}^{\wedge}],\ \mathbf{v, w}\ \in\ \mathbb{R}^{3} \\
+	(\mathbf{v} \cdot \mathbf{w})=\frac{1}{2}\langle\langle \mathbf{v}^{\wedge},\ \mathbf{w}^{\wedge} \rangle\rangle, \mathbf{v}\ \mathbf{w} \in\ \mathbb{R}^{3} \\
+	\langle\langle \mathbf{A}\mathbf{v}^{\wedge}  \rangle\rangle =0 \\
+	tr([\mathbf{A},\mathbf{B}])=0
+	\end{align}
+	Let $\mathbb{P}_{a},\ \mathbb{P}_{s}$ denote, respectively, the anti-symmetric and symmetric projection operator in square matrix space:
+	$$
+	\mathbb{P}_{a}(\mathbf{H})=\frac{1}{2}(\mathbf{H}-\mathbf{H}^T), \mathbb{P}_{s}(\mathbf{H})=\frac{1}{2}(\mathbf{H}+\mathbf{H}^T)
+	$$
+	\item the kinematics of rotation matrix:
+	$$
+	\dot{\mathbf{R}}=\mathbf{R}\mathbf{w}^{\wedge}
+	$$
+	From this and an observer to drive a error form and apply the Lyapunov analysis (\textcolor{red}{section III, very important for publication on ACC, ECC, CDC}).
+	\item Stability analysis.
+\end{enumerate}
+An nonlinear complementary filter fully works on$\mathbb{SO}(3)$ is given here\footnote{\url{https://zhuanlan.zhihu.com/p/54569420}}.
+
+
+%\bibliographystyle{ieee/IEEEtran}
+\bibliography{liegourp}
+\bibliographystyle{ieeetr}
 
 \end{document}
