@@ -12,26 +12,36 @@
 \coordinate (A) at  (0,0,0);
 \coordinate (Ax) at (0.5,0,0);
 \coordinate (Ay) at (0,0.5,0);
-\coordinate (Az) at (0,0,0.5);
+\coordinate (Az) at (0,0,-0.5);
 
-\coordinate (A1) at  (-0.187,-0.504,-0.396);
-\coordinate (A1x) at (0.255,-0.734,-0.189);
-\coordinate (A1y) at (-0.107,-0.371,-0.673);
-\coordinate (A1z) at (0.032,-0.083,-0.0432);
+\coordinate (A1) at  (0   ,      0 +2  , 1.0000);
+\coordinate (A1x) at (0.3536 ,  -0.3536+2  ,  1.0000 );
+\coordinate (A1y) at (0.3536  ,  0.3536 +2 ,  1.0000  );
+\coordinate (A1z) at (0      ,   0 +2 ,  0.5000);
 
-\coordinate (A2) at  (0,0,0);
-\coordinate (A2x) at (0.5,0,0);
-\coordinate (A2y) at (0,0.5,0);
-\coordinate (A2z) at (0,0,0.5);
+\coordinate (A2) at  (0  ,  1.5000 + 2 ,  0.5000);
+\coordinate (A2x) at (-0.2500 ,   1.0670 +2  ,  0.5000 );
+\coordinate (A2y) at (0.4330 ,   0.7500+2.5,    0.5000  );
+\coordinate (A2z) at (0  ,  1.0000  +2.5,  0.0000  );
 
+\coordinate (B) at  (0.7000  , 0  , -0.3000 );
+\coordinate (Bx) at (0.7000  ,  0    ,  -0.8000);
+\coordinate (By) at (1.2000   ,   0   , -0.3000);
+\coordinate (Bz) at (0.7000 , 0.5  ,  -0.3000 );
 
-\coordinate (B) at  (0,1,-0.5);
-\coordinate (Bx) at (0.5,1,-0.5);
-\coordinate (By) at (0.0,1-0.5,-0.5);
-\coordinate (Bz) at (0.0,1,-0);
+\coordinate (B1) at  (0.4950 ,  -0.4950 + 2 ,   0.7000  );
+\coordinate (B1x) at  (0.4950 ,  -0.4950+ 2,   0.2000   );
+\coordinate (B1y) at  (0.8485 ,  -0.8485+ 2  ,  0.7000 );
+\coordinate (B1z) at  (0.8485  , -0.1415 + 2 ,  0.7000 );
+
+\coordinate (B2) at  (-0.3500 +0.5 ,   0.3938 +2.3 ,  0.2000 );
+\coordinate (B2x) at  (-0.3500 +0.5,   0.3938 +2.3  , -0.3000 );
+\coordinate (B2y) at  (-0.6000 +0.5,  -0.0392 +2.3 ,   0.2000 );
+\coordinate (B2z) at  (0.1500  +0.5,  0.1062 +2.3  ,  0.2000 );
 
 \draw[-, line width=1mm, solid] (A) to[] node[left,rotate=0] {} (B);
-
+\draw[-, line width=1mm, solid] (A1) to[] node[left,rotate=0] {} (B1);
+\draw[-, line width=1mm, solid] (A2) to[] node[left,rotate=0] {} (B2);
 %determine a coordinate (P) using (r,\theta,\phi) coordinates.  This command
 %also determines (Pxy), (Pxz), and (Pyz): the xy-, xz-, and yz-projections
 %of the point (P).
@@ -42,19 +52,28 @@
 \tdplotsetrotatedcoordsorigin{(Shift)}
 %%%% draw A1
 \draw[thick,color=green,tdplot_rotated_coords,->] (A) --
-(Ax) node[anchor=north]{$y$};
+(Ax) node[anchor=east]{$y$};
 \draw[thick,color=red,tdplot_rotated_coords,->] (A) --
 (Ay) node[anchor=west]{$x$};
 \draw[thick,color=blue,tdplot_rotated_coords,->] (A) --
-(Az) node[anchor=south]{$z$};
-\node (O) [left] {$\bold{A}_1$};
+(Az) node[anchor=east]{$z$};
+\draw (A) node[left] {$\bold{A}_1$};
 
 \draw[thick,color=green,tdplot_rotated_coords,->] (A1) --
 (A1x) node[anchor=north]{$y$};
 \draw[thick,color=red,tdplot_rotated_coords,->] (A1) --
 (A1y) node[anchor=west]{$x$};
 \draw[thick,color=blue,tdplot_rotated_coords,->] (A1) --
-(A1z) node[anchor=south]{$z$};
+(A1z) node[anchor=east]{$z$};
+\draw (A1) node[right] {$\bold{A}_2$};
+
+\draw[thick,color=green,tdplot_rotated_coords,->] (A2) --
+(A2x) node[anchor=north]{$y$};
+\draw[thick,color=red,tdplot_rotated_coords,->] (A2) --
+(A2y) node[anchor=east]{$x$};
+\draw[thick,color=blue,tdplot_rotated_coords,->] (A2) --
+(A2z) node[anchor=east]{$z$};
+\draw (A2) node[right] {$\bold{A}_n$};
 
 %%%% draw B1
 \draw[thick,color=green,tdplot_rotated_coords,->] (B) --
@@ -63,77 +82,34 @@
 (By) node[anchor=south]{$x$};
 \draw[thick,color=blue,tdplot_rotated_coords,->] (B) --
 (Bz) node[anchor=south]{$z$};
-\node (B) at (-0,0.7,-0.5) [right] {$\bold{B}_1$};
-
-\coordinate (Shift) at (-0.7,1.0,0.1);
-\tdplotsetrotatedcoords{-70}{70}{45}
-\tdplotsetrotatedcoordsorigin{(Shift)}
-\coordinate (A2) at (-0.7,1.0,0.1);
-\coordinate (A2x) at (-0.7,1.5,0.1);
-\coordinate (A2z) at (-1.3,1.0,0.1);
-\coordinate (A2y) at (-0.7,1.0,-0.4);
-\coordinate (B2) at  (-0.7,1.7,-0.4);
-\coordinate (B2x) at (-0.7,1.7-0.5,-0.4);
-\coordinate (B2y) at (-0.2,1.7,-0.4);
-\coordinate (B2z) at (-0.7,1.7,-0.4+0.5);
-\draw[thick,color=red,tdplot_rotated_coords,->] (A2) --
-(A2x) node[anchor=north east]{${x}$};
-\draw[thick,color=green,tdplot_rotated_coords,->] (A2) --
-(A2y) node[anchor=west]{${y}$};
-\draw[thick,color=blue,tdplot_rotated_coords,->] (A2) --
-(A2z) node[anchor=south]{${z}$};
-\draw[thick,color=red,tdplot_rotated_coords,->] (B2) --
-(B2x) node[anchor=north east]{${x}$};
+\draw (B) node[left] {$\bold{B}_1$};
+\draw[thick,color=green,tdplot_rotated_coords,->] (B1) --
+(B1x) node[anchor=north]{$y$};
+\draw[thick,color=red,tdplot_rotated_coords,->] (B1) --
+(B1y) node[anchor=south]{$x$};
+\draw[thick,color=blue,tdplot_rotated_coords,->] (B1) --
+(B1z) node[anchor=south]{$z$};
+\draw (B1) node[left, above] {$\bold{B}_2$};
 \draw[thick,color=green,tdplot_rotated_coords,->] (B2) --
-(B2y) node[anchor=north]{${y}$};
+(B2x) node[anchor=north]{$y$};
+\draw[thick,color=red,tdplot_rotated_coords,->] (B2) --
+(B2y) node[anchor=south]{$x$};
 \draw[thick,color=blue,tdplot_rotated_coords,->] (B2) --
-(B2z) node[anchor=south]{${z}$};
-\draw (A2) node[left] {$\bold{A}_2$};
-\draw (B2) node[right] {$\bold{B}_2$};
-\draw[-, line width=1mm, solid] (A2) to[] node[left,rotate=0] {} (B2);
+(B2z) node[anchor=south]{$z$};
+\draw (B2) node[above] {$\bold{B}_n$};
 
-\coordinate (m1) at (-0.7,2.,-0.2);
-\coordinate (mi) at (-0.7,2.0,-0.4);
+%\draw[loosely dotted, color=black] (A) -- (A1);
+\draw[<->, dashed] (A) to[bend left=80] node[above,rotate=0] {$\mathbf{T}_{\mathbf{A}_1}^{{\mathbf{A}}_2}$} (A1);
+\draw[<->, dashed] (A1) to[bend left=80] node[above,rotate=0] {$\mathbf{T}_{\mathbf{A}_2}^{{\mathbf{A}}_n}$} (A2);
+\draw[<->, dashed] (B) to[bend right=80] node[below,rotate=0] {$\mathbf{T}_{\mathbf{B}_1}^{{\mathbf{B}}_2}$} (B1);
+\draw[<->, dashed] (B1) to[bend right=80] node[below,rotate=0] {$\mathbf{T}_{\mathbf{B}_2}^{{\mathbf{B}}_n}$} (B2);
 
-\draw[loosely dotted, color=black] (m1) -- (mi);
-
-\coordinate (Shift) at (-0.7,2.0,-0.8);
-\tdplotsetrotatedcoords{-130}{90}{0}
-\tdplotsetrotatedcoordsorigin{(Shift)}
-\draw[thick,color=green,tdplot_rotated_coords,->] (0,0,0) --
-(-.3,0,0) node[anchor=north east]{$\bold{M}_{iy}$};
-\draw[thick,color=blue,tdplot_rotated_coords,->] (0,0,0) --
-(0,.3,0) node[anchor=north west]{$\bold{M}_{iz}$};
-\draw[thick,color=red,tdplot_rotated_coords,->] (0,0,0) --
-(0,0,-.3) node[anchor=south west]{$\bold{M}_{ix}$};
-%
-%\coordinate (Shift) at (0.5,1.3,0.);
-%\tdplotsetrotatedcoords{-45}{90}{0}
-%\tdplotsetrotatedcoordsorigin{(Shift)}
-%\draw[thick,color=green,tdplot_rotated_coords,->] (0,0,0) --
-%(-0.7,0,0) node[anchor=north west]{$\bold{G}_y$};
-%\draw[thick,color=blue,tdplot_rotated_coords,->] (0,0,0) --
-%(0,.7,0) node[anchor=west]{$\bold{G}_z$};
-%\draw[thick,color=red,tdplot_rotated_coords,->] (0,0,0) --
-%(0,0,-.7) node[anchor=south]{$\bold{G}_x$};
-%
-%\coordinate (G) at (0.5,1.3,0.);
-%
-%\draw (G) node[left] {$\bold{G}$};
-%\draw (-0.7,2.0,-0.8) node[below] {$\bold{M}_i$};
-%\draw (-0.7,2.0,0.1) node[left] {$\bold{M}_1$};
-%
-%
-%\draw[<->, dashed] (-0.7,2.0,0.1) to[bend right=80] node[left,rotate=0] {} (O);
-%\draw[<->, dashed] (-0.7,2.0,-0.8) to[bend right=80] node[left,rotate=0] {} (O);
-%
-%\draw[<->, loosely dotted] (-0.7,2.0,-0.8) to[bend right=20] node[left,rotate=0] {} (-0.7,2.0,0.1);
-%\draw[<->, loosely dotted] (O) to[bend right=50] node[above,rotate=0] {} (G);
-%\draw[<->, loosely dotted] (-0.7,2.0,-0.8) to[bend right=50] node[above,rotate=0] {} (G);
-%\draw[<->, loosely dotted] (-0.7,2.0,0.1) to[bend right=50] node[left,rotate=0] {} (G);
+\draw[<->, loosely dotted] (A) to[bend right=80] node[left,rotate=0] {$\mathbf{X}$} (B);
+\draw[<->, loosely dotted] (A1) to[bend right=80] node[left,rotate=0] {$\mathbf{X}$} (B1);
+\draw[<->, loosely dotted] (A2) to[bend right=80] node[left,rotate=0] {$\mathbf{X}$} (B2);
 
 \end{tikzpicture}
-\caption{Coordinate Systems. Dashed connections are transformation matrices directly measured and dotted connections are transformation matrices to be optimized.}
+\caption{Coordinate Systems used for hand eye calibration. With out lossing generality, $\mathbf{A}$ can denote the camera frame with  $\mathbf{B}$ being the IMU body frame, which turns out to be the camera-IMU calibration problem. Note here the dashed connections are transformation matrices directly measured and dotted connections are transformation matrices to be optimized. The black thick solid line represents the rigid joint between two sensors.}
 \label{fig:frame}
 \end{figure}
 
