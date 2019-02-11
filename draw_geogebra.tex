@@ -1,0 +1,114 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{pgf,tikz,pgfplots}
+\pgfplotsset{compat=1.15}
+\usepackage{mathrsfs}
+\usetikzlibrary{arrows}
+\pagestyle{empty}
+
+\begin{document}
+\definecolor{qqffqq}{rgb}{0,1,0}
+\definecolor{dtsfsf}{rgb}{0.8274509803921568,0.1843137254901961,0.1843137254901961}
+\definecolor{ttffqq}{rgb}{0.2,1,0}
+\definecolor{zzqqqq}{rgb}{0.6,0,0}
+\definecolor{qqqqff}{rgb}{0,0,1}
+\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=0.5mm,y=0.5mm]
+%\clip(-260.3622590235269,-130.75238283767115) rectangle (343.56581357229004,189.76452857176022);
+\fill[line width=0.4pt,color=qqqqff,fill=qqqqff,fill opacity=0.1] (-120,60) -- (-120,20) -- (-40,0) -- (-40,40) -- cycle;
+\draw [line width=0.4pt,color=qqqqff] (-120,60)-- (-120,20);
+\draw [line width=0.4pt,color=qqqqff] (-120,20)-- (-40,0);
+\draw [line width=0.4pt,color=qqqqff] (-40,0)-- (-40,40);
+\draw [line width=0.4pt,color=qqqqff] (-40,40)-- (-120,60);
+\draw [line width=1pt,dash pattern=on 1pt off 2pt] (-120,-20)-- (-96.60375187670019,124.56698014312113);
+\draw [line width=1pt,dash pattern=on 1pt off 2pt] (-120,-20)-- (-73.97887009343246,97.50584702980086);
+\draw [line width=1pt,dash pattern=on 1pt off 2pt] (-120,-20)-- (-26.06735572886549,126.78510580814738);
+\draw [line width=1pt,dash pattern=on 1pt off 2pt] (-120,-20)-- (-20,60);
+\draw [->,line width=0.8pt,color=qqqqff] (40,100) -- (40,140) node[anchor=west] {\large z};
+\draw [->,line width=0.8pt,color=ttffqq] (40,100) -- (80,100) node[anchor=north] {\large y};
+\draw [->,line width=0.8pt,color=dtsfsf] (40,100) -- (13.479793758392113,72.70521021337512) node[anchor=east] {\large x};
+\draw [->,line width=0.8pt,color=qqqqff] (-120,-20) -- (-95.8035927295883,8.47576261708527) node[anchor=west] {\large z};
+\draw [->,line width=0.8pt,color=dtsfsf] (-120,-20) -- (-80,-20) node[anchor=north] {\large x};
+\draw [->,line width=0.8pt,color=qqffqq] (-120,-20) -- (-120,-60) node[anchor=west] {\large y};
+%\draw (23.048902162857512,87.40383830128313) node[anchor=north west] {x};
+%\draw (72.94973866971526,114.91327381147384) node[anchor=north west] {y};
+%\draw (47.359566102095904,148.82025246356937) node[anchor=north west] {z};
+%\draw (-82.51055967857235,-13.677343340812993) node[anchor=north west] {x};
+%\draw (-117.69704695904898,-41.82653316519419) node[anchor=north west] {y};
+%\draw (-95.30564596238203,15.75135511194917) node[anchor=north west] {z};
+\begin{scriptsize}
+\draw[fill=black, draw = none] (-120,-20) circle (1.5pt) node[left] {\large $C$};
+
+\draw[fill=black, draw = none] (-96.60375187670019,124.56698014312113) circle (1.5pt) node[left] {\large $P_2$};
+\draw[fill=black, draw = none] (-73.97887009343246,97.50584702980086) circle (1.5pt) node[left] {\large $P_3$};
+\draw[fill=black, draw = none] (-26.06735572886549,126.78510580814738) circle (1.5pt) node[left] {\large $P_1$};
+\draw[fill=black, draw = none] (-20,60) circle (1.5pt) node[left] {\large $P_4$};
+
+%\draw [fill=zzqqqq] (-110.83294796934277,36.643826903476544) circle (1.5pt);
+\draw[fill=zzqqqq, draw = none] (-110.83294796934277,36.643826903476544) circle (1.5pt) node[left] {\large $q_2$};
+\draw[fill=zzqqqq, draw = none] (-100.30588565656207,30.285023251834062) circle (1.5pt) node[left] {\large $q_3$};
+\draw[fill=zzqqqq, draw = none] (-84.65453313461363,35.23306762980626) circle (1.5pt) node[left] {\large $q_2$};
+\draw[fill=zzqqqq, draw = none] (-55.15869508984737,31.8730439281221) circle (1.5pt) node[left] {\large $q_1$};
+
+\draw[fill=black, draw = none] (40,100) circle (1.5pt) node[left] {\large $G$};
+
+  \coordinate (C) at (-120,-20);
+  \coordinate (G) at (40,100);      
+  \draw[->, dashed, thin] (G) to[bend right=-80] node[below,rotate=0,xshift=0.7cm,yshift=0.2cm] {\large $\mathbf{R},\ \mathbf{t}$} (C);
+
+\end{scriptsize}
+\end{tikzpicture}
+
+
+\definecolor{zzqqqq}{rgb}{0.6,0,0}
+\definecolor{rvwvcq}{rgb}{0.08235294117647059,0.396078431372549,0.7529411764705882}
+\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=2cm,y=2cm]
+\clip(-4.758976629870427,-2.8996547331881795) rectangle (8.531052042687612,5.255590134063304);
+\fill[line width=1pt,color=rvwvcq,fill=rvwvcq,fill opacity=0.10000000149011612] (-1,2) -- (-1.5,1) -- (1,1) -- (1.5,2) -- cycle;
+\draw [line width=1pt,color=rvwvcq] (-1,2)-- (-1.5,1);
+\draw [line width=1pt,color=rvwvcq] (-1.5,1)-- (1,1);
+\draw [line width=1pt,color=rvwvcq] (1,1)-- (1.5,2);
+\draw [line width=1pt,color=rvwvcq] (1.5,2)-- (-1,2);
+\draw [line width=1pt] (0,3)-- (-1.5,-1.5);
+\draw [line width=1pt] (0,3)-- (0,-2.5);
+\draw [line width=1pt] (0,3)-- (1,-1.5);
+\draw [line width=1pt] (-1.5,-1.5)-- (0,-2.5);
+\draw [line width=1pt] (0,-2.5)-- (1,-1.5);
+\draw [line width=1pt] (1,-1.5)-- (-1.5,-1.5);
+\draw [->,line width=0.5pt] (0,3) -- (-0.5,1.5);
+\draw [->,line width=0.5pt] (0,3) -- (0,1.2089279311713292);
+\draw [->,line width=0.5pt] (0,3) -- (0.3304596247759258,1.512931688508334);
+
+\draw [shift={(0,3)},line width=1.2pt,dash pattern=on 1pt off 1pt]  plot[domain=4.3906384259880475:4.71238898038469,variable=\t]({1*0.8598807276619135*cos(\t r)+0*0.8598807276619135*sin(\t r)},{0*0.8598807276619135*cos(\t r)+1*0.8598807276619135*sin(\t r)});
+\draw [shift={(0,3)},line width=1.2pt,dash pattern=on 1pt off 1pt]  plot[domain=4.71238898038469:4.931057926258632,variable=\t]({1*1.2*cos(\t r)+0*1.2*sin(\t r)},{0*1.2*cos(\t r)+1*1.2*sin(\t r)});
+\draw [shift={(0,3)},line width=1.2pt,dash pattern=on 1pt off 1pt]  plot[domain=4.3906384259880475:4.931057926258632,variable=\t]({1*1.1318277420868645*cos(\t r)+0*1.1318277420868645*sin(\t r)},{0*1.1318277420868645*cos(\t r)+1*1.1318277420868645*sin(\t r)});
+
+\coordinate (c1) at (-1,2.5);
+\coordinate (c2) at (-0.2,2.2);      
+\draw (c1) node[anchor=east] {$\alpha_1$};
+\draw[->, dashed, thin] (c1) to[bend right=30] (c2);
+
+\coordinate (c3) at (0.8,2.3);
+\coordinate (c4) at (-0.0,1.9);      
+\draw (c3) node[anchor=north] {$\alpha_2$};
+\draw[->, dashed, thin] (c3) to[bend right=45] (c4);
+
+\coordinate (c5) at (0.8,1.2);
+\coordinate (c6) at (0.1,1.8);      
+\draw (c5) node[anchor=south] {$\alpha_3$};
+\draw[->, dashed, thin] (c5) to[bend left=60] (c6);
+
+
+%\draw (0.41032673042974566,2.330057848350867) node[anchor=north west] {$\alpha_2$};
+%\draw (0.32402784294560255,2.036641630904782) node[anchor=north west] {$\alpha_3$};
+
+\begin{scriptsize}
+\draw [fill=black] (0,3) circle (1pt) node[anchor=west] {\large $C$};
+\draw [fill=black] (-1.5,-1.5) circle (1pt) node[anchor=east] {\large $P_1$};
+\draw [fill=black] (0,-2.5) circle (1pt) node[anchor=west] {\large $P_3$};
+\draw [fill=black] (1,-1.5) circle (1pt) node[anchor=west] {\large $P_2$};
+\draw [fill=zzqqqq] (-0.5,1.5) circle (1pt) node[anchor=west] {\large $q_1$};
+\draw [fill=zzqqqq] (0,1.2089279311713292) circle (1pt) node[anchor=west] {\large $q_3$};
+\draw [fill=zzqqqq] (0.3304596247759258,1.512931688508334) circle (1pt) node[anchor=west] {\large $q_2$};
+\end{scriptsize}
+\end{tikzpicture}
+
+\end{document}
