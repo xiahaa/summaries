@@ -1,4 +1,5 @@
 \documentclass[a4paper]{article}
+\usepackage[left=3cm, right=3cm]{geometry}
 \usepackage{lipsum}
 \usepackage{tikzpagenodes}
 \usepackage{pgfplots}
@@ -20,9 +21,9 @@
 \usepackage{siunitx,booktabs,etoolbox}
 \usepackage{ulem}
 
-\usepackage{pgf,tikz,pgfplots}
-\pgfplotsset{compat=1.15}
-\usepackage{mathrsfs}
+%\usepackage{pgf,tikz,pgfplots}
+%\pgfplotsset{compat=1.15}
+%\usepackage{mathrsfs}
 
 \usetikzlibrary{arrows}
 
@@ -198,6 +199,155 @@ Another linear P$n$P algorithm is proposed in~\cite{ansar2003linear}. It also st
 &\mathbf{M}\mathbf{t} = \mathbf{0}
 \end{align*}
 Finding $\mathbf{t}$ by choosing the rightmost singular vector and apply a similar relinearization to recover $x$. For $N$ points, we have $C_{N}^2$ cosine equations. Then we have $N$ terms in form of $x_i^2$, $C_{N}^2$ terms in form of $x_ix_j$ and one slack variable $1$. So in total, the solution vector is $\frac{N(N+1)}{2}+1$. The kernel is of dimension $\frac{N(N-1)}{2}$, so we will have a null space of dimension $N+1$. We still needs $\frac{N*N*(N-1)}{2}$ constraints to do the relinearization. As can be seen, this method is extremely complex. The computation time will increase significantly with the number of correspondences. \textcolor{red}{This method is only theoretically meaningful, but cannot be used in practice, especially now we have the $\mathcal{O}(n)$ solutions.}
+
+\subsection{Summary of Complex P$n$P}
+The linearization and relinearization techniques opens the gate for later $\mathcal{O}(n)$ P$n$P solutions. Regard to the Complex P$n$P, we could include them as the related work, but use other $\mathcal{O}(n)$ solutions in practice.
+
+\subsection{POSIT \& SoftPOSIT}
+
+
+SoftPOSIT is an improvement for orginal POSIT algorithm which aims to estimate pose and correspondence simultaneuously. As can be seen from this statement, for SoftPOSIT solution, the correspondence could be unknown or partially known. This serves the biggest difference of SoftPOSIT algorithm relative to other solutions mentioned in this report.
+\subsubsection{POSIT routine}
+Assume object points are  $\mathbf{P}_i,\ i=1,\ \cdots,\ M$ (homogeneous coordiantes) and image points $\mathbf{q}_j,\ j=1,\ \cdots,\ N$ (normalized homogeneous coodrinates, so $f=1$), then the coordinates of object points relative to an origin $\mathbf{P}_0$ can be represented as $\tilde{\mathbf{P}}_i=\mathbf{P}_i-\mathbf{P}_0$. From the perspective projection model, we have:
+\begin{align*}
+w\left[
+\begin{matrix}
+x \\ y \\ 1
+\end{matrix}\right]&=\left[
+\begin{matrix}
+\mathbf{R}_1^T & tx \\ 
+\mathbf{R}_2^T & ty \\ 
+\mathbf{R}_3^T & tz \\ 
+\end{matrix}
+\right]
+\left[
+\begin{matrix}
+\tilde{\mathbf{P}} \\ 1
+\end{matrix}
+\right] \\
+w\left[
+\begin{matrix}
+x \\ y 
+\end{matrix}\right]&=s
+\left[
+\begin{matrix}
+\mathbf{R}_1^T & tx \\ 
+\mathbf{R}_2^T & ty \\ 
+\end{matrix}
+\right]
+\left[
+\begin{matrix}
+\tilde{\mathbf{P}} \\ 1
+\end{matrix}
+\right] \\
+with\ s=&\frac{1}{t_z},\ w=\frac{\mathbf{R}_3^T\tilde{\mathbf{P}}_i}{tz}+1
+\end{align*}
+If $t_z >> \mathbf{R}_3^T\tilde{\mathbf{P}}_i$, then $w \approx 1$. Furthermore, we will have 
+\begin{align*}
+\left[
+\begin{matrix}
+x \\ y 
+\end{matrix}\right]&=s
+\left[
+\begin{matrix}
+\mathbf{R}_1^T & tx \\ 
+\mathbf{R}_2^T & ty \\ 
+\end{matrix}
+\right]
+\left[
+\begin{matrix}
+\tilde{\mathbf{P}} \\ 1
+\end{matrix}
+\right]
+\end{align*}
+which defines the scaled orthographic projection. Taking the transpose of this equation, we will have
+\begin{align*}
+[X,\ Y,\ Z,\ 1]
+\underbrace{\left[
+\begin{matrix}
+s\mathbf{R}_1 & s\mathbf{R}_2 \\ 
+stx & sty \\ 
+\end{matrix}
+\right]}_{\mathbf{Q}}=[wx,\ wy]
+\end{align*}
+$\mathbf{Q}$ is the variable we are going to optimize. Once we have $\mathbf{Q}$, we can extract the corresponding blocks as $s\mathbf{R}_1$ and $s\mathbf{R}_2$, since we know that $||\mathbf{R}_1||=1$, $s$ can be recorvered as $s=\sqrt{|s\mathbf{R}_1||s\mathbf{R}_2|}$. Then $\mathbf{R}_3=\mathbf{R}_1 \times \mathbf{R}_2$, $t_x = \frac{st_x}{s},\ t_y=\frac{st_y}{s}, t_z=\frac{1}{s}$. This process runs iteratively by firstly letting $w_k=1,\ k=1,\ 2,\ \cdots,\ M$ and update $w_k$ with newly estimated $\mathbf{R}, \mathbf{t}$. The geometric interpretation of this equation is that $w_k$ functions like a correction of the perspective projection $[x,\ y,\ 1]^T$ to the scaled orthographic projection. The overall objective function for POSIT can be written as:
+\begin{align*}
+E=\sum_{k=1}^{M}\left(
+\left(
+\mathbf{Q}_1^T \mathbf{P}_k - w_kx_k
+\right)^2+
+\left(
+\mathbf{Q}_2^T \mathbf{P}_k - w_ky_k
+\right)^2
+\right)
+\end{align*}
+where $\mathbf{Q}_1=s[\mathbf{R_1}^T \mathbf{tx}]^T$, $\mathbf{Q}_2=s[\mathbf{R_2}^T \mathbf{ty}]^T$, $\mathbf{P}_k=[\tilde{\mathbf{P}}_k^T, 1]^T$. By taking the derivative of $E$ with respect to $\mathbf{Q}_1, \mathbf{Q}_2$, we can get the least-square solution for $\mathbf{Q}_1, \mathbf{Q}_2$ as
+\begin{align*}
+\mathbf{Q}_1=\left(
+\sum_{k=1}\mathbf{P}_k\mathbf{P}_k^T
+\right)^{-1}\left(
+\sum_{k=1} w_kx_k\mathbf{P}_k
+\right) \\
+\mathbf{Q}_2=\left(
+\sum_{k=1}\mathbf{P}_k\mathbf{P}_k^T
+\right)^{-1}\left(
+\sum_{k=1} w_ky_k\mathbf{P}_k
+\right)
+\end{align*}
+\subsubsection{Correspondence Update routine}
+SoftPOSIT~\cite{softposit} algorithm maintains a soft assign matrix $\mathbf{M} \in \mathbb{R}^{M\times N},\ $ (M is the number of object points, and N is the number of the image points) in which the element $m_{ij}$ represents the likelihood of model point $i$ matches with image point $j$. Since we have no information of the correspondence, so for each $w_k$, its correction has to be applied for each image points. Then we compute the pixel distance of each corrected image coordinates with the scaled orthographic projection of the $k^{th}$ object point:
+\begin{align*}
+d_{kj}^2=(\mathbf{Q}_1\mathbf{P}_k-w_k x_j)^2 + (\mathbf{Q}_2\mathbf{P}_k-w_k y_j)^2
+\end{align*}
+An threshold $\alpha$ is used as the maximum tolerate distance for considering an correspondence. The modified optimization problem is described as:
+\begin{align*}
+E=\sum_{k=1}^{M}\sum_{j=1}^{N}m_{kj}\left(
+\left(
+\mathbf{Q}_1\mathbf{P}_k-w_k x_j
+\right)^2+
+\left(
+\mathbf{Q}_2\mathbf{P}_k-w_k y_j
+\right)^2
+\right)
+\end{align*}
+where $m_{kj}$ serves as a weight ($0 \leq m_{kj} \leq 1$). This is a weighted least square problem which can be similarly solved. 
+
+Once we solve for the new pose, we do the update of the soft assign matrix $\mathbf{M}$ by:
+\begin{itemize}
+	\item compute the matching distance $d_{kj}^2$.
+	\item update $w_k=\gamma exp(-\beta(d_{kj}^2-\alpha))$ and truncate this to be within $0-1$.
+	\item the row and column of $\mathbf{M}$ should be $1$ since one object point only matches to one image point. So re-normalization is necessary: this is done by alternatively normalize along the row direction and then along the column direction using the so called Sinkhorn algorithm.
+\end{itemize}
+
+\subsection{Summary of POSIT \& SoftPOSIT}
+SoftPOSIT~\cite{softposit} iterates to solve this problem, which is related to the general expectation-maximization (EM) algorithm. So generally speaking, global optimality is not guaranteed. Secondly, SoftPOSIT algorithm is usually very slow since its working condition is more challenging. From the experiments I have done, SoftPOSIT is not very stable. Sometimes it cannot find the correct solution.
+
+
+\subsection{Iterative P$n$P}
+The most famous iterative solution should be~\cite{lu2000fast}. The biggest difference of this method compared with other methods would be classical methods apply optimization using Euler angles which constrain their performance and optimality, while this method does the so-called orthogonal iteration. 
+
+The objective function used in this method is the object-space error:
+$$
+E = \sum_{i=1}^{N} ||(\mathbf{I}-\mathbf{V}_i)(\mathbf{R}\mathbf{P}_i+\mathbf{t})||^2
+$$
+It is clear that if we make $\mathbf{R}$ fixed, then the objective function is in the quadratic form of $\mathbf{t}$, which means the optimal $\mathbf{t}$ can be computed as
+$$
+\mathbf{t}(\mathbf{R})=\frac{1}{N}(\mathbf{I}-\frac{1}{N}\sum_{j}\hat{\mathbf{V}}_j)^{-1} \sum_{j}(\hat{\mathbf{V}}_j-\mathbf{I})\mathbf{R}\mathbf{p}_j
+$$
+With the equation, the iteration process starts with an initial estimation of the $\mathbf{R}_k$:
+\begin{itemize}
+	\item compute for the $\mathbf{t}_k$.
+	\item compute the transformed point coordiante $\mathbf{q}^k_i=\mathbf{R}_k\mathbf{p}^k_i+\mathbf{t}$.
+	\item update $\mathbf{R}_k$ as the minimizer for $\sum_{i=1}^{N}||\mathbf{R}_k\mathbf{p}_i+\mathbf{t}-\hat{\mathbf{V}}_i\mathbf{q}^k_i||^2$, which is a $3$D to $3$D pose estimation problem if we assume $\mathbf{q_i^k}$ is fixed.
+	\item iterates this process until a local minimum achieves.
+\end{itemize}
+This method is proved to be globally convergent, which means given an initial guess, it will definitely converge to a local minimum. However, globally convergency does not mean globally optimal. As can be seen that this method is a nonlinear optimization method, which normally would require a initial value. Any P$n$P solution can be a front-end to provide the initial value.~\cite{lu2000fast} also propose an initial method under weak perspective approximation. Weak perspective projection means the depths of all camera space coordinates are roughly equal to the principle depth and the object is close to the optical axis of the camera:
+\begin{align*}
+u_i = \frac{1}{s}(\mathbf{R}_1^T\mathbf{p}_i+t_x) \\
+v_i = \frac{1}{s}(\mathbf{R}_2^T\mathbf{p}_i+t_y)
+\end{align*}
+Recall the derivation of the POSIT~\cite{oberkampf1996iterative}, it is exactly the same approximation used in POSIT. The initial value can be obtained by simply using the image coordinates as the $\mathbf{q}_i$ for estimating the initial $\mathbf{R}$ and $\mathbf{t}$. ~\cite{lu2000fast} shows that this is approximately the optimization procedure with $s,\ \mathbf{R},\ \mathbf{t}$ simultaneously.
+
 
 
 \bibliography{PnPCites} 
