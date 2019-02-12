@@ -204,10 +204,31 @@ Finding $\mathbf{t}$ by choosing the rightmost singular vector and apply a simil
 The linearization and relinearization techniques opens the gate for later $\mathcal{O}(n)$ P$n$P solutions. Regard to the Complex P$n$P, we could include them as the related work, but use other $\mathcal{O}(n)$ solutions in practice.
 
 \subsection{POSIT \& SoftPOSIT}
+\subsubsection{Original POSIT}
+POSIT was firstly proposed in~\cite{dementhon1995model} and later refined in~\cite{oberkampf1996iterative} for solving planar case. The original formulation of POSIT is slightly different with the formulation given below. However, the two formulation can be easily transformed by doing some variable replacements. Here I just list the key equations for POSIT algorithm.
 
-
+The principle of POSIT algorithm is that the perspective projection $\mathbf{x}$ can be corrected by some scales $\epsilon_i$ to match with the scaled orthographic projection $s\mathbf{P}_i$. So we can formulate two normal equations for $\mathbf{x}=[u,\ v]^T$ such as
+\begin{align*}
+\mathbf{R} &= \left[
+\begin{matrix}
+\mathbf{i}^T \\ \mathbf{j}^T \\ \mathbf{k}^T
+\end{matrix}
+\right] \\
+s\mathbf{i} &= \mathbf{I},\ s\mathbf{j} = \mathbf{J},\ s\mathbf{k} = \mathbf{K},\\
+\mathbf{P}_i \cdot \mathbf{I} &=u_i(1+\epsilon_i)-u_0 \\
+\mathbf{P}_i \cdot \mathbf{J} &=v_i(1+\epsilon_i)-v_0 \\
+\Leftrightarrow & \\
+\mathbf{A}\mathbf{x}&=\mathbf{b}
+\end{align*}
+By solving $\mathbf{A}\mathbf{x}=\mathbf{b}$ using the pseudo-inverse, we can recover the pose and then update the $\epsilon_i=\frac{\overrightarrow{\mathbf{P}_0\mathbf{P}_i} \cdot \mathbf{k}}{t_z}$. This process iterates until convergence. For planar case, the rank of $\mathbf{A}$ is $2$. Consequently, any solution $x_0$ plus the scaled null vector $\mathbf{x}_{null}$ of $\mathbf{A}$ could be the solution $\mathbf{x}_{0}+\lambda\mathbf{x}_{null}$. We note the solution for $u,\ v$ as $\mathbf{I}_0+\lambda \mathbf{t}_{null}$ and $\mathbf{J}_0+\mu\mathbf{t}_{null}$ (the null vector is the same since $\mathbf{A}$ works both for $u$ and $v$). Then since we know that the correct $\mathbf{I}$ and $\mathbf{J}$ are orthogonal to each other and of the same length:
+\begin{align*}
+\lambda \mu &= \mathbf{I}_0\mathbf{J}_0 \\
+\lambda^2 -\mu^2 &= ||\mathbf{J}_0||^2-||\mathbf{I}_0||^2 \\
+\end{align*}
+which will results in a $2^{rd}$ polynomial and brings us two solutions. As a result, two possible poses could be returned. As you can see from here, the number of solutions may grow exponentially ($1 \to 2 \to 4 \to 8 \to \cdots$), in order to suppress this curse of dimension,~\cite{oberkampf1996iterative} suggests if over two solutions are generated, only keeps the best two possible solutions. In my experiments, the scheme works well although there is no theoretical proof.
+\subsubsection{SoftPOSIT}
 SoftPOSIT is an improvement for orginal POSIT algorithm which aims to estimate pose and correspondence simultaneuously. As can be seen from this statement, for SoftPOSIT solution, the correspondence could be unknown or partially known. This serves the biggest difference of SoftPOSIT algorithm relative to other solutions mentioned in this report.
-\subsubsection{POSIT routine}
+\paragraph{POSIT routine}
 Assume object points are  $\mathbf{P}_i,\ i=1,\ \cdots,\ M$ (homogeneous coordiantes) and image points $\mathbf{q}_j,\ j=1,\ \cdots,\ N$ (normalized homogeneous coodrinates, so $f=1$), then the coordinates of object points relative to an origin $\mathbf{P}_0$ can be represented as $\tilde{\mathbf{P}}_i=\mathbf{P}_i-\mathbf{P}_0$. From the perspective projection model, we have:
 \begin{align*}
 w\left[
@@ -215,9 +236,9 @@ w\left[
 x \\ y \\ 1
 \end{matrix}\right]&=\left[
 \begin{matrix}
-\mathbf{R}_1^T & tx \\ 
-\mathbf{R}_2^T & ty \\ 
-\mathbf{R}_3^T & tz \\ 
+\mathbf{R}_{(1,:)}^T & tx \\ 
+\mathbf{R}_{(2,:)}^T & ty \\ 
+\mathbf{R}_{(3,:)}^T & tz \\ 
 \end{matrix}
 \right]
 \left[
@@ -231,8 +252,8 @@ x \\ y
 \end{matrix}\right]&=s
 \left[
 \begin{matrix}
-\mathbf{R}_1^T & tx \\ 
-\mathbf{R}_2^T & ty \\ 
+\mathbf{R}_{(1,:)}^T & tx \\ 
+\mathbf{R}_{(2,:)}^T & ty \\ 
 \end{matrix}
 \right]
 \left[
@@ -240,7 +261,7 @@ x \\ y
 \tilde{\mathbf{P}} \\ 1
 \end{matrix}
 \right] \\
-with\ s=&\frac{1}{t_z},\ w=\frac{\mathbf{R}_3^T\tilde{\mathbf{P}}_i}{tz}+1
+with\ s=&\frac{1}{t_z},\ w=\frac{\mathbf{R}_{(3,:)}^T\tilde{\mathbf{P}}_i}{tz}+1
 \end{align*}
 If $t_z >> \mathbf{R}_3^T\tilde{\mathbf{P}}_i$, then $w \approx 1$. Furthermore, we will have 
 \begin{align*}
@@ -250,8 +271,8 @@ x \\ y
 \end{matrix}\right]&=s
 \left[
 \begin{matrix}
-\mathbf{R}_1^T & tx \\ 
-\mathbf{R}_2^T & ty \\ 
+\mathbf{R}_{(1,:)}^T & tx \\ 
+\mathbf{R}_{(2,:)}^T & ty \\ 
 \end{matrix}
 \right]
 \left[
@@ -265,12 +286,12 @@ which defines the scaled orthographic projection. Taking the transpose of this e
 [X,\ Y,\ Z,\ 1]
 \underbrace{\left[
 \begin{matrix}
-s\mathbf{R}_1 & s\mathbf{R}_2 \\ 
+s\mathbf{R}_{(1,:)} & s\mathbf{R}_{(2,:)} \\ 
 stx & sty \\ 
 \end{matrix}
 \right]}_{\mathbf{Q}}=[wx,\ wy]
 \end{align*}
-$\mathbf{Q}$ is the variable we are going to optimize. Once we have $\mathbf{Q}$, we can extract the corresponding blocks as $s\mathbf{R}_1$ and $s\mathbf{R}_2$, since we know that $||\mathbf{R}_1||=1$, $s$ can be recorvered as $s=\sqrt{|s\mathbf{R}_1||s\mathbf{R}_2|}$. Then $\mathbf{R}_3=\mathbf{R}_1 \times \mathbf{R}_2$, $t_x = \frac{st_x}{s},\ t_y=\frac{st_y}{s}, t_z=\frac{1}{s}$. This process runs iteratively by firstly letting $w_k=1,\ k=1,\ 2,\ \cdots,\ M$ and update $w_k$ with newly estimated $\mathbf{R}, \mathbf{t}$. The geometric interpretation of this equation is that $w_k$ functions like a correction of the perspective projection $[x,\ y,\ 1]^T$ to the scaled orthographic projection. The overall objective function for POSIT can be written as:
+$\mathbf{Q}$ is the variable we are going to optimize. Once we have $\mathbf{Q}$, we can extract the corresponding blocks as $s\mathbf{R}_{(1,:)}$ and $s\mathbf{R}_{(2,:)}$, since we know that $||\mathbf{R}_1||=1$, $s$ can be recorvered as $s=\sqrt{|s\mathbf{R}_{(1,:)}||s\mathbf{R}_{(2,:)}|}$. Then $\mathbf{R}_{(3,:)}=\mathbf{R}_{(1,:)} \times \mathbf{R}_{(2,:)}$, $t_x = \frac{st_x}{s},\ t_y=\frac{st_y}{s}, t_z=\frac{1}{s}$. This process runs iteratively by firstly letting $w_k=1,\ k=1,\ 2,\ \cdots,\ M$ and update $w_k$ with newly estimated $\mathbf{R}, \mathbf{t}$. The geometric interpretation of this equation is that $w_k$ functions like a correction of the perspective projection $[x,\ y,\ 1]^T$ to the scaled orthographic projection. The overall objective function for POSIT can be written as:
 \begin{align*}
 E=\sum_{k=1}^{M}\left(
 \left(
@@ -281,7 +302,7 @@ E=\sum_{k=1}^{M}\left(
 \right)^2
 \right)
 \end{align*}
-where $\mathbf{Q}_1=s[\mathbf{R_1}^T \mathbf{tx}]^T$, $\mathbf{Q}_2=s[\mathbf{R_2}^T \mathbf{ty}]^T$, $\mathbf{P}_k=[\tilde{\mathbf{P}}_k^T, 1]^T$. By taking the derivative of $E$ with respect to $\mathbf{Q}_1, \mathbf{Q}_2$, we can get the least-square solution for $\mathbf{Q}_1, \mathbf{Q}_2$ as
+where $\mathbf{Q}_1=s[\mathbf{R_{(1,:)}}^T \mathbf{tx}]^T$, $\mathbf{Q}_2=s[\mathbf{R_{(2,:)}}^T \mathbf{ty}]^T$, $\mathbf{P}_k=[\tilde{\mathbf{P}}_k^T, 1]^T$. By taking the derivative of $E$ with respect to $\mathbf{Q}_1, \mathbf{Q}_2$, we can get the least-square solution for $\mathbf{Q}_1, \mathbf{Q}_2$ as
 \begin{align*}
 \mathbf{Q}_1=\left(
 \sum_{k=1}\mathbf{P}_k\mathbf{P}_k^T
@@ -294,7 +315,7 @@ where $\mathbf{Q}_1=s[\mathbf{R_1}^T \mathbf{tx}]^T$, $\mathbf{Q}_2=s[\mathbf{R_
 \sum_{k=1} w_ky_k\mathbf{P}_k
 \right)
 \end{align*}
-\subsubsection{Correspondence Update routine}
+\paragraph{Correspondence Update routine}
 SoftPOSIT~\cite{softposit} algorithm maintains a soft assign matrix $\mathbf{M} \in \mathbb{R}^{M\times N},\ $ (M is the number of object points, and N is the number of the image points) in which the element $m_{ij}$ represents the likelihood of model point $i$ matches with image point $j$. Since we have no information of the correspondence, so for each $w_k$, its correction has to be applied for each image points. Then we compute the pixel distance of each corrected image coordinates with the scaled orthographic projection of the $k^{th}$ object point:
 \begin{align*}
 d_{kj}^2=(\mathbf{Q}_1\mathbf{P}_k-w_k x_j)^2 + (\mathbf{Q}_2\mathbf{P}_k-w_k y_j)^2
@@ -324,6 +345,8 @@ SoftPOSIT~\cite{softposit} iterates to solve this problem, which is related to t
 
 
 \subsection{Iterative P$n$P}
+We will introduce two iterative P$n$P solutions: the LHM~\cite{lu2000fast}, the PP$n$P~\cite{garro2012solving}.
+\subsubsection{LHM}
 The most famous iterative solution should be~\cite{lu2000fast}. The biggest difference of this method compared with other methods would be classical methods apply optimization using Euler angles which constrain their performance and optimality, while this method does the so-called orthogonal iteration. 
 
 The objective function used in this method is the object-space error:
@@ -348,6 +371,101 @@ v_i = \frac{1}{s}(\mathbf{R}_2^T\mathbf{p}_i+t_y)
 \end{align*}
 Recall the derivation of the POSIT~\cite{oberkampf1996iterative}, it is exactly the same approximation used in POSIT. The initial value can be obtained by simply using the image coordinates as the $\mathbf{q}_i$ for estimating the initial $\mathbf{R}$ and $\mathbf{t}$. ~\cite{lu2000fast} shows that this is approximately the optimization procedure with $s,\ \mathbf{R},\ \mathbf{t}$ simultaneously.
 
+\subsubsection{PP$n$P}
+Although look quite differently, the PP$n$P algorithm has a strong connection with the POSIT algorithm and the LHM algorithm except its formulation is not in $2$D image space but in object space. From the perspective projection:
+\begin{align*}
+\zeta_i \mathbf{q}_i &= \mathbf{R}\mathbf{P}_i+\mathbf{t},\text{ for all $i$} \\
+\underbrace{
+\left[
+\begin{matrix}
+\zeta_1 & 0 & \cdots & 0 \\
+0 & \zeta_2 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \zeta_n
+\end{matrix}
+\right]}_{\mathbf{Z}}
+\underbrace{\left[
+\begin{matrix}
+\mathbf{q}_1^T \\
+\mathbf{q}_2^T \\
+\vdots \\
+\mathbf{q}_n^T
+\end{matrix}
+\right]}_{\mathbf{Q}}\mathbf{R}+
+\underbrace{\left[
+\begin{matrix}
+\mathbf{c}^T \\
+\mathbf{c}^T \\
+\vdots \\
+\mathbf{c}^T
+\end{matrix}
+\right]}_{\mathbf{1c}^T}&=
+\underbrace{\left[
+\begin{matrix}
+\mathbf{P}_1^T \\
+\mathbf{P}_2^T \\
+\vdots \\
+\mathbf{P}_n^T
+\end{matrix}
+\right]}_{\mathbf{S}},\ \mathbf{c}=-\mathbf{R}^T\mathbf{t}
+\end{align*}
+As can be easily derived, $\zeta_i \mathbf{q}_i \mathbf{R}$ is the point in world frame (with origin shifting to the camera center). By adding the coordinates of the camera center $\mathbf{c}$, it will theoretically align with the object point. So the objective function is to minimize the error in object space
+$$
+E=\sum_{i} ||\mathbf{S}-\mathbf{ZQR}-\mathbf{1c}^T||_{F}^{2}
+$$
+The PP$n$P algorithm does the optimization as
+\begin{itemize}
+\item assume $\mathbf{Z}$ fixed, then it is a $3$D to $3$D problem where $\mathbf{R}$ can be recovered using SVD. The paper~\cite{garro2012solving} writes this implicitly, so it is not so clear. Let's do it explicitly. Minimizing $E$ is equivalent to minimize $||\mathbf{S}^T-\mathbf{R}^T\mathbf{Q}^T\mathbf{Z}+\mathbf{R}^T\mathbf{t1}||_{F}^{2}$, which can be further extend to $||\mathbf{R}\mathbf{S}^T-\mathbf{Q}^T\mathbf{Z}+\mathbf{t1}||_{F}^{2}$. The Frobenius norm of $\mathbf{A}$ is the trace of the $\mathbf{A}^T\mathbf{A}$. So this is exactly the $3$D to $3$D problem. We can eliminate $\mathbf{t}$ by taking the mean as $\bar{\mathbf{S}}=\mathbf{S}(\mathbf{I}-\frac{\mathbf{11}^T}{n})$. Similar to the $3$D to $3$D problem, $\mathbf{R}$ can be found by applying SVD to $\mathbf{Q}^T\mathbf{Z}(\mathbf{I}-\frac{\mathbf{11}^T}{n})(\mathbf{I}-\frac{\mathbf{11}^T}{n})^T\mathbf{S}$. Since $(\mathbf{I}-\frac{\mathbf{11}^T}{n})(\mathbf{I}-\frac{\mathbf{11}^T}{n})^T=(\mathbf{I}-\frac{\mathbf{11}^T}{n})$, this is simplified to $\mathbf{Q}^T\mathbf{Z}(\mathbf{I}-\frac{\mathbf{11}^T}{n})\mathbf{S}$, which is exactly the equation given in~\cite{garro2012solving}.
+\item following the previous $3$D to $3$D problem, $\mathbf{t}=\mathbf{Q}^T\mathbf{Z1}/n-\mathbf{R}\mathbf{S}^T\mathbf{1}/n$, so $\mathbf{c}=-\mathbf{R}^T\mathbf{t}=\frac{({\mathbf{S}-\mathbf{ZQR}}^T)\mathbf{1}}{n}$, which also coincides with the equation listed in~\cite{garro2012solving}.
+\item update $\mathbf{Z}$ by $\mathbf{R}(\mathbf{S}^T-\mathbf{c1}^T)=\mathbf{P}^T\mathbf{Z} \to diag(\mathbf{P}\mathbf{R}(\mathbf{S}^T-\mathbf{c1}^T))=diag(\mathbf{P}\mathbf{P}^T\mathbf{Z})$, note $\mathbf{Z}$ is a diagonal matrix, so $\mathbf{Z}=diag(\mathbf{P}\mathbf{R}(\mathbf{S}^T-\mathbf{c1}^T))diag(\mathbf{P}\mathbf{P}^T)^{-1}$.
+\item iterate until converge.
+\end{itemize}
+As can be seen from here, the PP$n$P functions similarly to POSIT under the scaled orthographic projection and LHM under weak perspective projection. Perhaps this is why all equations in this paper are written in such a implicit way.
+
+\subsection{Summary of iterative P$n$P algorithm}
+\begin{itemize}
+\item \textcolor{blue}{LHM has been documented by many references to be the state-of-the-art iterative method. So this should be considered as the nonlinear optimization method to refine the result.}
+\item \textcolor{blue}{The benchmark of LHM and POSIT is unclear.}
+\item \textcolor{red}{Manifold optimization can do the same, it remains a question which one is better.}
+\end{itemize}
+
+\section{Convex P$n$P}
+Convex P$n$P means solving the P$n$P problem with convex optimization routines like SOCP and SDP~\cite{schweighofer2008globally}. In my opinion, even if the method is named globally optimal, it cannot guarantee to find the optimum solution since it use some relaxations. Secondly, it is implicitly iterative method since SOCP and SDP are usually solving in an iterative way. Thirdly, solving a SOCP and SDP problem is time consuming even with advanced toolbox like Mosek. So generally speaking, they are not practical methods at least in current stage. However, it seems to be an trend that increasing number of papers have been proposed in this area. Recent works focus on solving this problem by solving the Langrange dual problem. The strong duality may guarantee the optimality under some mild conditions.
+
+\section{$\mathcal{O}(n)$ P$n$P}
+\subsection{Algebraic Geometry P$n$P}
+Algebraic Geometry P$n$P means solving P$n$P problem by using Algebraic Geometry~\cite{zheng2013revisiting}~\cite{hesch2011direct}~\cite{kneip2014upnp}~\cite{zheng2013aspnp}\cite{triggs1999camera}. This kind of methods involves strong mathematical knowledge on Algebraic Geometry. Consequently, if you are not familiar with Algebraic Geometry, then it is extremely hard to understand. Since I am also on the way to understand this technique, I can only list several key points for this kind of algorithms.
+
+Algebraic Geometry P$n$P algorithms all works in the following routines:
+\begin{itemize}
+\item formulate the objective function, constraints.
+\item carefully choose a parameterization which can write the objective function, constraints in the form of multi-variable polynomial (\textcolor{red}{one key step});
+\item use the Langrange multiplier and take the first order optimality condition to construct a polynomial system (a batch of polynomials), e.g. 
+$$
+\left[ 
+\begin{matrix}
+f_1(x_1,x_2,\cdots,x_n) \\
+f_2(x_1,x_2,\cdots,x_n) \\
+\vdots \\
+f_n(x_1,x_2,\cdots,x_n) \\
+\end{matrix}
+\right]=\mathbf{0}
+$$
+So the problem transforms to find the common roots of this polynomial system. 
+\item find the Gre\"obner basis. Then use the elimination and extension to find all solutions (could be complex solutions). \textcolor{red}{This step is another key step.} It can be automatically found by using the generator in~\cite{kukelova2008automatic}. However, special symmetric characteristic can significantly boosting the generated solver, which needs sufficient knowledge about Algebraic Geometry.
+\item recover the solutions and then recover $\mathbf{R,t}$, compute the error defined and select the one with the minimum cost.
+\end{itemize}
+
+\subsubsection{Summary}
+Algebraic Geometry P$n$P seems to be very efficient, especially the UPnP~\cite{kneip2014upnp} and OPnP~\cite{zheng2013revisiting}. However, one thing is quite strange. If you carefully review those papers, you will find different methods performs quite differently in different experiments. That is to say: $A$ is the second best in paper one, but the worst in paper two. 
+
+Two questions remains:
+\begin{itemize}
+\item \textcolor{blue}{So it will be interesting to see which one is actually the best one.} 
+\item \textcolor{blue}{Can RANSAC be integrated in another way?}
+\end{itemize}
+
+\subsection{RP$n$P}
 
 
 \bibliography{PnPCites} 
