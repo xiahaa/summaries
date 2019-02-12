@@ -466,6 +466,142 @@ Two questions remains:
 \end{itemize}
 
 \subsection{RP$n$P}
+RP$n$P~\cite{li2012robust} is one of the first two $\mathcal{O}(n)$ P$n$P algorithm. It should be noted that the real implementation of the RP$n$P algorithm is slightly different with what is written in the paper. 
+%The principle of RP$n$P algorithm is as follows: recover the coordinates of image points in camera frame, then do $3$D to $3$D pose estimation. The novelty here is that it
+\paragraph{Coordinate Transformation}
+The first step is to transform the coordinates. \textcolor{blue}{What it does actually is to select the pair with the largest intersection angle from $n$ random samples.}
+$$
+(i,j)=\underset{(i,j) \in n\ paris}{argmin}{\mathbf{v}_i \cdot \mathbf{v}_j}
+$$
+Then choose the $\overrightarrow{\mathbf{P}_i\mathbf{P}_j}$ as the rotated $x$-axis. The corresponding rotation matrix can be found as
+\begin{align*}
+&\mathbf{x} = \overrightarrow{\mathbf{P}_i\mathbf{P}_j} \\
+&\text{Method 1}:\\
+&\alpha = \mathbf{x} \cdot [1,0,0]^T, \mathbf{v} = [1,0,0]^T \times \mathbf{x},\ \mathbf{v} = \frac{\mathbf{v}}{||\mathbf{v}||},\ \mathbf{R}=cos(\alpha)\mathbf{I}_3 + (1 - cos(\alpha)) * \mathbf{v} * \mathbf{v}' + sin(\alpha) * \mathbf{v}_{\times} \\
+&\text{Method 2}:\\
+&\text{if } |\mathbf{x} \cdot [0,1,0]^T| < \mathbf{x} \cdot [0,0,1]^T|\ then\  \mathbf{z} = \frac{\mathbf{x} \times [0,1,0]}{||\mathbf{x} \times [0,1,0]||},\ \mathbf{y}=\frac{\mathbf{z} \times \mathbf{x}}{||\mathbf{z} \times \mathbf{x}||} \\
+& \text{else, } \mathbf{y} = \frac{[0,0,1] \times \mathbf{x}}{||[0,0,1] \times \mathbf{x}||},\ \mathbf{z}=\frac{\mathbf{x} \times \mathbf{y}}{||\mathbf{x} \times \mathbf{y}||} \\
+&\mathbf{R}=[\mathbf{x},\ \mathbf{y},\ \mathbf{z}]
+\end{align*}
+Transform $\mathbf{P}_i$ as $\mathbf{P}'_i = \mathbf{RP}_i+\mathbf{t}_0,\ \mathbf{t}_0=-\frac{\overrightarrow{\mathbf{P}_i\mathbf{P}_j}}{2}$. This is like a coordinate normalization.
+\paragraph{$3$ Point constrain}
+Recall the $3$ point constrain in the P$3$P section using the cosine rule, here we can formulate $n-2$ $3$ Point constrains. In stead of solving using linearization technique, the author propose to formulate a minimization problem:
+\begin{align*}
+&\text{assuming:$f_1,f_2,\cdots,f_{n-2}$ are the corresponding polynomials} \\
+& f' = \sum_{i}^{n-2} f_i^2
+\end{align*}
+$f'$ is a $8^{th}$ order polynomial, the optimal solution for $f'$ should be the roots of its derivative. The solution can now be used to compute the $\overrightarrow{\mathbf{P}_i\mathbf{P}_j}$ in camera frame since we know the arc lengths as well as the ray direction.
+\paragraph{Recover Rotation \& Translation}
+RP$n$P decomposes the $\mathbf{R}$ into two parts:
+\begin{align*}
+\mathbf{R}=\mathbf{R}'rot(x,\alpha)
+\end{align*}
+where $\mathbf{R}'$ is constructed with the $\overrightarrow{\mathbf{P}_i\mathbf{P}_j}$ in camera frame using the aforementioned rotation matrix composition approach. $rot(x,\alpha)$ is a pure rotation along $x$-axis\footnote{In their paper, they use $rot(z,\alpha)$.}. Together with translation vector, a linear function can be built as
+\begin{align*}
+\lambda_i \left[ 
+\begin{matrix}
+u_i \\ v_i \\ 1
+\end{matrix}
+\right]=\mathbf{R}'\left[ 
+\begin{matrix}
+1 & 0 & 0 \\ 0 & c & -s \\ 0 & s & c
+\end{matrix}
+\right]\mathbf{P}_i+\left[ 
+\begin{matrix}
+t_x \\ t_y \\ t_z
+\end{matrix}
+\right]
+\end{align*}
+\textcolor{blue}{Note here $cos(\alpha)$ and $sin(\alpha)$ are treated separately by ignoring the constraint of $cos(\alpha)^2+sin(\alpha)^2=1$, this is actually a linearization.} Again, we can formulate $\mathbf{Ax}=\mathbf{0}$ and solve. 
+
+Although theoretically we can directly recover the pose, the author just use the solution for $3$D points reconstruction and then solve the $3$D to $3$D problem for pose recover. \textcolor{red}{Perhaps the linearization may deteriorate the result. So they don't directly recover the pose.}
+
+\subsubsection{Summary}
+According to the paper, RP$n$P outperforms others. However, in my experiments, it does show some instabilities. 
+\begin{itemize}
+\item \textcolor{blue}{It may be a good idea to evaluate RP$n$P algorithm in a fair benchmark experiment.}
+\item \textcolor{blue}{RP$n$P algorithm may perform badly in case of outliers. For example, recall its first step by selecting two points with maximum expansion angle, what if two outliers are selected? This may ruin the following steps. Where to add the RANSAC is worthy of investigating.}
+\end{itemize}
+
+\subsection{EP$n$P}
+EP$n$P~\cite{lepetit2009epnp}~\cite{moreno2007accurate} is the first $\mathcal{O}(n)$ P$n$P algorithm. It was later enhanced in~\cite{ferraz2014very} for outlier removal and in~\cite{ferraz2014leveraging} for maximum likelihood estimation.
+\subsubsection{Original EP$n$P}
+EP$n$P follows the same routine as other methods by firstly reconstruct the $3$D points in the camera coordinate frame and do $3$D to $3$D pose estimation.
+\paragraph{Parameterization using $4$ control points}
+Parameterization is the key technique which makes EP$n$P works with a $\mathcal{O}(n)$ complexity. It uses four control points $\mathbf{c}_j$ as the base to represent other points:
+$$
+\mathbf{p}_i=\sum_{j=1}^{4}\alpha_{ij}\mathbf{c}_j,\ \sum_{j=1}^{4}\alpha_{ij}=1,\ i=1,2,\cdots,n
+$$
+As a result, in order to reconstruct $n$ points' coordinates, we only need to find the coordinates of four control points $\mathbf{c}_j$. Rewriting the perspective projection with the help of $\mathbf{c}_j$, we will have:
+\begin{align*}
+\forall\ i,\ w_i\left[ \begin{matrix}
+u_i \\ v_i \\ 1
+\end{matrix} \right]=\left[
+\begin{matrix}
+f_u & 0 & u_c \\
+0 & f_v & v_c \\
+0 & 0 & 1
+\end{matrix}
+\right]
+\sum_{j=1}^{4}\alpha_{ij}\left[
+\begin{matrix}
+x_j \\ y_j \\ z_j
+\end{matrix}
+\right] &\Leftrightarrow \\
+\sum_{j=1}^{4}\alpha_{ij}f_ux_j+\alpha_{ij}(u_c-u_i)z_j&=0 \\
+\sum_{j=1}^{4}\alpha_{ij}f_vy_j+\alpha_{ij}(v_c-v_i)z_j&=0 \Leftrightarrow \\
+\mathbf{M}\mathbf{x}=0
+\end{align*}
+Now $\mathbf{x}=[\mathbf{c}_1^T,\mathbf{c}_2^T,\mathbf{c}_3^T,\mathbf{c}_4^T]^T$. The solution belongs to the null space of $\mathbf{M}$. 
+$$
+\mathbf{x}=\sum_{i=1}^{N}\beta_i \mathbf{v}_i
+$$
+Because we have $12$ unknowns and the dimension of $dim(\mathbf{M})=2n \times 12$, if $2n \leq 12$, then the solution is the linear combination of those null vectors. That's why we have $\beta_i$ here.
+
+\paragraph{Choosing the right combination}
+EP$n$P will always find the $\beta_i$ up to $N=3$ ($N=4$ will be checked if a certain condition meets). 
+\begin{itemize}
+\item $N=1$, the inter-distance is used to find the correct $\beta$:
+$$
+||\beta\mathbf{v}^{[i]}-\beta\mathbf{v}^{[j]}||^2=||\mathbf{c}_i-\mathbf{c}_j||^2
+$$
+here $\mathbf{c}_i,\ \mathbf{c}_j$ are their values in the world coordinate frame which can be computed from $\mathbf{P}$. This can give us a least square problem such as $\mathbf{A}\beta=\mathbf{b}$.
+\item $N=2$, the inter-distance is used to find the correct $\beta$:
+$$
+||\beta_1\mathbf{v}^{[i]}+\beta_2\mathbf{v}^{[i]}-(\beta_1\mathbf{v}^{[j]}+\beta_2\mathbf{v}^{[j]})||^2=||\mathbf{c}_i-\mathbf{c}_j||^2
+$$
+Since $C_{4}^{2}=6$, this can give us a overdetermined least square problem such as $\mathbf{A}\bm{\beta}=\mathbf{b}$ where $\bm{\beta}=[\beta_1^2,\beta_1\beta_2,\beta_2^2]^T$.
+\item $N=3$, use the same linearization technique with $\bm{\beta}=[\beta_1^2,\beta_1\beta_2,\beta_1\beta_3,\beta_2^2,\beta_2\beta_3,\beta_3^2]^T$. 
+\item $N=4$, the system is under-determined this time. We still form $\mathbf{A}\bm{\beta}=\mathbf{b}$ and search for the null vector $\bm{\gamma}$ that meet $\bm{\beta}=\sum_{i=1}^{4}\lambda_i \bm{\gamma}_i$. \\
+Since $\bm{\beta}=[\beta_1^2,\beta_1\beta_2,\beta_1\beta_3,\beta_1\beta_4,\beta_2^2,\beta_2\beta_3,\beta_2\beta_4,\beta_3^2,\beta_3\beta_4,\beta_4^2]^T$, we need to use the relinearization technique to find $\lambda_i$. This is feasible since $\beta_{ab}\beta_{cd}=\beta_{a}\beta_{c}\beta_{b}\beta_{d}=\beta_{a'b'}\beta_{c'd'}$ where ${a',b',c',d'}$ represents any permutation of the integers ${a,b,c,d}$.
+\end{itemize}
+
+\paragraph{Planar case}
+Planar case is tackled as a special case since only $3$ control points are needed. Then $\mathbf{M}$ is a $2n \times 9$ matrix.
+
+\paragraph{Gauss-Newton Optimization}
+Applying Gauss-Newton Optimization for EP$n$P is easy since there is no nonlinear constraints (unlike Gauss-Newton Optimization for $\mathbf{R}$ where $\mathbf{R} \in \mathbb{SO}(3)$ imposes several nonlinear constraints). The optimized variable is $\bm{\beta}=[\beta_1,\beta_2, \beta_3, \beta_4]^T$ and the objective function is as 
+$$
+E(\bm{\beta})=\sum \left( 
+||\mathbf{c}^{c}_i-\mathbf{c}^{c}_j||^2-||\mathbf{c}^{w}_i-\mathbf{c}^{w}_j||^2
+\right)
+$$
+which corresponds to minimizing the error of inter-distances.
+
+\subsection{EPP$n$P}
+EPP$n$P is nothing more than reformulate EP$n$P in a more efficient way. By using the Kronecker product, the formulation can be written as
+$$
+\left[\alpha_{i1},\ ,\alpha_{i2},\ \alpha_{i3},\ \alpha_{i4}\right] \otimes 
+\left[
+\begin{matrix}
+1 & 0 & -u_i \\
+0 & 1 & -v_i \\
+\end{matrix}
+\right]\mathbf{x}=\mathbf{0}
+$$
+$u_i, v_i$ are normalized coordinates. This will significantly speed-ups when building $\mathbf{M}$.
+
+\subsection{REPP$n$P}
 
 
 \bibliography{PnPCites} 
