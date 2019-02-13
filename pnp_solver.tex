@@ -142,8 +142,8 @@ The only different P$3$P method was proposed in~\cite{kneip2011novel}. By introd
 \subsubsection{Summary of P$3$P}
 Here are several points which remains unclear:
 \begin{itemize}
-\item which P$3$P gives the best performance in terms of stability, runtime?
-\item how can P$3$P benefit from data redundancy? Or P$3$P can only be used for outlier removal together with RANSAC?
+\item \textcolor{blue}{which P$3$P gives the best performance in terms of stability, runtime?}
+\item \textcolor{blue}{how can P$3$P benefit from data redundancy? Or P$3$P can only be used for outlier removal together with RANSAC?}
 \end{itemize}
 
 \subsection{Complex P$n$P}
@@ -602,7 +602,81 @@ $$
 $u_i, v_i$ are normalized coordinates. This will significantly speed-ups when building $\mathbf{M}$.
 
 \subsection{REPP$n$P}
+REPP$n$P is the variant of of EP$n$P which can deal with outliers. In noise-free case, the rank of the null space of $\mathbf{M}$ is one. Due to the noise, the rank may grow up to four. Although EP$n$P proceed each of the cases and retain the one with minimum reprojection error, it is still very sensitive to the presence of outliers. REPP$n$P works with the assumption that the rank of the null space of $\mathbf{M}$ is one and actually use this as a criteria for outliers removal. Theoretically, REPP$n$P attemps to recover an approximation of $\mathbf{M}$ by the following optimization problem:
+\begin{align*}
+&\underset{\mathbf{L},\ \mathbf{W}}{argmin} ||\mathbf{W}(\mathbf{M-L})||^2 \\
+&\text{subject to: } rank(\mathbf{L})=rank(\mathbf{M})-1
+\end{align*}
+where $\mathbf{W}=diag(w_1,w_1,w_2,w_2,\cdots,w_n,w_n) \in \mathbb{R}^{2n\times 2n}$ is indicator matrix with binary entries indicating each correspondence is considered as inlier ($w_i=1$) or outlier ($w_i=0$). Rewrite this with the null vector $\mathbf{x}$, we will have:
+\begin{align*}
+&\underset{\mathbf{x},\ \mathbf{W}}{argmin} ||\mathbf{W}(\mathbf{M-L})x||^2 \\ \Leftrightarrow\ &\underset{\mathbf{x},\ \mathbf{W}}{argmin} ||\mathbf{W}\mathbf{Mx}||^2
+\end{align*}
+which is a unconstrained optimization problem. This is solved iteratively as follows:
+\begin{itemize}
+	\item initialize $\mathbf{W}$ as $\mathbf{I}_{2n}$ and $\xi$ as Inf.
+	\item svd($\mathbf{M^TWM}$) and make $\mathbf{x}$ the smallest right singular vector.
+	\item compute error $\mathbf{\epsilon}=\mathbf{Mx}$ and $\epsilon_i=||(\mathbf{\epsilon}_{2i-1}, \mathbf{\epsilon}_{2i})||$.
+	\item find $\epsilon_{25\%}$
+	\item if $\epsilon_{max}=\epsilon_{25\%}>\xi$ then return $\mathbf{W,x}$.
+	\item else $\xi=\epsilon_{max}$.
+	\item update $w_i$ as 1 if $\epsilon_i < max(\epsilon_{max}, \delta_{max})$ and 0, otherwise.
+\end{itemize}
+$\delta_{max}$ is a must since without it, this process will always remove some samples even if they are all inliers. \textcolor{blue}{This outlier removal scheme is very efficient. It is reported to be able to execute with $ms$ for over $1000$ correspondences.} \textcolor{red}{Inspired from this paper, it seems a better idea of applying outliers removal before constructing $\mathbf{R,t}$ because of its speed.}
 
+\subsection{CEPP$n$P}
+CEPP$n$P algorithm was proposed by the same author of EPP$n$P with the capability of leveraging feature uncertainty. As said in the introduction section, it formulate a maximum likelihood estimation problem with the paramerization of control points. Then the MLE problem is optimized iteratively. \textcolor{blue}{If the output needs a covariance, this method could be considered.}
+
+\subsection{Summary}
+EP$n$P has several advantages compared with other methods:
+\begin{itemize}
+	\item because of its novel parameterization, applying Gauss-Newton optimization is fairly easy and fast.
+	\item because of its novel parameterization, front-end outlier removal is possible.
+	\item \textcolor{blue}{EP$n$P is definitely one of the solution we should consider. However, its reported performance varies a lot in different papers. So it would be interesting to do a benchmark test.}
+\end{itemize}
+
+\section{Very New P$n$P solution}
+In spite of many solutions available, most of these aforementioned solutions are not able to deal with outliers. Noises and outliers, which has more serious impact on the results. My intuitive answer would be outliers since outliers mean completely wrong while noises only mean partially wrong. So those very new P$n$P solutions all focus on improving the capability of dealing with outliers. 
+
+The conventional way of dealing with outliers, as said in the introduction, is to cascade P$n$P with RANSAC. It is also mentioned that RANSAC prefers minimum solver. So a $1$ point RANSAC P$n$P  solution is proposed in~\cite{8470970}.
+
+\subsection{R$1$PP$n$P}
+\paragraph{Formulation}
+Starts from perspective projection:
+\begin{align*}
+	\mathbf{X}_i^{c}&=\lambda_i^* \mathbf{x}_i \\
+	\mathbf{X}_i^{c}&= \mathbf{R}\mathbf{X}_i^{w}+\mathbf{t}
+\end{align*}
+Choosing one point as the control point $\mathbf{X}_o$, we will have
+\begin{align*}
+\lambda_i^* \mathbf{x}_i - \lambda_o^* \mathbf{x}_o = 
+\mathbf{X}_i^{c}-\mathbf{X}_o^{c}= \mathbf{R}(\underbrace{\mathbf{X}_i^{w}-\mathbf{X}_o^{w}}_{\mathbf{S}_i})
+\end{align*}
+Dividing with $\lambda_o^*$ and let $\mu=1/\lambda_o^*,\ \lambda_i=\mu\lambda_i^*$, we will have
+\begin{align*}
+&\lambda_i \mathbf{x}_i - \mathbf{x}_o=\mu \mathbf{RS}_i \\
+&\mathbf{t}=1/\mu \mathbf{x}_o-\mathbf{RX}_o^{w}
+\end{align*}
+The objective function for R$1$PP$n$P algorithm is given as
+\begin{align*}
+E(\mathbf{R,\mu,\lambda_i})=\sum_{i=1}^{N}\left(
+\frac{1}{\lambda_i}||\lambda_i \mathbf{x}_i - \mathbf{x}_o-\mu \mathbf{RS}_i ||^2
+\right)
+\end{align*}
+where $\frac{1}{\lambda_i}$ is a balanced weight (without this weight may cause points with larger depths are more weighted than points with smaller depths). 
+
+Denoting $\mathbf{p}_i=\mathbf{x}_o+\mu \mathbf{RS}_i $ and $\mathbf{q}_i=\lambda_i\mathbf{x}_i$, the objective function can be rewritten as 
+\begin{align*}
+E(\mathbf{R,\mu,\lambda_i})=\sum_{i=1}^{N}\left(
+\frac{1}{\lambda_i}|| \mathbf{p}_i - \mathbf{q}_i ||^2
+\right)
+\end{align*}
+The benefits of using one control point are two fold. The first benefit is $\mathbf{t}$ is decoupled with $\mathbf{R}$. The second benefit will be described later.
+
+As can be seen, this optimization cannot be done in a analytical way since $\mathbf{p}_i$ and $\mathbf{q}_i$ all contains some unknowns. Similar to LHM and other iterative methods, the optimization is done iteratively and alternatively: optimize $\mathbf{q}_i$ by fixing $\mathbf{p}_i$, then optimize $\mathbf{p}_i$ by fixing $\mathbf{q}_i$.
+\begin{itemize}
+	\item estimating $\mathbf{q}_i$: estimating $\mathbf{q}_i$ is equivalent to estimate the relative depth $\lambda_i$ since $\mathbf{x}_i$ is known. This can be achieved by projecting $\mathbf{p}_i$ along the unit vector of $\mathbf{x}_i$: $\lambda_i=\frac{\mathbf{x}_i}{\mathbf{x}_i^T\mathbf{x}_i}\mathbf{p}_i$\footnote{strange: should be $\frac{\mathbf{x}_i}{\sqrt{\mathbf{x}_i^T\mathbf{x}_i}}$}. 
+	\item estimating $\mathbf{p}_i$ is equivalent to update $\mathbf{R},\ \mu$. Estimating $\mathbf{R}$ is nothing more than a $3$D to $3$D pose estimation problem. $\mu$ is updated as follows: 1) reproject $\mathbf{p}_i$ as $\mathbf{v}_i$, 2) let $\mathbf{B}=[\mathbf{v}_1-\mathbf{x}_o, \cdots]_{3 \times N}$ and $\mathbf{C}=[\mathbf{x}_1-\mathbf{x}_o, \cdots]_{3 \times N}$, then $\Delta \mu=\frac{||vector(\mathbf{C})||}{||vector{\mathbf{B}}||},\ \mu_{new}=\mu \Delta\mu$.
+\end{itemize}
 
 \bibliography{PnPCites} 
 \bibliographystyle{ieeetr}
