@@ -674,8 +674,22 @@ The benefits of using one control point are two fold. The first benefit is $\mat
 
 As can be seen, this optimization cannot be done in a analytical way since $\mathbf{p}_i$ and $\mathbf{q}_i$ all contains some unknowns. Similar to LHM and other iterative methods, the optimization is done iteratively and alternatively: optimize $\mathbf{q}_i$ by fixing $\mathbf{p}_i$, then optimize $\mathbf{p}_i$ by fixing $\mathbf{q}_i$.
 \begin{itemize}
-	\item estimating $\mathbf{q}_i$: estimating $\mathbf{q}_i$ is equivalent to estimate the relative depth $\lambda_i$ since $\mathbf{x}_i$ is known. This can be achieved by projecting $\mathbf{p}_i$ along the unit vector of $\mathbf{x}_i$: $\lambda_i=\frac{\mathbf{x}_i}{\mathbf{x}_i^T\mathbf{x}_i}\mathbf{p}_i$\footnote{strange: should be $\frac{\mathbf{x}_i}{\sqrt{\mathbf{x}_i^T\mathbf{x}_i}}$}. 
-	\item estimating $\mathbf{p}_i$ is equivalent to update $\mathbf{R},\ \mu$. Estimating $\mathbf{R}$ is nothing more than a $3$D to $3$D pose estimation problem. $\mu$ is updated as follows: 1) reproject $\mathbf{p}_i$ as $\mathbf{v}_i$, 2) let $\mathbf{B}=[\mathbf{v}_1-\mathbf{x}_o, \cdots]_{3 \times N}$ and $\mathbf{C}=[\mathbf{x}_1-\mathbf{x}_o, \cdots]_{3 \times N}$, then $\Delta \mu=\frac{||vector(\mathbf{C})||}{||vector{\mathbf{B}}||},\ \mu_{new}=\mu \Delta\mu$.
+	\item estimating $\mathbf{q}_i$: estimating $\mathbf{q}_i$ is equivalent to estimate the relative depth $\lambda_i$ since $\mathbf{x}_i$ is known. This can be achieved by projecting $\mathbf{p}_i$ along the unit vector of $\mathbf{x}_i$: $\lambda_i=\frac{\mathbf{x}_i^T\mathbf{p}_i}{\mathbf{x}_i^T\mathbf{x}_i}$. 
+	\item estimating $\mathbf{p}_i$ is equivalent to update $\mathbf{R},\ \mu$. Estimating $\mathbf{R}$ is nothing more than a $3$D to $3$D pose estimation problem. $\mu$ is updated as follows: 1) reproject $\mathbf{p}_i$ as $\mathbf{v}_i$, 2) let $\mathbf{B}=[\mathbf{v}_1-\mathbf{x}_o, \cdots]_{3 \times N}$ and $\mathbf{C}=[\mathbf{x}_1-\mathbf{x}_o, \cdots]_{3 \times N}$, then $\Delta \mu=\frac{||vector(\mathbf{C})||}{||vector{\mathbf{B}}||},\ \mu_{new}=\mu \Delta\mu$. It is unclear where this updating rule comes from. However, I have tried with normal least square solution, but its performance is worse than the proposed updating rule.
+\end{itemize}
+
+\paragraph{Outlier Handling}
+Outliers are handled with two schemes:
+\begin{itemize}
+\item Soft Re-weighting: use reprojection error $e_i$ as the metrics.
+$$
+w_i=\left\lbrace \begin{matrix}
+1 & \text{   if $e_i \leq H$ } \\
+\frac{H}{e_i} & \text{   if $e_i > H$ } 
+\end{matrix}\right.
+$$
+where $H$ is the inlier threshold.
+\item $1$-point RANSAC: randomly choosing the control point.
 \end{itemize}
 
 \bibliography{PnPCites} 
