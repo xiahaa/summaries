@@ -4,6 +4,7 @@
 \usepackage{tikzpagenodes}
 \usepackage{pgfplots}
 \usepackage{tikz}
+\usepackage{graphicx}
 \usepackage{tikz-3dplot}
 \usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,matrix}
 \pgfplotsset{compat=1.8}
@@ -691,6 +692,24 @@ $$
 where $H$ is the inlier threshold.
 \item $1$-point RANSAC: randomly choosing the control point.
 \end{itemize}
+
+\subsection{HARD-P$n$P}
+HARD-P$n$P is another iterative optimization solution. The biggest difference of HARD-P$n$P, compared with all aforementioned methods, is its unique hybrid parameterization. Look the following images
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.14]{hand_eye_files/vision/figures/hadfi1-2806446-hires.png}
+\caption{Visualization of the PnP cost surface in the presence of noise and outliers, when optimized using different parameterizations. Color indicates the reprojection error from low (blue) to high (yellow). Fig. 1a plots this against initial camera orientation (defined by 2 Euler angles). Remaining subplots show the resulting error from a single refinement in various parameterization spaces. Diamonds indicate local minima and the white circle is the ground truth pose~\cite{8292943}. Image is made by~\cite{8292943}.}
+\end{figure}
+From this figure, we can clearly see
+\begin{itemize}
+\item Euler angles contains lots of local minima. While rotation vector shows great advantage.
+\item Hybrid parameterization is more smooth.
+\end{itemize}
+Consequently, HARD-P$n$P formulate the objective function not only with one parameterization, but with several. They are jointly optimized via Convex Combination Descent. 
+
+\textcolor{red}{This leaves us a new direction of how to optimize P$n$P algorithms.}
+
 
 \bibliography{PnPCites} 
 \bibliographystyle{ieeetr}
