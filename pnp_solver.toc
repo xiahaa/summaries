@@ -1,0 +1,51 @@
+\contentsline {chapter}{\numberline {1}$3$D to $3$D case}{2}{chapter.1}
+\contentsline {section}{\numberline {1.1}Problem Formulation}{2}{section.1.1}
+\contentsline {section}{\numberline {1.2}Solution}{2}{section.1.2}
+\contentsline {subsection}{\numberline {1.2.1}SVD}{2}{subsection.1.2.1}
+\contentsline {paragraph}{Translation}{2}{section*.2}
+\contentsline {paragraph}{Rotation}{3}{section*.3}
+\contentsline {paragraph}{The algorithm}{4}{section*.4}
+\contentsline {subsection}{\numberline {1.2.2}Quaternion}{4}{subsection.1.2.2}
+\contentsline {paragraph}{Quaternion}{4}{section*.5}
+\contentsline {paragraph}{Rotation}{5}{section*.6}
+\contentsline {chapter}{\numberline {2}$3$D to $2$D case}{6}{chapter.2}
+\contentsline {section}{\numberline {2.1}Introduction}{6}{section.2.1}
+\contentsline {section}{\numberline {2.2}Theory and Implementation}{8}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}P$3$P}{9}{subsection.2.2.1}
+\contentsline {subsubsection}{Summary of P$3$P}{10}{section*.7}
+\contentsline {subsection}{\numberline {2.2.2}Complex P$n$P}{11}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Summary of Complex P$n$P}{12}{subsection.2.2.3}
+\contentsline {subsection}{\numberline {2.2.4}POSIT \& SoftPOSIT}{12}{subsection.2.2.4}
+\contentsline {subsubsection}{Original POSIT}{12}{section*.8}
+\contentsline {subsubsection}{SoftPOSIT}{12}{section*.9}
+\contentsline {paragraph}{POSIT routine}{13}{section*.10}
+\contentsline {paragraph}{Correspondence Update routine}{13}{section*.11}
+\contentsline {subsection}{\numberline {2.2.5}Summary of POSIT \& SoftPOSIT}{14}{subsection.2.2.5}
+\contentsline {subsection}{\numberline {2.2.6}Iterative P$n$P}{14}{subsection.2.2.6}
+\contentsline {subsubsection}{LHM}{14}{section*.12}
+\contentsline {subsubsection}{PP$n$P}{15}{section*.13}
+\contentsline {subsection}{\numberline {2.2.7}Summary of iterative P$n$P algorithm}{16}{subsection.2.2.7}
+\contentsline {section}{\numberline {2.3}Convex P$n$P}{16}{section.2.3}
+\contentsline {section}{\numberline {2.4}$\mathcal {O}(n)$ P$n$P}{16}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}Algebraic Geometry P$n$P}{16}{subsection.2.4.1}
+\contentsline {subsubsection}{Summary}{17}{section*.14}
+\contentsline {subsection}{\numberline {2.4.2}RP$n$P}{17}{subsection.2.4.2}
+\contentsline {paragraph}{Coordinate Transformation}{17}{section*.15}
+\contentsline {paragraph}{$3$ Point constrain}{18}{section*.16}
+\contentsline {paragraph}{Recover Rotation \& Translation}{18}{section*.17}
+\contentsline {subsubsection}{Summary}{19}{section*.18}
+\contentsline {subsection}{\numberline {2.4.3}EP$n$P}{19}{subsection.2.4.3}
+\contentsline {subsubsection}{Original EP$n$P}{19}{section*.19}
+\contentsline {paragraph}{Parameterization using $4$ control points}{19}{section*.20}
+\contentsline {paragraph}{Choosing the right combination}{20}{section*.21}
+\contentsline {paragraph}{Planar case}{20}{section*.22}
+\contentsline {paragraph}{Gauss-Newton Optimization}{20}{section*.23}
+\contentsline {subsection}{\numberline {2.4.4}EPP$n$P}{20}{subsection.2.4.4}
+\contentsline {subsection}{\numberline {2.4.5}REPP$n$P}{20}{subsection.2.4.5}
+\contentsline {subsection}{\numberline {2.4.6}CEPP$n$P}{21}{subsection.2.4.6}
+\contentsline {subsection}{\numberline {2.4.7}Summary}{21}{subsection.2.4.7}
+\contentsline {section}{\numberline {2.5}Very New P$n$P solution}{22}{section.2.5}
+\contentsline {subsection}{\numberline {2.5.1}R$1$PP$n$P}{22}{subsection.2.5.1}
+\contentsline {paragraph}{Formulation}{22}{section*.24}
+\contentsline {paragraph}{Outlier Handling}{23}{section*.25}
+\contentsline {subsection}{\numberline {2.5.2}HARD-P$n$P}{23}{subsection.2.5.2}

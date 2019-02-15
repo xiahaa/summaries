@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper]{report}
 \usepackage[left=3cm, right=3cm]{geometry}
 \usepackage{lipsum}
 \usepackage{tikzpagenodes}
@@ -32,9 +32,173 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
 \begin{document}
-\title{Pose Estimation: $3$D to $2$D case}
+\title{Pose Estimation}
 \author{Xiao Hu, emails: \url{xiahaa@space.dtu.dk}}
 \maketitle
+\tableofcontents
+\chapter{$3$D to $3$D case}
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.8]{hand_eye_files/vision/figures/p3.pdf}
+	\caption{Principles of the $3$D to $3$D pose estimation problem.}
+\end{figure}
+\section{Problem Formulation}
+Let $\mathbf{P}_i$ and $\mathbf{Q}_i$ ($i=1,\ 2,\ ,\ \cdots,\ n$) be two sets of corresponding points in $\mathbb{R}^{3}$. The aim is to find a rigid transformation that align optimally the two sets in the least square sense:
+$$
+\mathbf{R,t}=\underset{\mathbf{R}\in \mathbb{SO}(3),\ \mathbf{t} \in \mathbb{R}^3}{argmin} \underbrace{\sum_{i=1}^{n} w_i||\mathbf{RP}_i+\mathbf{t}-\mathbf{Q}_i||^2}_{E}
+$$
+where $w_i$ denotes the corresponding weight for each point pair. 
+
+\section{Solution}
+The following introduced solutions were documented in~\cite{sorkine2017least}.
+
+\subsection{SVD}
+\paragraph{Translation} It is to see that the objective function is defined in a quadratic form on $\mathbf{t}$. Consequently, if we assume $\mathbf{R}$ is known, $\mathbf{t}$ can be easily found by taking the derivative and letting it equal to zero (first-order optimality condition for differentiable function):
+\begin{align*}
+\frac{\partial E}{\partial \mathbf{t}}=\sum_{i=1}^{n} 2w_i(\mathbf{RP}_i+\mathbf{t}-\mathbf{Q}_i)&=0 \Leftrightarrow \\
+\mathbf{R}\underbrace{\frac{\sum_{i=1}^{n} w_i\mathbf{P}_i}{\sum_{i=1}^{n} w_i}}_{\bar{\mathbf{P}}} - \underbrace{\frac{\sum_{i=1}^{n} w_i\mathbf{Q}_i}{\sum_{i=1}^{n} w_i}}_{\bar{\mathbf{Q}}} &= -\mathbf{t} \Leftrightarrow \\ 
+\bar{\mathbf{Q}}  - \mathbf{R}\bar{\mathbf{P}} &=\mathbf{t}
+\end{align*}
+Plug this into the objective function, we will have:
+\begin{align*}
+E &= \sum_{i=1}^{n} w_i||\mathbf{R}(\mathbf{P}_i-\bar{\mathbf{P}})-(\mathbf{Q}_i-\bar{\mathbf{Q}})||^2 \Leftrightarrow \\ 
+E &= \sum_{i=1}^{n} w_i||\mathbf{R}\mathbf{x}_i-\mathbf{y}_i||^2,\ \mathbf{x}_i = \mathbf{P}_i-\bar{\mathbf{P}},\ \mathbf{y}_i =\mathbf{Q}_i-\bar{\mathbf{Q}}
+\end{align*}
+\paragraph{Rotation}
+Expand one element as
+\begin{align*}
+||\mathbf{R}\mathbf{x}_i-\mathbf{y}_i||^2=(\mathbf{R}\mathbf{x}_i-\mathbf{y}_i)^{T}(\mathbf{R}\mathbf{x}_i-\mathbf{y}_i)=\mathbf{x}_i^T\mathbf{x}_i-2\mathbf{y}_i^T\mathbf{Rx}_i+\mathbf{y}_i^T\mathbf{y}_i
+\end{align*}
+It can be seen that the first and third terms are constant, so it is equivalent to optimize only the second term
+\begin{align*}
+\mathbf{R}=\underset{\mathbf{R}\in\mathbb{SO}(3)}{argmax} \underbrace{\sum_{i=1}^{n} w_i\mathbf{y}_i^T\mathbf{Rx}_i}_{E'}
+\end{align*}
+The new objective function $E'$ can be written as
+\begin{align*}
+E'=trace(\mathbf{WYRX})=\underbrace{diag(w_i)}_{\mathbf{W}_{n\times n}} \underbrace{\left[
+\begin{matrix}
+\mathbf{y}_1^T \\
+\mathbf{y}_2^T \\
+\vdots \\
+\mathbf{y}_n^T 
+\end{matrix}
+\right]}_{\mathbf{Y}_{n \times 3}} \mathbf{R} 
+\underbrace{\left[
+	\begin{matrix}
+	\mathbf{x}_1 & \mathbf{x}_2 & \cdots & \mathbf{x}_n 
+	\end{matrix}
+	\right]}_{\mathbf{X}_{3 \times n}}
+\end{align*}
+Recall that $trace{\mathbf{AB}}=trace{\mathbf{BA}}$, so 
+$$
+E'=trace(\mathbf{WYRX})=trace(\mathbf{RXWY})
+$$
+Use a new matrix $\mathbf{S}_{3 \times 3}=\mathbf{XWY}$ and take the SVD of as $\mathbf{S}=\mathbf{U\Sigma V}^T$
+$$
+E'=trace(\mathbf{RS})=trace(\mathbf{RU\Sigma V}^T)=trace(\mathbf{\Sigma V^TRU})
+$$
+where $\mathbf{V},\ \mathbf{R},\ \mathbf{U}$ are all unitary matrix. So their product is also an unitary matrix. Assuming their product is $\mathbf{M}=[\mathbf{m}_{(:,1)}\ \mathbf{m}_{(:,2)}\ \mathbf{m}_{(:,3)}]$, then we have
+$$
+\mathbf{m}_{(:,i)}^T\mathbf{m}_{(:,i)} = \sum_{j=1}^{3} m_{ji}^2 = 1 \Rightarrow |m_{ji}|\leq 1
+$$
+Recall the new objective function
+\begin{align*}
+\mathbf{R}&=\underset{\mathbf{R}\in\mathbb{SO}(3)}{argmax}\ trace(\mathbf{\Sigma M}) \Leftrightarrow \\
+\mathbf{R}&=\underset{\mathbf{R}\in\mathbb{SO}(3)}{argmax}\ \sum_{i} \sigma_i m_{ii}
+\end{align*}
+In order to maximize this objective function, we need to have $m_{ii}=1$. Then, we have
+\begin{align*}
+&\mathbf{I}=\mathbf{M}=\mathbf{V^TRU} \Leftrightarrow \\
+&\mathbf{R}=\mathbf{VU}^T
+\end{align*}
+This optimization omits one constraint imposed by $\mathbb{SO}(3)$, i.e. $det(\mathbf{R})=1$, since the result is only an orthogonal matrix, not a special orthogonal matrix. Actually, it could be a rotation matrix or a reflection matrix. In case we find a reflection matrix $det(\mathbf{R})=-1$, we need to recover from this reflection matrix a rotation matrix:
+\begin{align*}
+\mathbf{R}=\mathbf{V}
+\left[
+\begin{matrix}
+1 & 0 & 0 \\ 0&1&0 \\0&0&det(\mathbf{VU}^T)
+\end{matrix}
+\right]
+\mathbf{U}^T
+\end{align*}
+This is the best since we only perturbate the smallest singular value.
+
+\paragraph{The algorithm}
+\begin{itemize}
+	\item find $\bar{\mathbf{P}}$ and $\bar{\mathbf{Q}}$.
+	\item form $\mathbf{x},\ \mathbf{y}$.
+	\item find optimal $\mathbf{R}$.
+	\item find optimal $\mathbf{t}$.
+	\item non-linear optimization.
+\end{itemize}
+
+\subsection{Quaternion}
+This closed-form pose estimation solution using unit-quaternion was firstly proposed in~\cite{horn1987closed}.
+\paragraph{Quaternion} 
+The left and right matrix of a quaternion $\mathbf{q}=\{w,\ x,\ y,\ z\}=\{w, \mathbf{x}^T\}$ is given as
+\begin{align*}
+	\mathbf{L_{q}}&=\left[
+	\begin{matrix}
+	w & -\mathbf{x}^T \\
+	\mathbf{x} & w\mathbf{I}+skew(\mathbf{x})
+	\end{matrix}
+	\right] \\
+	\mathbf{R_{q}}&=\left[
+	\begin{matrix}
+	w & -\mathbf{x}^T \\
+	\mathbf{x} & w\mathbf{I}-skew(\mathbf{x})
+	\end{matrix}
+	\right] \\
+	skew(\mathbf{x})&=\
+	\left[
+	\begin{matrix}
+	0 & -z & y \\
+	z & 0 & -x \\
+	-y & x & 0
+	\end{matrix}
+	\right]
+\end{align*}
+By using quaternion, we also have the following property:
+$$
+\mathbf{pq}\cdot \mathbf{r} = \mathbf{p} \cdot \mathbf{rq^*}
+$$
+where $\mathbf{q^*}=\{w,\ -x,\ -y,\ -z\}$ is the conjugate quaternion of $\mathbf{q}$.
+
+\paragraph{Rotation}
+Similar to the SVD solution, the first two step is also to find $\bar{\mathbf{P}}$, $\bar{\mathbf{Q}}$, $\mathbf{x}$, and $\mathbf{y}$. Then a new objective function is defined as
+\begin{align*}
+\mathbf{R}=\underset{\mathbf{R}\in \mathbb{SO}(3)}{argmax}\ \sum_{i=1}^{n} \mathbf{y} \cdot \mathbf{Rx}
+\end{align*}
+This can be seen as an optimization which best align the rays generated by one point pair since the $\cdot()$ operation is to find the projection of one vector to other. Using the corresponding quaternion of $\mathbf{R}$, it can be further written as
+\begin{align*}
+\mathbf{R}=\underset{\mathbf{R}\in \mathbb{SO}(3)}{argmax}\ \sum_{i=1}^{n} \mathbf{y} \cdot \mathbf{Rx}=\underset{\mathbf{R}\in (\mathbb{SO}(3)}{argmax}\ \sum_{i=1}^{n} \mathbf{qq_{x_i}} \cdot \mathbf{q_{y_i}q} = \underset{\mathbf{R}\in (\mathbb{SO}(3)}{argmax}\  \sum_{i=1}^{n} \mathbf{q}^T\mathbf{R}_{\mathbf{q_{x_i}}}^T\mathbf{L}_{\mathbf{q_{y_i}}}\mathbf{q}
+\end{align*}
+where $\mathbf{q_x}$ is the corresponding quaternion of $\mathbf{x}$ by making $w=0$. 
+We use $\mathbf{N}=\sum_{i=1}^{n}\mathbf{R}_{\mathbf{q_{x_i}}}^T\mathbf{L}_{\mathbf{q_{y_i}}}$ and there is another convenient way of computing $\mathbf{N}$:
+\begin{align*}
+	\mathbf{M}&=\sum_{i=1}^{n} \mathbf{x_iy_i^T} \\
+	\mathbf{M}&=\left[
+	\begin{matrix}
+	S_{xx} & S_{xy} & S_{xz} \\
+	S_{yx} & S_{yy} & S_{yz} \\
+	S_{zx} & S_{zy} & S_{zz} 
+	\end{matrix}
+	\right] \\
+	\mathbf{N}=&=\left[
+	\begin{matrix}
+	S_{xx}+S_{yy}+S_{zz} & S_{yz}-S_{zy} & S_{zx}-S_{xz} & S_{xy}-S_{yx} \\
+	S_{yz}-S_{zy} & S_{xx}-S_{yy}-S_{zz} & S_{xy}+S_{yx} & S_{zx}+S_{xz} \\
+	S_{zx}-S_{xz} &  S_{xy}+S_{yx} & -S_{xx}+S_{yy}-S_{zz}& S_{yz}+S_{zy} \\
+	S_{xy}-S_{yx} & S_{zx}+S_{xz} & S_{yz}+S_{zy} & -S_{xx}-S_{yy}+S_{zz} \\
+	\end{matrix}
+	\right] 
+\end{align*}
+Now the objetcive function is in a quadratic form of $\mathbf{q}$. Since $\mathbf{N}$ is symmetric and positive-definite, we apply the Eigen-value decomposition to $\mathbf{N}$, i.e. $\mathbf{N}=\mathbf{U}\mathbf{\Sigma}\mathbf{U}^T$. Let $\mathbf{q}'=\mathbf{U}^T\mathbf{q} \Leftrightarrow \mathbf{q}=\mathbf{U}\mathbf{q}'$, so $\mathbf{q}$ can be seen as a linear combination of the basis spanned by $\mathbf{U}$
+$$
+\mathbf{q}=\alpha_1 \mathbf{e}_1 + \alpha_2 \mathbf{e}_2+\alpha_3 \mathbf{e}_3+\alpha_4 \mathbf{e}_4
+$$ 
+
+\chapter{$3$D to $2$D case}
 \begin{figure}
 \centering
 \includegraphics[scale=0.8]{hand_eye_files/vision/figures/pnp.pdf}
