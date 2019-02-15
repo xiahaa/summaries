@@ -50,8 +50,7 @@ $$
 where $w_i$ denotes the corresponding weight for each point pair. 
 
 \section{Solution}
-The following introduced solutions were documented in~\cite{sorkine2017least}.
-
+The following introduced solutions were documented in~\cite{4767965} and~\cite{horn1987closed}. A good tutorial can be found in~\cite{sorkine2017least}.
 \subsection{SVD}
 \paragraph{Translation} It is to see that the objective function is defined in a quadratic form on $\mathbf{t}$. Consequently, if we assume $\mathbf{R}$ is known, $\mathbf{t}$ can be easily found by taking the derivative and letting it equal to zero (first-order optimality condition for differentiable function):
 \begin{align*}
@@ -195,8 +194,30 @@ We use $\mathbf{N}=\sum_{i=1}^{n}\mathbf{R}_{\mathbf{q_{x_i}}}^T\mathbf{L}_{\mat
 \end{align*}
 Now the objetcive function is in a quadratic form of $\mathbf{q}$. Since $\mathbf{N}$ is symmetric and positive-definite, we apply the Eigen-value decomposition to $\mathbf{N}$, i.e. $\mathbf{N}=\mathbf{U}\mathbf{\Sigma}\mathbf{U}^T$. Let $\mathbf{q}'=\mathbf{U}^T\mathbf{q} \Leftrightarrow \mathbf{q}=\mathbf{U}\mathbf{q}'$, so $\mathbf{q}$ can be seen as a linear combination of the basis spanned by $\mathbf{U}$
 $$
-\mathbf{q}=\alpha_1 \mathbf{e}_1 + \alpha_2 \mathbf{e}_2+\alpha_3 \mathbf{e}_3+\alpha_4 \mathbf{e}_4
+\mathbf{q}=\alpha_1 \mathbf{e}_1 + \alpha_2 \mathbf{e}_2+\alpha_3 \mathbf{e}_3+\alpha_4 \mathbf{e}_4,\ where\ \mathbf{U}=[\mathbf{e}_1,\ \mathbf{e}_2,\ \mathbf{e}_3,\ \mathbf{e}_4], \mathbf{q}'=[\alpha_1,\ \alpha_2,\ \alpha_3,\ \alpha_4]^T
 $$ 
+So $\mathbf{q}^T\mathbf{Nq}=\mathbf{q}'^T\mathbf{\Sigma q}'=\sum \alpha_i^2 \lambda_i$. Recall the unit-quaternion has a constraint on its norm, i.e. $||\mathbf{q}||=1$, it is easy to validate that $||\mathbf{q}'||=1$. Together with $\lambda_1 \geq \lambda_i, i \neq 1$
+\begin{align*}
+\sum \alpha_i^2 \lambda_i \leq \lambda_1
+\end{align*}
+The maximum will be achieved when $\alpha_1=1, \alpha_i=0, i\neq 1$. Consequently, $\mathbf{q}=\mathbf{e}_1$ which corresponds to the eigen vector of the maximum eigen value. $\mathbf{t}$ can be found in a similar way to the SVD solution.
+\paragraph{The algorithm}
+\begin{itemize}
+	\item find $\bar{\mathbf{P}}$ and $\bar{\mathbf{Q}}$.
+	\item form $\mathbf{x},\ \mathbf{y}$.
+	\item form $\mathbf{M},\ \mathbf{N}$.
+	\item find $\mathbf{R, t}$
+	\item non-linear optimization.
+\end{itemize}
+
+\section{Summary}
+There are actually other improvements or variants, like~\cite{291441},~\cite{Horn88},~\cite{Umeyama:1991:LET:105514.105525}~\cite{Walker:1991:ELP:119076.119080}. A fairly detailed comparison of four methods was given in~\cite{Eggert1997}. 
+
+Several key points from~\cite{Eggert1997}:
+\begin{itemize}
+\item SVD and Unit-Quaternion method performs similarly, better than others.
+\item Unit-Quaternion method is faster than SVD based solution.
+\end{itemize}
 
 \chapter{$3$D to $2$D case}
 \begin{figure}
@@ -365,7 +386,7 @@ Another linear P$n$P algorithm is proposed in~\cite{ansar2003linear}. It also st
 \end{align*}
 Finding $\mathbf{t}$ by choosing the rightmost singular vector and apply a similar relinearization to recover $x$. For $N$ points, we have $C_{N}^2$ cosine equations. Then we have $N$ terms in form of $x_i^2$, $C_{N}^2$ terms in form of $x_ix_j$ and one slack variable $1$. So in total, the solution vector is $\frac{N(N+1)}{2}+1$. The kernel is of dimension $\frac{N(N-1)}{2}$, so we will have a null space of dimension $N+1$. We still needs $\frac{N*N*(N-1)}{2}$ constraints to do the relinearization. As can be seen, this method is extremely complex. The computation time will increase significantly with the number of correspondences. \textcolor{red}{This method is only theoretically meaningful, but cannot be used in practice, especially now we have the $\mathcal{O}(n)$ solutions.}
 
-\subsection{Summary of Complex P$n$P}
+\subsubsection{Summary of Complex P$n$P}
 The linearization and relinearization techniques opens the gate for later $\mathcal{O}(n)$ P$n$P solutions. Regard to the Complex P$n$P, we could include them as the related work, but use other $\mathcal{O}(n)$ solutions in practice.
 
 \subsection{POSIT \& SoftPOSIT}
@@ -505,7 +526,7 @@ Once we solve for the new pose, we do the update of the soft assign matrix $\mat
 	\item the row and column of $\mathbf{M}$ should be $1$ since one object point only matches to one image point. So re-normalization is necessary: this is done by alternatively normalize along the row direction and then along the column direction using the so called Sinkhorn algorithm.
 \end{itemize}
 
-\subsection{Summary of POSIT \& SoftPOSIT}
+\subsubsection{Summary of POSIT \& SoftPOSIT}
 SoftPOSIT~\cite{softposit} iterates to solve this problem, which is related to the general expectation-maximization (EM) algorithm. So generally speaking, global optimality is not guaranteed. Secondly, SoftPOSIT algorithm is usually very slow since its working condition is more challenging. From the experiments I have done, SoftPOSIT is not very stable. Sometimes it cannot find the correct solution.
 
 
@@ -587,7 +608,7 @@ The PP$n$P algorithm does the optimization as
 \end{itemize}
 As can be seen from here, the PP$n$P functions similarly to POSIT under the scaled orthographic projection and LHM under weak perspective projection. Perhaps this is why all equations in this paper are written in such a implicit way.
 
-\subsection{Summary of iterative P$n$P algorithm}
+\subsubsection{Summary of iterative P$n$P algorithm}
 \begin{itemize}
 \item \textcolor{blue}{LHM has been documented by many references to be the state-of-the-art iterative method. So this should be considered as the nonlinear optimization method to refine the result.}
 \item \textcolor{blue}{The benchmark of LHM and POSIT is unclear.}
@@ -791,7 +812,7 @@ $\delta_{max}$ is a must since without it, this process will always remove some 
 \subsection{CEPP$n$P}
 CEPP$n$P algorithm was proposed by the same author of EPP$n$P with the capability of leveraging feature uncertainty. As said in the introduction section, it formulate a maximum likelihood estimation problem with the paramerization of control points. Then the MLE problem is optimized iteratively. \textcolor{blue}{If the output needs a covariance, this method could be considered.}
 
-\subsection{Summary}
+\subsubsection{Summary}
 EP$n$P has several advantages compared with other methods:
 \begin{itemize}
 	\item because of its novel parameterization, applying Gauss-Newton optimization is fairly easy and fast.
