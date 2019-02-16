@@ -21,7 +21,8 @@
 \usepackage{pbox}
 \usepackage{siunitx,booktabs,etoolbox}
 \usepackage{ulem}
-
+\usepackage[framed,numbered,autolinebreaks,useliterate]{mcode}
+\usepackage{filecontents}
 %\usepackage{pgf,tikz,pgfplots}
 %\pgfplotsset{compat=1.15}
 %\usepackage{mathrsfs}
@@ -30,6 +31,18 @@
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{filecontents*}{normalization.m}
+	pbar = mean(p,2);% p: 3xn
+	pdiff = p(1:2,:) - repmat(pbar(1:2), 1, n);
+	mdist = mean(sqrt(diag(pdiff'*pdiff)));
+	scale = sqrt(2)/mdist;
+	pnormalized(1:2,:) = scale.*pdiff;
+	pnormalized(3,:) = 1;
+	T = [scale, 0, -pbar(1)*scale; ...
+			0, scale, -pbar(2)*scale; ...
+			0,0,1];
+\end{filecontents*}
 
 \begin{document}
 \title{Pose Estimation}
@@ -897,6 +910,122 @@ Consequently, HARD-P$n$P formulate the objective function not only with one para
 
 \textcolor{red}{This leaves us a new direction of how to optimize P$n$P algorithms.}
 
+\chapter{$2$D to $2$D case}
+For $2$D to $2$D case, pose is often recorvered from either the Essential Matrix or the Homography matrix. We will explain the estimation methos for estimaing Essential matrix and Homography matrix as well as how we decompose from those matrices to obtain relevent pose.
+
+\section{Essential Matrix}
+Essential matrix or Fundamental matrix is the bridge to connect two images. By denoting image points in two images as $\mathbf{q}$ and $\mathbf{q}'$, respectively, together with the camera matrix $\mathbf{K}$, the epipolar constraint tells us:
+\begin{align*}
+	\mathbf{q}'\mathbf{F}\mathbf{q}&=0 \\
+	\mathbf{qn}'\mathbf{E}\mathbf{qn}&=0,\ where\ \mathbf{qn}=\mathbf{K}^{-1}\mathbf{q}, \mathbf{qn}' = \mathbf{K}^{-1}\mathbf{q}'\\
+\end{align*}
+If write explicitly, 
+$$
+\mathbf{E}=\mathbf{t}_{\times} \mathbf{R}
+$$
+Clearly, the pose information is enclosed in the essential matrix, which provides us a key to recover $\mathbf{R,t}$ from $\mathbf{E}$.
+
+However, firstly, we need to know how to estimate $\mathbf{E}$ and then we can apply decomposition method to recover pose. We will use $\mathbf{q}$ instead of $\mathbf{qn}$ in the following sections for brevity.
+
+\subsection{Eight Point Algorithm} 
+Eight point algorithm is the most straightforward solution for essential matrix estimation. It starts from the equation $\mathbf{qn}'\mathbf{E}\mathbf{qn}=0$. Then, by vectorization the $\mathbf{E}$, we can have:
+$$
+\tilde{\mathbf{q}}^T\tilde{\mathbf{E}}=0
+$$
+where $\tilde{\mathbf{q}}=\mathbf{q}'^T \otimes \mathbf{q}^T$. $\otimes$ means the Kronecker product. $\tilde{\mathbf{E}}=[E_{11},E_{12},E_{13},E_{21},E_{22},E_{23},E_{31},E_{32},E_{33}]$ is the vectorization of $\mathbf{E}$. Since the Degree-of-Freedom (DoF) of $\mathbf{E}$ is 8\footnote{Not really 8, but the eight point algorithm omits other constraints, so the DoF is 8} and one point pair can provide one equation, we need at least eight point for estimation. That is also why this algorithm is often called Eight point algorithm. Similarly, the solution can be found by taking the smallest right singular vector. 
+
+Eight point algorithm is easy to implement and fast to solve. However, it doesn't work for planar case.
+
+\subsection{Five Point Algorithm}
+\paragraph{Theory}
+Compared with the eight point algorithm, five point algorithm only uses 5 points to estimate $\mathbf{E}$. This is feasible since the real DoF of $\mathbf{E}$ is $5$ ($3$ for rotation matrix and $3$ for translation matrix and minus $1$ for scale).
+
+An efficient five poitn algorithm was proposed by~\cite{nister2003efficient}~\cite{nister2004efficient}. It also starts from the normal equation. However, since  we only have five point, we can only know that the solution should be in the corresponding null space:
+\begin{align*}
+	\mathbf{E}=x\mathbf{X}+y\mathbf{Y}+z\mathbf{Z}+w\mathbf{W}
+\end{align*}
+where $\mathbf{X,Y,Z,W}$ are the corresponding null vector. In order to find $\mathbf{E}$, we need to find $x,y,z,w$. We can set $w=1$ since $\mathbf{E}$ is up to a scale. Then, we can see that if $x,y,z$ are known, so does $\mathbf{E}$. We need to use other two constraints for $\mathbf{E}$.
+\begin{align*}
+	det(\mathbf{E})&=0 \\
+	\mathbf{E}^T\mathbf{E}\mathbf{E}-\frac{1}{2}trace(\mathbf{E}^T\mathbf{E})\mathbf{E}&=0
+\end{align*}
+Expand them explicitly, we will have an equation system:
+\begin{center}
+	\begin{tabular}{ |c|cccccccccc|ccc|} 
+		\hline
+		$\mathbf{A}$ & $x^3$ & $y^3$ & $x^2y$ & $xy^2$ & $x^2z$ & $x^2$ & $y^2z$ & $y^2$ & $xyz$ & $xy$ & $x$ & $y$ & $z$ \\
+		$\langle a \rangle$ & $1$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\left[2\right]$ & $\left[2\right]$ & $\left[3\right]$  \\
+		$\langle b \rangle$ & $0$ & $1$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$  & $\left[2\right]$ & $\left[2\right]$ & $\left[3\right]$  \\
+		$\langle c \rangle$ & $0$ & $0$ & $1$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\left[2\right]$ & $\left[2\right]$ & $\left[3\right]$  \\
+		$\langle d \rangle$ & $0$ & $0$ & $0$ & $1$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\left[2\right]$ & $\left[2\right]$ & $\left[3\right]$  \\
+		$\langle e \rangle$ & $0$ & $0$ & $0$ & $0$ & $1$ & $0$ & $0$ & $0$ & $0$ & $0$ & $\left[2\right]$ & $\left[2\right]$ & $\left[3\right]$  \\
+		$\langle f \rangle$ & $0$ & $0$ & $0$ & $0$ & $0$ & $1$ & $0$ & $0$ & $0$ & $0$ & $\left[2\right]$ & $\left[2\right]$ & $\left[3\right]$  \\
+		$\langle g \rangle$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $1$ & $0$ & $0$ & $0$ & $\left[2\right]$ & $\left[2\right]$ & $\left[3\right]$  \\
+		$\langle h \rangle$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $1$ & $0$ & $0$ & $\left[2\right]$ & $\left[2\right]$ & $\left[3\right]$  \\
+		$\langle i \rangle$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $1$ & $0$ & $\left[2\right]$ & $\left[2\right]$ & $\left[3\right]$  \\
+		$\langle j \rangle$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $1$ & $\left[2\right]$ & $\left[2\right]$ & $\left[3\right]$  \\
+		\hline
+	\end{tabular}
+\end{center}
+where $[N]$ denotes a polynomial of degree $N$ in variable $z$. New equations can be further defined as:
+\begin{align*}
+\langle e \rangle - z \langle f \rangle = \langle k \rangle \\
+\langle g \rangle - z \langle h \rangle = \langle l \rangle \\
+\langle i \rangle - z \langle j \rangle = \langle m \rangle
+\end{align*}
+Another equation system can be obtained as
+\begin{center}
+	\begin{tabular}{ |c|ccc|} 
+		\hline
+		$\mathbf{B}$ & $x$ & $y$ & $1$ \\ \hline
+		 $\langle k \rangle$  & $[3]$ & $[3]$ & $[4]$ \\
+		 $\langle l \rangle$  & $[3]$ & $[3]$ & $[4]$ \\
+ 		 $\langle m \rangle$  & $[3]$ & $[3]$ & $[4]$ \\
+		\hline
+	\end{tabular}
+\end{center}
+Since $[x,y,1]$ is a null vector of $\mathbf{B}$, so the determinant of $\mathbf{B}$ must be zero, which results in a $10^{th}$ order polynomial of $z$. The roots of this tenth order polynomial can be found by finding the eigenvalues of the $10 \times 10$ companion matrix:
+$$
+\left[
+\begin{matrix}
+0 & 0 & \cdots & -a_0 \\
+1 &  0 & \cdots & -a_1 \\
+0 & \ddots & \cdots & \vdots \\
+0 & \cdots & 1 & -a_9
+\end{matrix}
+\right]
+$$
+where $a_i$ is the coefficient of monomial $z^{i}$ after polynomial normalization\footnote{Normalize a $n^{th}$ order polynomial means rescaling the coefficient of $z^{n}$ to $1$.}
+\paragraph{Implementation}
+The implementation of the original Nist\`er five point algorithm is a little bit complex. I have made an implementation which is available by requests.  Again, Algebraic geometry can be used either by using the action matrix~\cite{stewenius2006recent}, using polynomial eigenvalue solution~\cite{kukelova2008polynomial}\footnote{This algorithm is fairly easy to implement, but the solutions can go up to $30$.}, and using the hidden variable resultant~\cite{li2006five}\footnote{Easy to implement if using the Symbolic toolbox}.
+
+You will get up to $10$ solutions using the five point algorithm. Five point algorithm also works for planar case. 
+
+\subsection{Normalization}
+Normalization is a key trick to achieve more stable results when we do estimation towards essential, fundamental, and homography matrix~\cite{hartley1995defence}. The principle of normalization is nothing but shifting the coordinates to their center and rescaling the mean distance of each point to the center to $\sqrt{2}$.
+
+\lstinputlisting{normalization.m}
+
+\subsection{Decomposition}
+Recover $\mathbf{R,t}$ from $\mathbf{E}$ is easy. 
+\begin{itemize}
+	\item SVD $\mathbf{E}=\mathbf{USV}^T$.
+	\item  $\mathbf{B}=\left[
+	\begin{matrix}
+	0 & 1 & 0 \\ -1 & 0 & 0 \\ 0 & 0 & 1
+	\end{matrix}
+	\right]$, $\mathbf{R}_1=det(\mathbf{UV}^T)\mathbf{UBV}^T$ and $\mathbf{R}_2=det(\mathbf{UV}^T)\mathbf{UB}^T\mathbf{V}^T$ .
+	\item $\mathbf{L}=\mathbf{U}\left[
+	\begin{matrix}
+	0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0
+	\end{matrix}
+	\right]\mathbf{U}^T$ and $\mathbf{M}=-\mathbf{U}\left[
+	\begin{matrix}
+	0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0
+	\end{matrix}
+	\right]\mathbf{U}^T$, then $\mathbf{t}_1=\frac{[L_{32}, L_{13}, L_{21}]^T}{||[L_{32}, L_{13}, L_{21}]^T||}$ and $\mathbf{t}_2=\frac{[M_{32}, M_{13}, M_{21}]^T}{||[M_{32}, M_{13}, M_{21}]^T||}$. 
+	\item four solutions: $\mathbf{R}_1, \mathbf{t}_1$, $\mathbf{R}_1, \mathbf{t}_2$, $\mathbf{R}_2, \mathbf{t}_1$, $\mathbf{R}_2, \mathbf{t}_2$. Use Cheirality constraint to select the correct one.
+\end{itemize}
 
 \bibliography{PnPCites} 
 \bibliographystyle{ieeetr}

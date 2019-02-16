@@ -1,0 +1,61 @@
+\contentsline {chapter}{\numberline {1}$3$D to $3$D case}{2}{chapter.1}
+\contentsline {section}{\numberline {1.1}Problem Formulation}{2}{section.1.1}
+\contentsline {section}{\numberline {1.2}Solution}{2}{section.1.2}
+\contentsline {subsection}{\numberline {1.2.1}SVD}{2}{subsection.1.2.1}
+\contentsline {paragraph}{Translation}{2}{section*.2}
+\contentsline {paragraph}{Rotation}{3}{section*.3}
+\contentsline {paragraph}{The algorithm}{4}{section*.4}
+\contentsline {subsection}{\numberline {1.2.2}Quaternion}{4}{subsection.1.2.2}
+\contentsline {paragraph}{Quaternion}{4}{section*.5}
+\contentsline {paragraph}{Rotation}{5}{section*.6}
+\contentsline {paragraph}{The algorithm}{6}{section*.7}
+\contentsline {section}{\numberline {1.3}Summary}{6}{section.1.3}
+\contentsline {chapter}{\numberline {2}$3$D to $2$D case}{7}{chapter.2}
+\contentsline {section}{\numberline {2.1}Introduction}{7}{section.2.1}
+\contentsline {section}{\numberline {2.2}Theory and Implementation}{9}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}P$3$P}{10}{subsection.2.2.1}
+\contentsline {subsubsection}{Summary of P$3$P}{11}{section*.8}
+\contentsline {subsection}{\numberline {2.2.2}Complex P$n$P}{12}{subsection.2.2.2}
+\contentsline {subsubsection}{Summary of Complex P$n$P}{13}{section*.9}
+\contentsline {subsection}{\numberline {2.2.3}POSIT \& SoftPOSIT}{13}{subsection.2.2.3}
+\contentsline {subsubsection}{Original POSIT}{13}{section*.10}
+\contentsline {subsubsection}{SoftPOSIT}{13}{section*.11}
+\contentsline {paragraph}{POSIT routine}{14}{section*.12}
+\contentsline {paragraph}{Correspondence Update routine}{14}{section*.13}
+\contentsline {subsubsection}{Summary of POSIT \& SoftPOSIT}{15}{section*.14}
+\contentsline {subsection}{\numberline {2.2.4}Iterative P$n$P}{15}{subsection.2.2.4}
+\contentsline {subsubsection}{LHM}{15}{section*.15}
+\contentsline {subsubsection}{PP$n$P}{16}{section*.16}
+\contentsline {subsubsection}{Summary of iterative P$n$P algorithm}{17}{section*.17}
+\contentsline {section}{\numberline {2.3}Convex P$n$P}{17}{section.2.3}
+\contentsline {section}{\numberline {2.4}$\mathcal {O}(n)$ P$n$P}{17}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}Algebraic Geometry P$n$P}{17}{subsection.2.4.1}
+\contentsline {subsubsection}{Summary}{18}{section*.18}
+\contentsline {subsection}{\numberline {2.4.2}RP$n$P}{18}{subsection.2.4.2}
+\contentsline {paragraph}{Coordinate Transformation}{18}{section*.19}
+\contentsline {paragraph}{$3$ Point constrain}{19}{section*.20}
+\contentsline {paragraph}{Recover Rotation \& Translation}{19}{section*.21}
+\contentsline {subsubsection}{Summary}{20}{section*.22}
+\contentsline {subsection}{\numberline {2.4.3}EP$n$P}{20}{subsection.2.4.3}
+\contentsline {subsubsection}{Original EP$n$P}{20}{section*.23}
+\contentsline {paragraph}{Parameterization using $4$ control points}{20}{section*.24}
+\contentsline {paragraph}{Choosing the right combination}{21}{section*.25}
+\contentsline {paragraph}{Planar case}{21}{section*.26}
+\contentsline {paragraph}{Gauss-Newton Optimization}{21}{section*.27}
+\contentsline {subsection}{\numberline {2.4.4}EPP$n$P}{21}{subsection.2.4.4}
+\contentsline {subsection}{\numberline {2.4.5}REPP$n$P}{21}{subsection.2.4.5}
+\contentsline {subsection}{\numberline {2.4.6}CEPP$n$P}{22}{subsection.2.4.6}
+\contentsline {subsubsection}{Summary}{22}{section*.28}
+\contentsline {section}{\numberline {2.5}Very New P$n$P solution}{23}{section.2.5}
+\contentsline {subsection}{\numberline {2.5.1}R$1$PP$n$P}{23}{subsection.2.5.1}
+\contentsline {paragraph}{Formulation}{23}{section*.29}
+\contentsline {paragraph}{Outlier Handling}{24}{section*.30}
+\contentsline {subsection}{\numberline {2.5.2}HARD-P$n$P}{24}{subsection.2.5.2}
+\contentsline {chapter}{\numberline {3}$2$D to $2$D case}{25}{chapter.3}
+\contentsline {section}{\numberline {3.1}Essential Matrix}{25}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Eight Point Algorithm}{25}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Five Point Algorithm}{26}{subsection.3.1.2}
+\contentsline {paragraph}{Theory}{26}{section*.31}
+\contentsline {paragraph}{Implementation}{27}{section*.32}
+\contentsline {subsection}{\numberline {3.1.3}Normalization}{27}{subsection.3.1.3}
+\contentsline {subsection}{\numberline {3.1.4}Decomposition}{27}{subsection.3.1.4}
