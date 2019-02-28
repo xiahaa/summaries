@@ -4,7 +4,17 @@
 \usepackage{mathrsfs}
 \usetikzlibrary{arrows}
 \pagestyle{empty}
-
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,matrix}
+\usepackage{bm}
+\usetikzlibrary{calc}
+\usepackage{tikzpagenodes}
+\usepackage{pgfplots}
+\usepackage{textcomp}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsmath,amssymb,amsfonts, stmaryrd}
 \begin{document}
 %\definecolor{qqffqq}{rgb}{0,1,0}
 %\definecolor{dtsfsf}{rgb}{0.8274509803921568,0.1843137254901961,0.1843137254901961}
@@ -110,68 +120,20 @@
 %\draw [fill=zzqqqq] (0.3304596247759258,1.512931688508334) circle (1pt) node[anchor=west] {\large $q_2$};
 %\end{scriptsize}
 %\end{tikzpicture}
-
-	\definecolor{zzqqqq}{rgb}{0.6,0,0}
-	\definecolor{dtsfsf}{rgb}{0.8274509803921568,0.1843137254901961,0.1843137254901961}
-	\definecolor{qqqqff}{rgb}{0,0,1}
-	\definecolor{qqffqq}{rgb}{0,1,0}
-	\definecolor{rvwvcq}{rgb}{0.08235294117647059,0.396078431372549,0.7529411764705882}
-	\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1.2cm,y=1.2cm]
-	\clip(-8.390604465377926,-4.199416915861288) rectangle (4.679421163845544,2.3936333127345537);
-	\draw [->,line width=1pt,color=qqffqq] (-6,-2) -- (-2.9396867421676482,-1.9979373484335248) node[anchor=west, text=black] {\LARGE y};
-	\draw [->,line width=1pt,color=qqqqff] (-6,-2) -- (-6.005814273404093,1.002487449990706) node[anchor=west, text=black] {\LARGE z};
-	\draw [->,line width=1pt,color=dtsfsf] (-6,-2) -- (-8,-4)node[anchor=east, text=black] {\LARGE x};
-	\draw [->,line width=1pt,color=qqffqq] (4,-2) -- (2,0) node[anchor=south west, text=black] {\LARGE y};
-	\draw [->,line width=1pt,color=dtsfsf] (4,-2) -- (1.0243781375023269,-2.019838259370928) node[anchor=north, text=black] {\LARGE x};
-	\draw [->,line width=1pt,color=qqqqff] (4,-2) -- (4.002902024989159,1.0462892718655121) node[anchor=south west, text=black] {\LARGE z};
-
-	\coordinate (g1) at (-6,-2);
-	\coordinate (g2) at (4,-2);
-	\coordinate (p2) at (-3,1.5);
-	\coordinate (p1) at (-1.2,-1.5);
-	
-	%% p2
-	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)-- node[above,yshift=0.2cm] {\LARGE $\mathbf{P}_2$} (p2) ;
-	\draw [fill=zzqqqq, color=zzqqqq] (p2) circle (2.5pt);% node[anchor=south,text=black] {$\large P_2$};
-	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p2)--node[above,yshift=0.1cm] {\LARGE $\mathbf{Q}_?$} (g2);
-	
-	%% p1
-	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[above,yshift=0.0cm] {\LARGE $\mathbf{P}_1$} (p1);
-	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p1)--node[above,yshift=0.0cm] {\LARGE $\mathbf{Q}_?$} (g2);
-	\draw [fill=zzqqqq, color=zzqqqq] (p1) circle (2.5pt);% node[anchor=south,text=black] {$\large P_4$};
-	
-	%% p3
-	\coordinate (p3) at (-1,2);
-	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[below,yshift=-0.09cm] {\LARGE $\mathbf{P}_3$}  (p3);
-	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p3)--node[above,yshift=0.0cm] {\LARGE $\mathbf{Q}_?$}  (g2);
-	\draw [fill=zzqqqq, color=zzqqqq] (p3) circle (2.5pt);% node[anchor=south,text=black] {$\large P_1$};
-	
-	%% p4
-	\coordinate (p4) at (1.5,2);
-	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[below,yshift=-0.09cm] {\LARGE $\mathbf{P}_4$} (p4);
-	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p4)--node[above,yshift=0.5cm] {\LARGE $\mathbf{Q}_?$} (g2);
-	\draw [fill=zzqqqq, color=zzqqqq] (p4) circle (2.5pt);% node[anchor=south,text=black] {\LARGE $P_3$};
-	\begin{scriptsize}
-
-	\draw [fill=zzqqqq] (g1) circle (0.5pt) node[anchor=south east] {\LARGE $ \mathbf{G}_1$};
-	\draw [fill=zzqqqq] (g2) circle (0.5pt) node[anchor=south west] {\LARGE $\mathbf{G}_2$};
-	\draw[->, dashed, thin]  (g1)  to[bend left=-40] node[above,rotate=0,xshift=0.7cm,yshift=0.2cm] {\LARGE  $\mathbf{R},\ \mathbf{t}$} (g2);
-	\end{scriptsize}
-	\end{tikzpicture}
-
+%
 %	\definecolor{zzqqqq}{rgb}{0.6,0,0}
 %	\definecolor{dtsfsf}{rgb}{0.8274509803921568,0.1843137254901961,0.1843137254901961}
 %	\definecolor{qqqqff}{rgb}{0,0,1}
 %	\definecolor{qqffqq}{rgb}{0,1,0}
 %	\definecolor{rvwvcq}{rgb}{0.08235294117647059,0.396078431372549,0.7529411764705882}
-%	\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1cm,y=1cm]
+%	\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1.2cm,y=1.2cm]
 %	\clip(-8.390604465377926,-4.199416915861288) rectangle (4.679421163845544,2.3936333127345537);
-%	\draw [->,line width=1pt,color=qqffqq] (-6,-2) -- (-2.9396867421676482,-1.9979373484335248) node[anchor=west, text=black] {\large y};
-%	\draw [->,line width=1pt,color=qqqqff] (-6,-2) -- (-6.005814273404093,1.002487449990706) node[anchor=west, text=black] {\large z};
-%	\draw [->,line width=1pt,color=dtsfsf] (-6,-2) -- (-8,-4)node[anchor=east, text=black] {\large x};
-%	\draw [->,line width=1pt,color=qqffqq] (4,-2) -- (2,0) node[anchor=south west, text=black] {\large y};
-%	\draw [->,line width=1pt,color=dtsfsf] (4,-2) -- (1.0243781375023269,-2.019838259370928) node[anchor=north, text=black] {\large x};
-%	\draw [->,line width=1pt,color=qqqqff] (4,-2) -- (4.002902024989159,1.0462892718655121) node[anchor=south west, text=black] {\large z};
+%	\draw [->,line width=1pt,color=qqffqq] (-6,-2) -- (-2.9396867421676482,-1.9979373484335248) node[anchor=west, text=black] {\LARGE y};
+%	\draw [->,line width=1pt,color=qqqqff] (-6,-2) -- (-6.005814273404093,1.002487449990706) node[anchor=west, text=black] {\LARGE z};
+%	\draw [->,line width=1pt,color=dtsfsf] (-6,-2) -- (-8,-4)node[anchor=east, text=black] {\LARGE x};
+%	\draw [->,line width=1pt,color=qqffqq] (4,-2) -- (2,0) node[anchor=south west, text=black] {\LARGE y};
+%	\draw [->,line width=1pt,color=dtsfsf] (4,-2) -- (1.0243781375023269,-2.019838259370928) node[anchor=north, text=black] {\LARGE x};
+%	\draw [->,line width=1pt,color=qqqqff] (4,-2) -- (4.002902024989159,1.0462892718655121) node[anchor=south west, text=black] {\LARGE z};
 %
 %	\coordinate (g1) at (-6,-2);
 %	\coordinate (g2) at (4,-2);
@@ -179,92 +141,251 @@
 %	\coordinate (p1) at (-1.2,-1.5);
 %	
 %	%% p2
-%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)-- node[above,yshift=0.2cm] {$\mathbf{P}_2$} (p2) ;
+%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)-- node[above,yshift=0.2cm] {\LARGE $\mathbf{P}_2$} (p2) ;
 %	\draw [fill=zzqqqq, color=zzqqqq] (p2) circle (2.5pt);% node[anchor=south,text=black] {$\large P_2$};
-%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p2)--node[above,yshift=0.1cm] {$\mathbf{Q}_2$} (g2);
+%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p2)--node[above,yshift=0.1cm] {\LARGE $\mathbf{Q}_?$} (g2);
 %	
 %	%% p1
-%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[above,yshift=0.0cm] {$\mathbf{P}_1$} (p1);
-%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p1)--node[above,yshift=0.0cm] {$\mathbf{Q}_1$} (g2);
+%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[above,yshift=0.0cm] {\LARGE $\mathbf{P}_1$} (p1);
+%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p1)--node[above,yshift=0.0cm] {\LARGE $\mathbf{Q}_?$} (g2);
 %	\draw [fill=zzqqqq, color=zzqqqq] (p1) circle (2.5pt);% node[anchor=south,text=black] {$\large P_4$};
 %	
 %	%% p3
 %	\coordinate (p3) at (-1,2);
-%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[below,yshift=-0.09cm] {$\mathbf{P}_3$}  (p3);
-%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p3)--node[above,yshift=0.0cm] {$\mathbf{Q}_3$}  (g2);
+%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[below,yshift=-0.09cm] {\LARGE $\mathbf{P}_3$}  (p3);
+%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p3)--node[above,yshift=0.0cm] {\LARGE $\mathbf{Q}_?$}  (g2);
 %	\draw [fill=zzqqqq, color=zzqqqq] (p3) circle (2.5pt);% node[anchor=south,text=black] {$\large P_1$};
 %	
 %	%% p4
 %	\coordinate (p4) at (1.5,2);
-%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[below,yshift=-0.09cm] {$\mathbf{P}_4$} (p4);
-%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p4)--node[above,yshift=0.5cm] {$\mathbf{Q}_4$} (g2);
-%	\draw [fill=zzqqqq, color=zzqqqq] (p4) circle (2.5pt);% node[anchor=south,text=black] {$\large P_3$};
+%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[below,yshift=-0.09cm] {\LARGE $\mathbf{P}_4$} (p4);
+%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p4)--node[above,yshift=0.5cm] {\LARGE $\mathbf{Q}_?$} (g2);
+%	\draw [fill=zzqqqq, color=zzqqqq] (p4) circle (2.5pt);% node[anchor=south,text=black] {\LARGE $P_3$};
 %	\begin{scriptsize}
 %
-%	\draw [fill=zzqqqq] (g1) circle (0.5pt) node[anchor=south east] {$\large \mathbf{G}_1$};
-%	\draw [fill=zzqqqq] (g2) circle (0.5pt) node[anchor=south west] {$\large \mathbf{G}_2$};
-%	\draw[->, dashed, thin]  (g1)  to[bend left=-40] node[above,rotate=0,xshift=0.7cm,yshift=0.2cm] {\large $\mathbf{R},\ \mathbf{t}$} (g2);
+%	\draw [fill=zzqqqq] (g1) circle (0.5pt) node[anchor=south east] {\LARGE $ \mathbf{G}_1$};
+%	\draw [fill=zzqqqq] (g2) circle (0.5pt) node[anchor=south west] {\LARGE $\mathbf{G}_2$};
+%	\draw[->, dashed, thin]  (g1)  to[bend left=-40] node[above,rotate=0,xshift=0.7cm,yshift=0.2cm] {\LARGE  $\mathbf{R},\ \mathbf{t}$} (g2);
 %	\end{scriptsize}
 %	\end{tikzpicture}
+%
+%%	\definecolor{zzqqqq}{rgb}{0.6,0,0}
+%%	\definecolor{dtsfsf}{rgb}{0.8274509803921568,0.1843137254901961,0.1843137254901961}
+%%	\definecolor{qqqqff}{rgb}{0,0,1}
+%%	\definecolor{qqffqq}{rgb}{0,1,0}
+%%	\definecolor{rvwvcq}{rgb}{0.08235294117647059,0.396078431372549,0.7529411764705882}
+%%	\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1cm,y=1cm]
+%%	\clip(-8.390604465377926,-4.199416915861288) rectangle (4.679421163845544,2.3936333127345537);
+%%	\draw [->,line width=1pt,color=qqffqq] (-6,-2) -- (-2.9396867421676482,-1.9979373484335248) node[anchor=west, text=black] {\large y};
+%%	\draw [->,line width=1pt,color=qqqqff] (-6,-2) -- (-6.005814273404093,1.002487449990706) node[anchor=west, text=black] {\large z};
+%%	\draw [->,line width=1pt,color=dtsfsf] (-6,-2) -- (-8,-4)node[anchor=east, text=black] {\large x};
+%%	\draw [->,line width=1pt,color=qqffqq] (4,-2) -- (2,0) node[anchor=south west, text=black] {\large y};
+%%	\draw [->,line width=1pt,color=dtsfsf] (4,-2) -- (1.0243781375023269,-2.019838259370928) node[anchor=north, text=black] {\large x};
+%%	\draw [->,line width=1pt,color=qqqqff] (4,-2) -- (4.002902024989159,1.0462892718655121) node[anchor=south west, text=black] {\large z};
+%%
+%%	\coordinate (g1) at (-6,-2);
+%%	\coordinate (g2) at (4,-2);
+%%	\coordinate (p2) at (-3,1.5);
+%%	\coordinate (p1) at (-1.2,-1.5);
+%%	
+%%	%% p2
+%%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)-- node[above,yshift=0.2cm] {$\mathbf{P}_2$} (p2) ;
+%%	\draw [fill=zzqqqq, color=zzqqqq] (p2) circle (2.5pt);% node[anchor=south,text=black] {$\large P_2$};
+%%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p2)--node[above,yshift=0.1cm] {$\mathbf{Q}_2$} (g2);
+%%	
+%%	%% p1
+%%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[above,yshift=0.0cm] {$\mathbf{P}_1$} (p1);
+%%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p1)--node[above,yshift=0.0cm] {$\mathbf{Q}_1$} (g2);
+%%	\draw [fill=zzqqqq, color=zzqqqq] (p1) circle (2.5pt);% node[anchor=south,text=black] {$\large P_4$};
+%%	
+%%	%% p3
+%%	\coordinate (p3) at (-1,2);
+%%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[below,yshift=-0.09cm] {$\mathbf{P}_3$}  (p3);
+%%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p3)--node[above,yshift=0.0cm] {$\mathbf{Q}_3$}  (g2);
+%%	\draw [fill=zzqqqq, color=zzqqqq] (p3) circle (2.5pt);% node[anchor=south,text=black] {$\large P_1$};
+%%	
+%%	%% p4
+%%	\coordinate (p4) at (1.5,2);
+%%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (g1)--node[below,yshift=-0.09cm] {$\mathbf{P}_4$} (p4);
+%%	\draw [line width=0.8pt,dash pattern=on 1pt off 1pt] (p4)--node[above,yshift=0.5cm] {$\mathbf{Q}_4$} (g2);
+%%	\draw [fill=zzqqqq, color=zzqqqq] (p4) circle (2.5pt);% node[anchor=south,text=black] {$\large P_3$};
+%%	\begin{scriptsize}
+%%
+%%	\draw [fill=zzqqqq] (g1) circle (0.5pt) node[anchor=south east] {$\large \mathbf{G}_1$};
+%%	\draw [fill=zzqqqq] (g2) circle (0.5pt) node[anchor=south west] {$\large \mathbf{G}_2$};
+%%	\draw[->, dashed, thin]  (g1)  to[bend left=-40] node[above,rotate=0,xshift=0.7cm,yshift=0.2cm] {\large $\mathbf{R},\ \mathbf{t}$} (g2);
+%%	\end{scriptsize}
+%%	\end{tikzpicture}
+%
+%
+%\definecolor{zzqqqq}{rgb}{0.6,0,0}
+%\definecolor{rvwvcq}{rgb}{0.08235294117647059,0.396078431372549,0.7529411764705882}
+%\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1cm,y=1cm]
+%\clip(-7.3664786790402434,-3.5993722340355396) rectangle (8.044718797527668,6.3339114475437395);
+%
+%\coordinate (pbar) at (-3.61,1.92);
+%\coordinate (v1) at (-4.39,1.14);
+%\coordinate (v3) at (-3.79,3.06);
+%\coordinate (v2) at (-4.73,2.55);
+%
+%\draw [->,line width=1pt] (pbar) -- (v1) node[anchor=north] {\huge $v_2$};
+%\draw [->,line width=1pt] (pbar) -- (v2) node[anchor=south] {\huge $v_1$};
+%\draw [->,line width=1pt] (pbar) -- (v3) node[anchor=south] {\huge $v_3$};
+%
+%\coordinate (p1) at (-6.28,3.42);
+%\coordinate (p2) at (-6.4,0.42);
+%\coordinate (p3) at (-2.98,5.52);
+%\coordinate (p4) at (-1.39,2.07);
+%
+%\draw [line width=1pt,dash pattern=on 2pt off 2pt] (pbar)  node[anchor=north west, yshift=-0.2cm] {\huge $\bar{\mathbf{p}}$}-- (p1) node[anchor=south] {\huge $\mathbf{p}_1$};
+%\draw [line width=1pt,dash pattern=on 2pt off 2pt] (pbar)-- (p2) node[anchor=south] {\huge $\mathbf{p}_2$};
+%\draw [line width=1pt,dash pattern=on 2pt off 2pt] (pbar)-- (p3) node[anchor=south] {\huge $\mathbf{p}_3$};
+%\draw [line width=1pt,dash pattern=on 2pt off 2pt] (pbar)-- (p4) node[anchor=south] {\huge $\mathbf{p}_4$};
+%
+%\coordinate (qbar) at (5.63,0.22);
+%\coordinate (qv1) at (5.45,1.36);
+%\coordinate (qv3) at (4.38,-0.13);
+%\coordinate (qv2) at (5.63,-0.89);
+%
+%\draw [->,line width=1pt] (qbar) -- (qv1) node[anchor=south] {\huge $v_3'$};
+%\draw [->,line width=1pt] (qbar) -- (qv2) node[anchor=west] {\huge $v_2'$};
+%\draw [->,line width=1pt] (qbar) -- (qv3) node[anchor=south] {\huge $v_1'$};
+%
+%\coordinate (q1) at (2.683476025649739,-0.6097906767839549);
+%\coordinate (q2) at (4.72,-2.82);
+%\coordinate (q3) at (3.53,3.20);
+%\coordinate (q4) at (7.01,1.89);
+%
+%\draw [line width=1pt,dash pattern=on 1pt off 1pt] (qbar) node[anchor=west, xshift=0.1cm] {\huge $\bar{\mathbf{q}}$}-- (q1) node[anchor=south] {\huge $\mathbf{q}_1$};
+%\draw [line width=1pt,dash pattern=on 2pt off 2pt] (qbar)-- (q2)  node[anchor=south] {\huge $\mathbf{q}_2$};
+%\draw [line width=1pt,dash pattern=on 2pt off 2pt] (qbar)-- (q3)  node[anchor=south] {\huge $\mathbf{q}_3$};
+%\draw [line width=1pt,dash pattern=on 2pt off 2pt] (qbar)-- (q4) node[anchor=south] {\huge $\mathbf{q}_4$};
+%
+%\begin{scriptsize}
+%\draw [fill=zzqqqq, color=zzqqqq] (pbar) circle (2.5pt);
+%\draw [fill=zzqqqq, color=zzqqqq] (-2.98,5.52) circle (2.5pt);
+%\draw [fill=zzqqqq, color=zzqqqq] (-1.39,2.07) circle (2.5pt);
+%\draw [fill=zzqqqq, color=zzqqqq] (-6.28,3.42) circle (2.5pt);
+%\draw [fill=zzqqqq, color=zzqqqq] (-6.4,0.42) circle (2.5pt);
+%\draw [fill=rvwvcq, color=rvwvcq] (5.632111303197643,0.2175242572043059) circle (2.5pt);
+%\draw [fill=rvwvcq, color=rvwvcq] (2.683476025649739,-0.6097906767839549) circle (2.5pt);
+%\draw [fill=rvwvcq, color=rvwvcq] (4.719943555466996,-2.8159638340859834) circle (2.5pt);
+%\draw [fill=rvwvcq, color=rvwvcq] (3.532004163073597,3.208585941623401) circle (2.5pt);
+%\draw [fill=rvwvcq, color=rvwvcq] (7.095822340253797,1.8933673286164232) circle (2.5pt);
+%
+%\draw[->, dashed, thin]  (pbar)  to[bend left=-80] node[above,rotate=0,xshift=0.7cm,yshift=0.2cm] {\huge $\mathbf{R}$} (qbar);
+%\end{scriptsize}
+%\end{tikzpicture}
 
-
-\definecolor{zzqqqq}{rgb}{0.6,0,0}
-\definecolor{rvwvcq}{rgb}{0.08235294117647059,0.396078431372549,0.7529411764705882}
-\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1cm,y=1cm]
-\clip(-7.3664786790402434,-3.5993722340355396) rectangle (8.044718797527668,6.3339114475437395);
-
-\coordinate (pbar) at (-3.61,1.92);
-\coordinate (v1) at (-4.39,1.14);
-\coordinate (v3) at (-3.79,3.06);
-\coordinate (v2) at (-4.73,2.55);
-
-\draw [->,line width=1pt] (pbar) -- (v1) node[anchor=north] {\huge $v_2$};
-\draw [->,line width=1pt] (pbar) -- (v2) node[anchor=south] {\huge $v_1$};
-\draw [->,line width=1pt] (pbar) -- (v3) node[anchor=south] {\huge $v_3$};
-
-\coordinate (p1) at (-6.28,3.42);
-\coordinate (p2) at (-6.4,0.42);
-\coordinate (p3) at (-2.98,5.52);
-\coordinate (p4) at (-1.39,2.07);
-
-\draw [line width=1pt,dash pattern=on 2pt off 2pt] (pbar)  node[anchor=north west, yshift=-0.2cm] {\huge $\bar{\mathbf{p}}$}-- (p1) node[anchor=south] {\huge $\mathbf{p}_1$};
-\draw [line width=1pt,dash pattern=on 2pt off 2pt] (pbar)-- (p2) node[anchor=south] {\huge $\mathbf{p}_2$};
-\draw [line width=1pt,dash pattern=on 2pt off 2pt] (pbar)-- (p3) node[anchor=south] {\huge $\mathbf{p}_3$};
-\draw [line width=1pt,dash pattern=on 2pt off 2pt] (pbar)-- (p4) node[anchor=south] {\huge $\mathbf{p}_4$};
-
-\coordinate (qbar) at (5.63,0.22);
-\coordinate (qv1) at (5.45,1.36);
-\coordinate (qv3) at (4.38,-0.13);
-\coordinate (qv2) at (5.63,-0.89);
-
-\draw [->,line width=1pt] (qbar) -- (qv1) node[anchor=south] {\huge $v_3'$};
-\draw [->,line width=1pt] (qbar) -- (qv2) node[anchor=west] {\huge $v_2'$};
-\draw [->,line width=1pt] (qbar) -- (qv3) node[anchor=south] {\huge $v_1'$};
-
-\coordinate (q1) at (2.683476025649739,-0.6097906767839549);
-\coordinate (q2) at (4.72,-2.82);
-\coordinate (q3) at (3.53,3.20);
-\coordinate (q4) at (7.01,1.89);
-
-\draw [line width=1pt,dash pattern=on 1pt off 1pt] (qbar) node[anchor=west, xshift=0.1cm] {\huge $\bar{\mathbf{q}}$}-- (q1) node[anchor=south] {\huge $\mathbf{q}_1$};
-\draw [line width=1pt,dash pattern=on 2pt off 2pt] (qbar)-- (q2)  node[anchor=south] {\huge $\mathbf{q}_2$};
-\draw [line width=1pt,dash pattern=on 2pt off 2pt] (qbar)-- (q3)  node[anchor=south] {\huge $\mathbf{q}_3$};
-\draw [line width=1pt,dash pattern=on 2pt off 2pt] (qbar)-- (q4) node[anchor=south] {\huge $\mathbf{q}_4$};
-
-\begin{scriptsize}
-\draw [fill=zzqqqq, color=zzqqqq] (pbar) circle (2.5pt);
-\draw [fill=zzqqqq, color=zzqqqq] (-2.98,5.52) circle (2.5pt);
-\draw [fill=zzqqqq, color=zzqqqq] (-1.39,2.07) circle (2.5pt);
-\draw [fill=zzqqqq, color=zzqqqq] (-6.28,3.42) circle (2.5pt);
-\draw [fill=zzqqqq, color=zzqqqq] (-6.4,0.42) circle (2.5pt);
-\draw [fill=rvwvcq, color=rvwvcq] (5.632111303197643,0.2175242572043059) circle (2.5pt);
-\draw [fill=rvwvcq, color=rvwvcq] (2.683476025649739,-0.6097906767839549) circle (2.5pt);
-\draw [fill=rvwvcq, color=rvwvcq] (4.719943555466996,-2.8159638340859834) circle (2.5pt);
-\draw [fill=rvwvcq, color=rvwvcq] (3.532004163073597,3.208585941623401) circle (2.5pt);
-\draw [fill=rvwvcq, color=rvwvcq] (7.095822340253797,1.8933673286164232) circle (2.5pt);
-
-\draw[->, dashed, thin]  (pbar)  to[bend left=-80] node[above,rotate=0,xshift=0.7cm,yshift=0.2cm] {\huge $\mathbf{R}$} (qbar);
-\end{scriptsize}
-\end{tikzpicture}
+\begin{figure}
+	\centering
+	\tdplotsetmaincoords{60}{110}
+	%start tikz picture, and use the tdplot_main_coords style to implement the display 
+	%coordinate transformation provided by 3dplot
+	\begin{tikzpicture}[scale=1.8,tdplot_main_coords]
+	%-----------------------
+	\coordinate (A) at  (0,0,0);
+	\coordinate (Ax) at (0.5,0,0);
+	\coordinate (Ay) at (0,0.5,0);
+	\coordinate (Az) at (0,0,-0.5);
+	
+	\coordinate (A1) at  (0   ,      0 +2  , 1.0000);
+	\coordinate (A1x) at (0.3536 ,  -0.3536+2  ,  1.0000 );
+	\coordinate (A1y) at (0.3536  ,  0.3536 +2 ,  1.0000  );
+	\coordinate (A1z) at (0      ,   0 +2 ,  0.5000);
+	
+	\coordinate (A2) at  (0  ,  1.5000 + 2 ,  0.5000);
+	\coordinate (A2x) at (-0.2500 ,   1.0670 +2  ,  0.5000 );
+	\coordinate (A2y) at (0.4330 ,   0.7500+2.5,    0.5000  );
+	\coordinate (A2z) at (0  ,  1.0000  +2.5,  0.0000  );
+	
+	\coordinate (B) at  (0.7000  , 0  , -0.3000 );
+	\coordinate (Bx) at (0.7000  ,  0    ,  -0.8000);
+	\coordinate (By) at (1.2000   ,   0   , -0.3000);
+	\coordinate (Bz) at (0.7000 , 0.5  ,  -0.3000 );
+	
+	\coordinate (B1) at  (0.4950 ,  -0.4950 + 2 ,   0.7000  );
+	\coordinate (B1x) at  (0.4950 ,  -0.4950+ 2,   0.2000   );
+	\coordinate (B1y) at  (0.8485 ,  -0.8485+ 2  ,  0.7000 );
+	\coordinate (B1z) at  (0.8485  , -0.1415 + 2 ,  0.7000 );
+	
+	\coordinate (B2) at  (-0.3500 +0.5 ,   0.3938 +2.3 ,  0.2000 );
+	\coordinate (B2x) at  (-0.3500 +0.5,   0.3938 +2.3  , -0.3000 );
+	\coordinate (B2y) at  (-0.6000 +0.5,  -0.0392 +2.3 ,   0.2000 );
+	\coordinate (B2z) at  (0.1500  +0.5,  0.1062 +2.3  ,  0.2000 );
+	
+	\draw[-, line width=0.5mm, solid] (A) to[] node[left,rotate=0] {} (B);
+	\draw[-, line width=0.5mm, solid] (A1) to[] node[left,rotate=0] {} (B1);
+	\draw[-, line width=0.5mm, solid] (A2) to[] node[left,rotate=0] {} (B2);
+	%determine a coordinate (P) using (r,\theta,\phi) coordinates.  This command
+	%also determines (Pxy), (Pxz), and (Pyz): the xy-, xz-, and yz-projections
+	%of the point (P).
+	%syntax: \tdplotsetcoord{Coordinate name without parentheses}{r}{\theta}{\phi}
+	%\tdplotsetcoord{P}{\rvec}{\thetavec}{\phivec}
+	\coordinate (Shift) at (0.,0.,0.);
+	\tdplotsetrotatedcoords{-200}{90}{0}
+	\tdplotsetrotatedcoordsorigin{(Shift)}
+	%%%% draw A1
+	\draw[thick,color=green,tdplot_rotated_coords,->] (A) --
+	(Ax) node[anchor=east]{$y$};
+	\draw[thick,color=red,tdplot_rotated_coords,->] (A) --
+	(Ay) node[anchor=west]{$x$};
+	\draw[thick,color=blue,tdplot_rotated_coords,->] (A) --
+	(Az) node[anchor=east]{$z$};
+	\draw (A) node[left] {$\bold{C_{A}}_{i-1}$};
+	
+	\draw[thick,color=green,tdplot_rotated_coords,->] (A1) --
+	(A1x) node[anchor=north]{$y$};
+	\draw[thick,color=red,tdplot_rotated_coords,->] (A1) --
+	(A1y) node[anchor=west]{$x$};
+	\draw[thick,color=blue,tdplot_rotated_coords,->] (A1) --
+	(A1z) node[anchor=east]{$z$};
+	\draw (A1) node[right] {$\bold{C_{A}}_{i}$};
+	
+	\draw[thick,color=green,tdplot_rotated_coords,->] (A2) --
+	(A2x) node[anchor=north]{$y$};
+	\draw[thick,color=red,tdplot_rotated_coords,->] (A2) --
+	(A2y) node[anchor=east]{$x$};
+	\draw[thick,color=blue,tdplot_rotated_coords,->] (A2) --
+	(A2z) node[anchor=east]{$z$};
+	\draw (A2) node[right] {$\bold{C_{A}}_{i+1}$};
+	
+	%%%% draw B1
+	\draw[thick,color=green,tdplot_rotated_coords,->] (B) --
+	(Bx) node[anchor=north]{$y$};
+	\draw[thick,color=red,tdplot_rotated_coords,->] (B) --
+	(By) node[anchor=south]{$x$};
+	\draw[thick,color=blue,tdplot_rotated_coords,->] (B) --
+	(Bz) node[anchor=south]{$z$};
+	\draw (B) node[left] {$\bold{C_{B}}_{i-1}$};
+	\draw[thick,color=green,tdplot_rotated_coords,->] (B1) --
+	(B1x) node[anchor=north]{$y$};
+	\draw[thick,color=red,tdplot_rotated_coords,->] (B1) --
+	(B1y) node[anchor=south]{$x$};
+	\draw[thick,color=blue,tdplot_rotated_coords,->] (B1) --
+	(B1z) node[anchor=south]{$z$};
+	\draw (B1) node[right] {$\bold{C_{B}}_{i}$};
+	\draw[thick,color=green,tdplot_rotated_coords,->] (B2) --
+	(B2x) node[anchor=north]{$y$};
+	\draw[thick,color=red,tdplot_rotated_coords,->] (B2) --
+	(B2y) node[anchor=south]{$x$};
+	\draw[thick,color=blue,tdplot_rotated_coords,->] (B2) --
+	(B2z) node[anchor=south]{$z$};
+	\draw (B2) node[above] {$\bold{C_{B}}_{i+1}$};
+	
+	%\draw[loosely dotted, color=black] (A) -- (A1);
+	\draw[<->, dashed] (A) to[bend left=80] node[above,rotate=0] {$\mathbf{T}_{\mathbf{A}_{i-1}}^{{\mathbf{A}}_i}=\mathbf{A}_i$} (A1);
+	\draw[<->, dashed] (A1) to[bend left=80] node[above,rotate=0] {$\mathbf{T}_{\mathbf{A}_{i}}^{{\mathbf{A}}_{i+1}}=\mathbf{A}_{i+1}$} (A2);
+	\draw[<->, dashed] (B) to[bend right=80] node[below,rotate=0] {$\mathbf{T}_{\mathbf{B}_{i-1}}^{{\mathbf{B}}_i}=\mathbf{B}_{i}$} (B1);
+	\draw[<->, dashed] (B1) to[bend right=80] node[below,rotate=0] {$\mathbf{T}_{\mathbf{B}_{i}}^{{\mathbf{B}}_{i+1}}=\mathbf{B}_{i+1}$} (B2);
+	
+	\draw[<->, loosely dotted] (A) to[bend right=80] node[left,rotate=0] {$\mathbf{X}$} (B);
+	\draw[<->, loosely dotted] (A1) to[bend right=80] node[left,rotate=0] {$\mathbf{X}$} (B1);
+	\draw[<->, loosely dotted] (A2) to[bend right=80] node[left,rotate=0] {$\mathbf{X}$} (B2);
+	
+	\end{tikzpicture}
+	\caption{Illustration diagram of extrinsic calibration problem: $\mathbf{C_{A}}$ represents the frame of sensor $A$, $\mathbf{C_{B}}$ defines the coordinate frame of $B$, $A$ and $B$ are rigidly mounted and the corresponding transformation matrix is denoted with $\mathbf{X}$. Dashed connections denote transformation matrices directly measured, while dotted links denote transformation matrices to be estimated.}
+	\label{fig:frame}
+\end{figure}
 
 \end{document}
