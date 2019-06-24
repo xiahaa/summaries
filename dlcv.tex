@@ -1,0 +1,47 @@
+\documentclass[a4paper]{article}
+\usepackage{lipsum}
+\usepackage{tikzpagenodes}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,matrix}
+\pgfplotsset{compat=1.8}
+\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+\usepackage[colorlinks=true,citecolor=green]{hyperref}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{bm}
+\usepackage{pbox}
+\usepackage{siunitx,booktabs,etoolbox}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\section{Loss simplification of sigmoid}
+Sigmoid function:
+\begin{align}
+	\sigma(y) = \frac{1}{1+e^{-y}} = \frac{e^y}{e^{y}+1} 
+\end{align}
+The loss is defined as (taking one sample as an example):
+\begin{align}
+-f_{loss}(y, \hat{y})&=ylog(\sigma(\hat{y}))+(1-y)\left( log(1-\sigma\left( \hat{y}) \right) \right)  \\
+&=ylog(\frac{e^{\hat{y}}}{e^{\hat{y}}+1})+(1-y)log(1-\frac{e^{\hat{y}}}{e^{\hat{y}}+1})  \\
+&=ylog(\frac{e^{\hat{y}}}{e^{\hat{y}}+1})+(1-y)log(\frac{1}{e^{\hat{y}}+1})  \\
+&=y\left( log\left(e^{\hat{y}}\right)-log\left({e^{\hat{y}}+1}\right)\right)+(1-y)\left(log(1)-log(e^{\hat{y}}+1)\right)  \\
+&=y\left(\hat{y}-log\left({e^{\hat{y}}+1}\right)\right)+(1-y)\left(-log(e^{\hat{y}}+1)\right) \\
+&=y\hat{y}-\underbrace{ylog\left({e^{\hat{y}}+1}\right)}_{1}-log(e^{\hat{y}}+1)+\underbrace{y\left(log(e^{\hat{y}}+1)\right)}_{2}
+\end{align}
+Term $1$ and Term $2$ will cancel out, then
+\begin{align}
+	-f_{loss}(y, \hat{y})&=y\hat{y}-log(e^{\hat{y}}+1) \Leftrightarrow \\
+	f_{loss}(y, \hat{y})&=-y\hat{y}+log(e^{\hat{y}}+1) 
+\end{align}
+
+\end{document}
