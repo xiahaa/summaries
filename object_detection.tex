@@ -1,0 +1,460 @@
+\documentclass[a4paper]{report}
+\usepackage{lipsum}
+\usepackage{tikzpagenodes}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,matrix}
+\pgfplotsset{compat=1.8}
+\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+\usepackage[colorlinks=true,citecolor=green]{hyperref}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{bm}
+\usepackage{pbox}
+\usepackage{siunitx,booktabs,etoolbox}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\section{Related Work}
+In terms of the literatures, the tracking-by-detection methods [10], [11], aim to solve the long-term object tracking problems. The TLD [10] and Struck [11], as the state of the arts, have achieved great performance on benchmarks [27], [28]
+[10] Z. Kalal, K. Mikolajczyk, and J. Matas, “Tracking-learning-detection,”
+IEEE Trans. Pattern Anal. Mach. Intell., vol. 34, no. 7, pp. 1409–1422,
+Dec. 2012.
+[11] S. Hare, S. Golodetz, and A. Saffari, “Struck: Structured output tracking
+with Kernels,” IEEE Trans. Pattern Anal. Mach. Intell., vol. 38, no. 10,
+pp. 2096–2109, Dec. 2015.
+[27] Y. Wu, J. Lim, and M. Yang, “Online object tracking: A benchmark,” in
+Proc. IEEE Conf. Comput. Vision Pattern Recognit., 2013, pp. 2411–2418.
+
+The detector, tracker, and learner were integrated by TLD to robustly track a single object in cases of heavy occlusion, out-of-view, scale change, etc. 
+
+
+\subsection{aim}:
+
+% here why deep learning based trackers are not in consideration
+Most of these state of the arts have only been tested with GPU acceleration. However,
+they demonstrate low efficiency when they operate on specified embedded processors with only CPU.
+
+To realize fast object detection, the proposed detector divides the detection process into two steps: Proposals extraction and proposals classification. In the first step, classical methods
+
+Our algorithm extracts multiscale salient regions
+
+% note when compute the response, multiple a scale factor, see advanced image processing
+We develop a saliency map pyramid with multiple layers, to enhance the robustness for
+scale-varying objects. In this article, a two-layer architecture is adopted, where the input image for the second layer is resized to half the size of the first.
+
+Aiming to realize a classification of 30Hz that is appropriate for real flight scenarios,
+
+%% classifier
+Each dimension of the output vector denotes the probability of
+belonging to the corresponding class. Generally, the proposal
+will be treated as the corresponding class only if the maximal
+probability is greater than a specified threshold.
+
+Similar to Detector, the real-time capability of the tracker is
+the main performance to be considered. In this system, the the
+kernel correlation filter (KCF) tracker [38] is employed owing
+to its great real-time capability. As for multiobject tracking task,
+multiple KCF trackers are assigned to objects, respectively.
+[38] J. Henriques, R. Caseiro, and P. Martins, “High-speed tracking with
+Kernelized correlation filters,” IEEE Trans. Pattern Anal. Mach. Intell.,
+vol. 37, no. 3, pp. 583–596, Aug. 2014.
+
+while the reclassification is conducted every 10 frames.
+
+%% experiment, some quantatitive indicators are needed
+2) Accuracy: The accuracy comparison was conducted
+among oDTL, TLD, TM, and YOLO, and the results are presented
+in Table II. The precision P and recall R are computed
+
+\section{Whycon}
+about geometric pattern detection,
+
+One of the classical solution is the Generalized Hough Transform (Ballard 1981) used for finding the parameters of the expected geometrical shapes,, which is
+unfortunately computationally demanding.
+
+
+The detection algorithm searches the image for circular patterns using a combination of flood-fill techniques, adaptive thresholding, and and on-the-fly statistics calculation.
+
+The statistical information gathered on-the-fly is used to test
+whether the continuous areas of pixels are likely to represent
+the searched pattern, and quickly reject false candidates. 
+
+
+The main advantage of the method is that it can be initiated from
+any position in the image without a performance penalty,
+which allows for a simple implementation of pattern tracking.
+
+
+In a typical situation, the algorithm processes only the area that is occupied by the pattern itself, which results in a significant performance boost.
+
+In the initial phase of the pattern detection, the image is scanned for a continuous segment of black pixels. Segmentation of the pixels into black and white classes employs an adaptive thresholding that ensures good performance of the algorithm under variable light conditions, which is especially important in real-world outdoor experiments. Once a continuous segment of black pixels is found by the floodfill
+method, it is tested for minimum size and roundness.
+
+
+If a black region passes the roundness test, the flood-fill algorithm is initiated from the region’s centroid in order to search for the inner white segment. Again, a roundness score is computed for verification.
+
+Then, the concentricity of segments and the ratio of their areas are tested. After passing these tests, a PCA is used to to find the ellipse parameters.
+
+
+%cluster each of these datasets into six separate clusters using k-means and then fit PCA subspaces to each of the resulting 12 clusters
+
+
+%While a lot of the research on object detection has focused on faces, the detection of other objects, such as pedestrians and cars, has also received widespread attention
+
+Perhaps the most famous classical detector is the algorithm developed by Dalal
+and Triggs (2005), which is originally used for pedestrian detection. It extracts histogram of oriented gradients (HOG) descriptors and feed them into a support vector machine (SVM) classifier.
+
+% Each HOG has cells to accumulate magnitude-weighted votes for gradients at particular orientations, just as in the scale invariant feature transform (SIFT) developed by Lowe (2004), see the work of Dalal and Triggs (2005) for more implementation details.
+
+% Once the descriptors have been computed, a support vector machine (SVM) is trained
+on the resulting high-dimensional continuous descriptor vectors. 
+
+
+\subsection{CNN}
+Ever since its success on imagenet competition, deep learning and convolutional neural networks (CNNs) have revolutionized the field of computer vision over the last
+years. It is now almost the standard tool for a large
+variety of computer vision tasks such as image classification, object detection, and segmentation. 
+%significantly boosted the level of performance
+New network architectures, layer types, and methods to improve the training efficiency and the performance of the CNNs are proposed at a very rapid pace.
+
+Although existing network architectures vary greatly, there are some elements and operations that are used in most networks. 
+A comprehensive summary of common methods and operations in deep learning networks can be found in [20].
+[45] J. Redmon, S. Divvala, R. Girshick, and A. Farhadi. “You only look
+once: Unified, real-time object detection”. In: Proceedings of the IEEE
+conference on computer vision and pattern recognition. 2016, pp. 779–
+788.
+[20] I. Goodfellow, Y. Bengio, and A. Courville. Deep learning. MIT press,
+2016.
+
+
+Convolutional layers. In a convolutional layer, the input is convolved with a number of convolution kernels to generate the output called feature maps. The trainable kernel weights are normally shared within a layer and applied across the entire input. This parameter sharing is both memory and computationally efficient, and also leads to translational invariance by pooling.
+
+The more modern activation functions are derived from the Rectified Linear Unit (ReLU) [19] and other variants, e.g. Leaky ReLU, have been proposed recently.
+[19] X. Glorot, A. Bordes, and Y. Bengio. “Deep sparse rectifier neural networks”.
+In: Proceedings of the Fourteenth International Conference on
+Artificial Intelligence and Statistics. 2011, pp. 315–323.
+
+
+Generally, a CNN can be divided into two main parts. The first part, often
+called the encoder, generates feature maps or feature descriptors to represent
+the input image at various levels of detail. The basic building elements of the
+encoder are convolutional layers, nonlinear activation functions and pooling
+layers. The second part of the CNN utilizes these image representations and is
+trained to output e.g. the image object class, the location of a tracked object or
+a pixelwise horizon segmentation. The second part in a classification network,
+the classifier, often comprises a few fully connected layers, activation layers
+and sometimes pooling layers. The final stage of a classification network is a
+softmax operation, which outputs the probabilities for each object class.
+
+
+Transfer learning
+Transfer learning is a technique that is widely used within the field of deep learning. Transfer learning means that a network model is trained for one
+base task, and the trained model is then reused as the starting point to solve
+a second application task. There are two main drivers for using transfer learning.
+First, training on the application task can be made with a significantly
+smaller number of training images compared to training the full network from
+scratch. Provided that the base task is general enough, the learned model only
+needs to be fine-tuned when training on the application task. Second, there
+is a large gain in training time and thus saving computational resources when
+solving the application task. Training the network on the base task with a
+huge dataset may take weeks on dedicated hardware. This training time can
+be saved when using transfer learning for the application task.
+
+
+\subsection{MOSSE}
+Visual tracking has many practical applications in video processing. When a target is located in one frame of a video, it is often useful to track that object in subsequent frames. Every frame in which the target is successfully
+tracked provides more information about the identity
+and the activity of the target. Because tracking is generally easier than detection, tracking algorithms can use fewer computational resources than running an object detector on every frame.
+Visual tracking has received much attention in recent years. A number of robust tracking strategies have been proposed that tolerate changes in target appearance and
+track targets through complex motions
+
+the strength of a correlation peak
+
+can be used to detect occlusions or tracking failure, to stop the online update, and to reacquire the track if the object reappears with a similar appearance.
+
+The tracker follows the object within specified region-of-interest from
+frame to frame with lower computing consumption.
+
+One difficulty is that the objects may move out of the camera view frequently due to the fast flight speed of fixed-wing vehicles. Besides, the object appearances vary constantly due to the ever-changing viewpoint and illumination conditions.
+
+Although some handcrafted feature descriptors are robust to illumination variation, they often rely on extra information such as image depth [17]. Instead, the
+convolutional neural network (CNN) could extract the features
+at different levels through a prelearning process.
+
+Under such circumstances, this article proposes and develops
+a lightweight approach to realize a long-term, real-time, and
+automatic positioning, using only low-cost onboard sensors and
+processors.
+
+
+SOME degrees of user interaction is required
+
+
+%cite Automaticgenerationanddetectionofhighlyreliable fiducial markers under occlusion
+
+One of the most popular families of fiducial markers are
+the square-based ones. They contain a black border to ease
+their detection and employ their inner region for identication
+purposes. Their main benefit is that each marker provides
+four prominent points (i.e. its four corners) which can
+be easily detected and employed as correspondence points,
+thus allowing camera pose estimation using a single marker.
+
+
+
+This section explains the steps employed to automatically
+detect the markers in an image(Fig. 5(a)). The process is
+comprised by several steps aimed at detecting rectangles and
+extracting the binary code from them. For that purpose, we take as
+input a gray-scale image.While the imagea nalysisisnotanovel
+contribution, themarkercodeidentification anderrorcorrectionis
+a newapproachspecifically designedforthegenerateddiction-
+aries ofourmethod.Thestepsemployedbyoursystemare
+described inthefollowing:
+1 Image segmentation: Firstly,themostprominentcontoursin
+the gray-scaleimageareextracted.Ourinitialapproachwas
+employingtheCannyedgedetector [35], however,itisvery
+slow forourreal-timepurposes.Inthiswork,wehaveoptedfor
+a localadaptivethresholdingapproachwhichhasproventobe
+very robusttodifferentlightingconditions(see Fig. 5(b)).
+2 Contourextractionand filtering: Afterwards,acontourextrac-
+tion isperformedonthethresholdedimageusingtheSuzuki
+and Abe [36] algorithm. Itproducesthesetofimagecontours,
+most ofwhichareirrelevantforourpurposes(see Fig. 5(c)).
+Then, apolygonalapproximationisperformedusingthe
+Douglas–Peucker [37] algorithm. Sincemarkersareenclosed
+in rectangularcontours,thosethatarenotapproximatedto
+4-vertexpolygonsarediscarded.Finally,wesimplifynear
+contours leavingonlytheexternalones. Fig. 5(d) showsthe
+resulting polygonsfromthisprocess.
+3 Marker Codeextraction: Thenextstepconsistsinanalyzingthe
+inner regionofthesecontourstoextractitsinternalcode.First,
+perspectiveprojectionisremovedbycomputingthehomo-
+graphymatrix(Fig. 5(e)). Theresultingimageisthresholded
+using Otsu0s method [38], whichprovidestheoptimalimage
+thresholdvaluegiventhatimagedistributionisbimodal
+(which holdstrueinthiscase).
+
+35] J. Canny,Acomputationalapproachtoedgedetection,IEEETrans.Pattern
+Anal. Mach.Intell.8(6)(1986)679–698.
+[36] S. Suzuki,K.Abe,Topologicalstructuralanalysisofdigitizedbinaryimagesby
+border following,Comput.Vis.Graph.ImageProcess.30(1)(1985)32–46.
+[37] D.H. Douglas,T.K.Peucker,Algorithmsforthereductionofthenumberof
+points requiredtorepresentadigitizedlineoritscaricature,Cartographica:
+Int. J.Geogr.Inf.Geovis.10(2)(1973)112–122.
+[38] N. Otsu,Athresholdselectionmethodfromgray-levelhistograms,IEEETrans.
+Syst. ManCybern.9(1)(1979)62–66.
+
+Corner refinement andposeestimation: Onceamarkerhasbeen
+detected,itispossibletoestimateitsposewithrespecttothe
+camera byiterativelyminimizingthereprojectionerrorofthe
+corners (usingforinstancetheLevenberg–Marquardtalgo-
+rithm [39,40]). 
+
+
+cite{whycon}
+
+% which computes the bounding box, number of pixels, and center of gravity on
+the fly. 
+
+ 
+1) Segmentation and thresholding: Starting from a pixel position p0, the algorithm classifies the current pixel as either black or white by thresholding against an adaptively set value.
+In a case the pixel is classified as white, the algorithm
+proceeds to the next image pixel. In case a black pixel is
+found, a segment consisting of the contiguous set of black
+pixels is computed using a queue-based flood-fill method, see
+Algorithm 1. This black segment is tested for a possible match
+of the outer ring of the pattern. At this point, these tests consist
+of a minimum size (in terms of the number of pixels belonging
+to the segment) and a roundness measure within acceptable
+bounds. These simple constraints allow a fast rejection of false
+positives. In a case either test fails, the detection for further
+black segments continues starting from the next pixel position.
+However, no redundant computation is performed since the
+previous segment is labeled with a unique identifier.
+If a black segment passes both tests, the detection resumes
+from the pixel position corresponding to the segment centroid
+where a white pixel is expected. In this case, the corresponding
+white segment is computed using the flood-fill algorithm. If the
+minimum size and roundness tests are valid, further validation
+tests are performed involving the centroid positions of both
+segments, their area ratio, and a more complex circularity
+measure (discussed in following sections). If the segments pass
+all these tests, the pattern is considered to be found and its
+centroid position will be used as a starting point p0 for the
+next detection run.
+
+
+3) Pattern center and dimensions: Once a pattern passes all
+the aforementioned tests, the queue, which has been used by
+the flood-fill phase, contains positions of all the pattern pixels.
+Thus, all the information to calculate the ellipse centre u; v and
+semiaxes e0; e1 is at hand. The pattern center u; v is calculated
+simply as the mean of the pixel positions. Then, the method
+calculates the covariance matrix of the pixels positions C. The
+eigenvalues and eigenvectors of the matrix correspond to the
+ellipse semiaxes lengths and orientations. 
+
+Since the matrix C is two-dimensional, its eigen decomposition
+is a matter of solving one quadratic equation. Note
+that if it is desirable, the most of the calculation of C can be
+performed in the integer arithmetic, which might be useful if
+the system runs on an embedded hardware.
+
+
+cite{JIRS}
+
+In [16], a planar pattern consisting of a ring surround-
+ing the letter \H" is used to obtain the relative 6DoF
+robot pose with an on-board camera and IMU (Inertial
+Measurement Unit) to resolve angular ambiguity. The
+pattern is initially detected by binarization using adap-
+tive thresholding and later processing for connected com-
+ponent labeling. For classifying each component as be-
+longing to the target or not, a neural network (multilayer
+perceptron) is used. The input to the neural network is a
+resized 14 x 14 pixel image. After testing for certain ge-
+ometric properties, false matches are discarded. Positive
+matches corresponding to the outer ring are processed
+by applying the Canny edge detector and ellipse tting,
+which allows computation of the 5DoF pose. Recognition
+of the \H" letter allows to obtain the missing yaw angle.
+The precision in 3D position is in the order of 1 cm to
+7 cm depending on the target viewing angle and distance,
+which was at the maximum around 1:5 m.
+
+Finally, a widely used, simple and freely available cir-
+cular target detector can be found in the OpenCV li-
+brary. This "SimpleBlobDetector" class is based on tra-
+ditional blob detection methods and includes several op-
+tional post-detection ltering steps, based on character-
+istics such as area, circularity, inertia ratios, convexity
+and center color. While this implementation is originally
+aimed for circular target detection, by tuning the pa-
+rameters it is possible to nd elliptical shapes similar
+to the ones proposed in the present work and thus it is
+compared to the proposed implementation.
+
+3 Pattern detection
+The core of the proposed computationally efficient local-
+ization system is based on pattern detection. Fast and
+precise detection is achieved by exploiting properties of
+the considered pattern that is a black and white roundel
+consisting of two concentric annuli with a white central
+disc, see Figure 1.
+The low computational requirements are met by the
+pattern detection procedure based on on-demand thresh-
+olding and fl
+ood fill techniques, and gathering statistical
+information of the pattern on the 
+y. The statistical data
+are used in consecutive tests with increasing complexity,
+which determine if a candidate area represents the de-
+sired circular pattern.
+The pattern detection starts by searching for a black
+segment. Once such a segment is detected and passes the
+initial tests, the segment detection for a white inner disc
+is initiated at the expected pattern center.
+Notice, that at the beginning, there is no prior infor-
+mation about the pattern position in the image; hence,
+the search for the black segment is started at a ran-
+dom position. Later, in the subsequent detections, when
+a prior pattern position is available, the algorithm starts
+detection over this area. For a successfully re-detected
+(tracked) pattern, the detection processes only pixels be-
+longing to the pattern itself, which signicantly reduces
+the computation burden. Since the method is robust (see
+following sections for detection limits), tracking is gen-
+erally successful and thus the method provides very high
+computational performance.
+After the roundel is detected, its image dimensions
+and coordinates are identied. Then, its three-dimensional
+position with respect to the camera is computed from its
+known dimensions and camera re-projection techniques,
+and its coordinates are transformed to a coordinate frame
+dened by the user, see Section 4.
+
+segmentation
+First,
+a black circular ring is searched for in the input im-
+age starting at an initial pixel position p0. The adaptive
+thresholding classies the processed pixel using an adap-
+tively set value aa as either black or white. If a black pixel
+is detected, the queue-based 
+ood-ll algorithm proce-
+dure is initiated to determine the black segment.
+Once the 
+ood ll is complete, the segment is tested
+for a possible match of the outer (or inner) circle of
+the pattern. At this point, these tests consist of a min-
+imum size (in terms of the number of pixels belonging
+to the segment) and a roundness measure within accept-
+able bounds.
+Hence, ini-
+tial simple constraints can be validated quickly for a fast
+rejection of false positives.
+In the case where either test fails, the detection for
+further segments continues by starting from the next
+pixel position (i.e., a pixel at the position p0 + 1). How-
+ever, no redundant computation is performed since the
+previous segment is labeled with a unique identier.
+
+Efficient thresholding
+Since the segmentation looks only for black or white seg-
+ments, the success rate of the roundel detection depends
+on the threshold parameter $\tau$ , especially under various
+lighting conditions. Therefore, we proposed to adaptively
+update aa whenever the detection fails according to a bi-
+nary search scheme over the range of possible values.
+When the pattern is successfully detected, the thresh-
+old is updated using the information obtained during
+detection in order to iteratively improve the precision of segmentation:
+
+The computationally intensive full image threshold-
+ing is addressed by on-demand processing over each pixel
+analyzed during the detection. At the very rst access,
+the RGB values of the image are read and a pixel is
+classied as either black or white and the classication
+result is stored for further re-use in the subsequent steps.
+Moreover, whenever the tracking is successful, only the
+relevant pixels are thresholded and processed by the two-
+step 
+ood ll segmentation. Clearing the per-pixel classi-
+cation memory area is also efficiently performed by only
+resetting the values inside the pattern's bounding box.
+As a result, the detection step is not directly dependent
+on the input image resolution, which provides a signi-
+cant performance gain. If the tracking is not successful,
+extra memory accesses resulting from this on-demand
+strategy are negligible compared to a full-image thresh-
+olding approach.
+
+Compensation of incorrect diameter estimation
+Moreover, the pixels on the black/white bor-
+der are affected by chromatic aberration, nonlinear cam-
+era sensitivity, quantization noise, and image compres-
+sion
+
+The compensation of the
+pattern diameter reduces the average localization error
+by approximately
+
+Moreover,
+we found that the OpenCV's blob radius calculation was
+too imprecise to reliably estimate the pattern distance
+and could not be used for the full 3D localization.
+
+\bibliography{gdop} 
+\bibliographystyle{ieeetr}
+
+\end{document}
