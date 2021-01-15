@@ -25,6 +25,20 @@
 \begin{document}
 
 \section{Related Work}
+
+\subsection{Tracking}
+Visual tracking aims to track a target in subsequent frames, which has many practical applications. Generally speaking, tracking is simpler than detection because the information learned from the object will be reused in the consecutive frames. Moreover, tracking algorithm normally is much faster than detection algorithm since it only needs to precess a small patch around the object rather than the whole image.
+% use fewer computational resources
+Thanks to these merits, it is often preferred to perform tracking after a target is detected rather than running detection algorithm on every new frame.
+
+
+Visual tracking has many practical applications in video processing. When a target is located in one frame of a video, it is often useful to track that object in subsequent frames. Every frame in which the target is successfully
+tracked provides more information about the identity
+and the activity of the target. Because tracking is generally easier than detection, tracking algorithms can use fewer computational resources than running an object detector on every frame.
+Visual tracking has received much attention in recent years. A number of robust tracking strategies have been proposed that tolerate changes in target appearance and
+track targets through complex motions
+
+
 In terms of the literatures, the tracking-by-detection methods [10], [11], aim to solve the long-term object tracking problems. The TLD [10] and Struck [11], as the state of the arts, have achieved great performance on benchmarks [27], [28]
 [10] Z. Kalal, K. Mikolajczyk, and J. Matas, “Tracking-learning-detection,”
 IEEE Trans. Pattern Anal. Mach. Intell., vol. 34, no. 7, pp. 1409–1422,
@@ -172,11 +186,7 @@ be saved when using transfer learning for the application task.
 
 
 \subsection{MOSSE}
-Visual tracking has many practical applications in video processing. When a target is located in one frame of a video, it is often useful to track that object in subsequent frames. Every frame in which the target is successfully
-tracked provides more information about the identity
-and the activity of the target. Because tracking is generally easier than detection, tracking algorithms can use fewer computational resources than running an object detector on every frame.
-Visual tracking has received much attention in recent years. A number of robust tracking strategies have been proposed that tolerate changes in target appearance and
-track targets through complex motions
+
 
 the strength of a correlation peak
 
@@ -453,6 +463,19 @@ Moreover,
 we found that the OpenCV's blob radius calculation was
 too imprecise to reliably estimate the pattern distance
 and could not be used for the full 3D localization.
+
+
+ Yang,
+Scherer, and Zell (2013) used an H‐shaped target that could be
+recognized successfully in complex scenes and had better robustness.
+
+Ellipse extraction
+Ellipses are the most significant features of the target and can give the
+center of the target. Fornaciari, Prati, and Cucchiara (2014) provided a
+novel real‐time algorithm called yet another ellipse detector (YAED)
+relying on an innovative arc selection strategy. YAED segments contour
+into four quadrants. The arcs that can group an ellipse are selected in
+these quadrants. Figure 5e shows the ellipses detected by YAED.
 
 \bibliography{gdop} 
 \bibliographystyle{ieeetr}
