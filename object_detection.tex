@@ -26,12 +26,19 @@
 
 \section{Introduction}
 
+Traditional fiducial detectors work well in idea conditions. 
+
+However, they are not flexible in practice. Change of the fiducial type or size often requires tedious re-adjustments of some related thresholds which make the algorithms work properly.
+
+
+
 Although the modern state of the arts can solve the tracking and recognition tasks very well, most of them rely on the acceleration of using high-performance GPU. In case that the computational resource is limited, their efficiency will drop significantly.
+
 
 Considering that the fiducials only occupy small portions of the whole image, it is not worthwhile to detect them by analysing the whole frame, while simply downsample the image and then feed it to a detector may deteriorate the accuracy due to the loss of information. Consequently, in this thesis, the fiducial detection is solved in two steps: first the ROIs are detected from a coarse image and then an arc based ellipse detector is used to detect valid ellipses. This scheme improves efficiency as well as maintains accuracy. 
 %The reason for dividing the whole process in two steps is for 
 
-For ROI detection, the following framework is applied. Initially, the template matching is used to extract a number of possible candidate ROIs. A cascaded classifier is used to verify the valid ROIs and reject others. When an valid ROI is found, an associated tracker is also initialized so that visual tracking can be applied in the new coming frames.
+For ROI detection, the following framework is applied. Initially, the template matching is used to extract a number of possible candidate ROIs. A cascaded classifier is used to verify the valid ROIs and reject others. When an valid ROI is found, an associated tracker is also initialized so that visual tracking can be applied in the new coming frames. 
 
 Indeed, the extraction and classification of ROIs can be combined in one step by using the convolutional implementation of sliding windows. Nonetheless, for the sake of efficiency, classical template matching is used. The use of tracking rather than running frame based detection is due to the same reason. As shown in the experiments, this framework can realize a performance of 40-60 Hz, which is highly sufficient for processing the capture video steams(30 Hz).
 
@@ -39,7 +46,36 @@ Indeed, the extraction and classification of ROIs can be combined in one step by
 
 \section{Related Work}
 
+\subsection{Object Detection}
+
+
+%cluster each of these datasets into six separate clusters using k-means and then fit PCA subspaces to each of the resulting 12 clusters
+
+%While a lot of the research on object detection has focused on faces, the detection of other objects, such as pedestrians and cars, has also received widespread attention
+
+Perhaps the most famous classical detector is the algorithm developed by Dalal
+and Triggs (2005), which is originally used for pedestrian detection. It extracts histogram of oriented gradients (HOG) descriptors and feed them into a support vector machine (SVM) classifier.
+
+% Each HOG has cells to accumulate magnitude-weighted votes for gradients at particular orientations, just as in the scale invariant feature transform (SIFT) developed by Lowe (2004), see the work of Dalal and Triggs (2005) for more implementation details.
+
+% Once the descriptors have been computed, a support vector machine (SVM) is trained
+on the resulting high-dimensional continuous descriptor vectors. 
+
+\subsection{On Fiducial}
+
+As discussed in introduction, detection using machine learning or deep learning techniques has now shown great advantage on noise and blur resilience~\cite{prasad2015motion}.
+
+
+ChromaTag[19]modifies AprilTag to use colors for both can-didate detection and decoding (seeFig. 2g). The detection algorithmonly runs on areas where both violet and green are present, whichdecreases the detection time significantly.
+
+
 \subsection{Tracking}
+Tracking: Fiducial detection between successive video
+frames can be considered as a tracking problem where the
+tracked object is the fiducial. There is a very large body
+of research dedicated to tracking and interested readers are
+referred to [29] for a good survey
+
 Visual tracking aims to track a target in subsequent frames, which has many practical applications. Generally speaking, tracking is simpler than detection because the information learned from the object will be reused in the consecutive frames. Moreover, tracking algorithm normally is much faster than detection algorithm since it only needs to precess a small patch around the object rather than the whole image.
 % use fewer computational resources
 Thanks to these merits, it is often preferred to perform tracking after a target is detected rather than running detection algorithm on every new frame. Visual tracking has attracted much attention in recent years, in particular after the releases of several public datasets. 
@@ -101,48 +137,27 @@ The strength of a correlation peak can be used to detect tracking failure, as pr
 among oDTL, TLD, TM, and YOLO, and the results are presented
 in Table II. The precision P and recall R are computed
 
-\section{Whycon}
+
 about geometric pattern detection,
 
-One of the classical solution is the Generalized Hough Transform (Ballard 1981) used for finding the parameters of the expected geometrical shapes,, which is
-unfortunately computationally demanding.
+\section{Whycon}
+One of the classical solution for detecting the circular fiducial is the Generalized Hough Transform (Ballard 1981) used for finding the parameters of a geometrical shape, which is unfortunately computationally demanding. 
+
+Other classical solutions rely on image analysis.
+
+For example, in [whycon], the authors proposed a detection algorithm that search the image for circular patterns using a combination of adaptive thresholding, region growing, and on-the-fly verification of geometric attributes. More specifically, the algorithm starts by finding a pixel that can be classified as black class based on an adaptive threshold. Once it is found, region growing algorithm is applied subsequently to extract a connected component from the image. Then, the component is verified for validity based on some geometric attributes such as area and roundness
+. If the black region passes the verification, a corresponding white region is grown from the center of the black region, which is again verified using attributes like concentricity and area ratio. After the white region passes these tests, a PCA is used to to find the ellipse parameters.
 
 
-The detection algorithm searches the image for circular patterns using a combination of flood-fill techniques, adaptive thresholding, and and on-the-fly statistics calculation.
 
-The statistical information gathered on-the-fly is used to test
-whether the continuous areas of pixels are likely to represent
-the searched pattern, and quickly reject false candidates. 
+%The verification of a component as the searched pattern is based on the statistical information, namely area, roundness, extracted from grown regions. 
 
+The author further improves the efficiency by searching the pattern in the next frame from the center of the pattern detected in current frame. 
 
-The main advantage of the method is that it can be initiated from
-any position in the image without a performance penalty,
-which allows for a simple implementation of pattern tracking.
+%In a typical situation, the algorithm processes only the area that is occupied by the pattern itself, which results in a significant performance boost.
 
 
-In a typical situation, the algorithm processes only the area that is occupied by the pattern itself, which results in a significant performance boost.
 
-In the initial phase of the pattern detection, the image is scanned for a continuous segment of black pixels. Segmentation of the pixels into black and white classes employs an adaptive thresholding that ensures good performance of the algorithm under variable light conditions, which is especially important in real-world outdoor experiments. Once a continuous segment of black pixels is found by the floodfill
-method, it is tested for minimum size and roundness.
-
-
-If a black region passes the roundness test, the flood-fill algorithm is initiated from the region’s centroid in order to search for the inner white segment. Again, a roundness score is computed for verification.
-
-Then, the concentricity of segments and the ratio of their areas are tested. After passing these tests, a PCA is used to to find the ellipse parameters.
-
-
-%cluster each of these datasets into six separate clusters using k-means and then fit PCA subspaces to each of the resulting 12 clusters
-
-
-%While a lot of the research on object detection has focused on faces, the detection of other objects, such as pedestrians and cars, has also received widespread attention
-
-Perhaps the most famous classical detector is the algorithm developed by Dalal
-and Triggs (2005), which is originally used for pedestrian detection. It extracts histogram of oriented gradients (HOG) descriptors and feed them into a support vector machine (SVM) classifier.
-
-% Each HOG has cells to accumulate magnitude-weighted votes for gradients at particular orientations, just as in the scale invariant feature transform (SIFT) developed by Lowe (2004), see the work of Dalal and Triggs (2005) for more implementation details.
-
-% Once the descriptors have been computed, a support vector machine (SVM) is trained
-on the resulting high-dimensional continuous descriptor vectors. 
 
 
 \subsection{CNN}
@@ -198,8 +213,6 @@ be saved when using transfer learning for the application task.
 
 \subsection{MOSSE}
 
-
-
 Although some handcrafted feature descriptors are robust to illumination variation, they often rely on extra information such as image depth [17]. Instead, the
 convolutional neural network (CNN) could extract the features
 at different levels through a prelearning process.
@@ -210,7 +223,6 @@ automatic positioning, using only low-cost onboard sensors and
 processors.
 
 
-SOME degrees of user interaction is required
 
 
 %cite Automaticgenerationanddetectionofhighlyreliable fiducial markers under occlusion
