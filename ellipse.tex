@@ -27,25 +27,7 @@
 \section{Introduction}
 
 
-%%% dong ntu 
-An ellipse (or a circle) is a common man-made nonlinear geo- metric shape. 
 
-The ellipse detection from image streams is a common need in a variety of applications such as industrial inspection [1] , medical diagnosis [2,3] , recognition of traffic signs [4] , security [5] , face recognition [6,7] , and object tracking for a robotic plat- form [8–10] . Thus
-
-reference no use
-
-The presence of noise substantially overwhelms edge pixels of real ellipses and breaks an ellipse’s boundary into multiple disconnected arc segments. This issue, in addition to complex background, causes degradation in the perfor- mances of the existing ellipse detection methods in terms of either the detection accuracy or the execution time, often both. Moreover, efforts to improve detection accuracy often result in longer exe- cution time, while algorithmic effort s in reducing execution time often compromise the detection accuracy.
-
-Five-dimensional Hough Transform (HT) is a classical method for detecting ellipses. Regardless of the robustness, the standard Hough transform [11] involves a large amount of computational cost. To improve the computational efficiency of HT, various HT- based approaches [12–16] , such as Randomized Hough Transform (RHT) [15] and Probabilistic Hough Transform (PHT) [16] ,have been developed. However, these variants of HT cannot reach video rate computation speeds due to the process of voting among nu- merous candidates.
-
-Another class of ellipse detection approaches is edge segment detection techniques. Methods in this class exploit the connectivity between edge pixels to detect ellipses. The main steps of these methods are to extract arcs and then group them by exploiting ge- ometric or algebraic properties of ellipses. Specifically, edge arcs that may consist of an ellipse are found by variety of techniques such as the statistical regression method [19] , curve segmentation by fitting a set of short line segments on edges [20–26] , connec-tivity and curvature conditions [22,27] . Subsequently, these arcs are grouped according to the convexity-concavity [21,28,29] , arc curvature [21] , and geometric constraints [1,30–33] . Lastly, ellipses are fitted on the grouped arc candidates using RANSAC [19,32] or least squares fitting technique [28] . Prasad et al. [21] use arc con- vexity to determine search regions where suitable arc candidates for grouping may be located. Fornaciari et al. [28] use geometric constraints as a selection strategy of arcs belonging to the same ellipse and estimate parameters by decomposing the parameter space.
-
-The edge segment detection methods are regarded as the most effective in detecting multiple ellipses in digital images and require less computational cost than HT-based methods. How- ever, because of dependence on the preciseness of arcs detected, the detection accuracy drops when these methods are applied to images containing complicated occluded contours.
-
-This paper presents an ellipse detection method that combines the advantages of arc extraction and arc grouping. Arc detection involves important arc splitting steps, where our novel propo- sitions given in points 2 and 3 below help in precise arc detec- tion at low computation expense. Arc grouping using geometric constraints, discussed more in points 4 and 5 below, guarantees the effectiveness of ellipse detection and optimizes the compu- tation cost
-
-
-%%% dong ntu 
 
 %%% lu tip
 ELLIPSE detection is a fundamental technique in image processing field and plays an indispensable role in shape
