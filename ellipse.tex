@@ -34,29 +34,35 @@ detection and geometric measurement.
 %%% lu tip
 
 \subsection{Ellipse Detection}
-Geometric primitive detection is a fundamental problem in image processing. Among various geometric primitives, ellipse may be the most popular one that exists both in natural and man-made environments, and therefore plays an indispensable role in many applications like traffic signs recognition, 
+Geometric primitive detection is a fundamental problem in image processing. Among various geometric primitives, ellipse may be the most popular one that exists both in natural and man-made environments, and therefore plays an indispensable role in many applications like traffic signs recognition, 3D scene reconstruction
 
 
-In practice, the presence of noise substantially hinders the localization of the edge pixels on ellipses. Further, partial occlusions breaks ellipses' borders into discrete arc segments. These issues complicates the problem 
+In practice, the presence of noise substantially hinders the localization of the edge pixels on ellipses. Further, partial occlusions splits ellipses' borders into discrete arc segments. These issues complicates the problem 
 %and therefore causes degradation in the 
 %causes degradation in the perfor- mances of the existing ellipse detection methods in terms of either the detection accuracy or the execution time, often both.
 %compromise the detection accuracy
 
+
 There are many studies on ellipse detection found in the literature and
-they are categorized in two groups, i.e. model-based and feature-based methods.
+they are classified in two categories, i.e. Hough-based and edge chaining methods.
 
 The earliest method relied on the generalized Hough Transform for detection ellipses. Briefly,
-the key concept of the HT is to cast the detection problem in image space as a voting problem in parameter space. 
-In the case of ellipse detection, HT needs all pixels to vote in a five dimensional parameter accumulator, i.e. the center, the major axis, the minor axis, and the orientation of the ellipse. After voting, the cells with a certain number votes correspond to the detected ellipses' parameters.
-
+the key concept of the HT is to cast the detection problem in the image space as a voting problem in the parameter space. More specifically, HT first establishes an accumulator in the parameter space. In the case of ellipse detection, HT needs all pixels to vote in a five dimensional parameter accumulator, i.e. the center, the major axis, the minor axis, and the orientation of the ellipse. Then, each cell of the accumulator will be voted by the pixels who lie on the primitive corresponding to the cell. 
+After voting, the cells whose votes are local maxima and over a threshold correspond to the detected ellipses' parameters.
+%with a certain number votes 
 \todo{a figure}
 
 
 Despite its robustness to discontinuous data points, the HT based method is very time and memory consuming. 
 %In light of this,
-To improve the computational efficiency, some variants of HT were proposed with Randomized Hough Transform (RHT) being the most well known. They work by splitting the five dimensional space into two or more
-subspaces with lesser dimensionality and deal with each of the
-subspaces in separate steps
+To improve the computational efficiency, some variants of HT were proposed with Randomized Hough Transform (RHT) being the most well known. RHT based methods randomly sample a certain number (3 for ellipse) of points to determine the parameters of the primitive and then vote the computed parameters with other points. 
+[Xu 1990, McLaughlin 1998].
+RHT alleviates the memory demands by replacing the grid accumulator with a variable-length list which grows its length only when a new entry is inserted.
+%They work by splitting the five dimensional space into two or more subspaces with lesser dimensionality and deal with each of the subspaces in separate steps
+
+
+
+
 
 The most popular approach in
 these methods was to find the centers of the ellipses using
@@ -65,7 +71,8 @@ finding the remaining parameters of the ellipses in the second step.McLaughlin
 
 McLaughlin [10] rely on the randomized version of eHT(RHT)and aim at reducing the memory usage using proper data structures.
 
-A very common and memory efficient approach has been proposed by XieandJi [12] and Chiaetal. [13], where four parameters are geometrically computed,estimating in a 1D accumulator the last one.
+Chia et al. [16] used a one-dimensional (1D) accumulator and reduced the memory storage and computational complexity by keeping the advantages of the HT. Besides, they could achieve a shorter execution time by using parallel computation.
+
 
 [11] R.O. Duda , P.E. Hart , Use of the Hough transformation to detect lines and curves in pictures, Commun. ACM 15 (1972) 11–15 .
 [15] L. Xu , E. Oja , P. Kultanen , A new curve detection method: randomized Hough transform (RHT), Pattern Recognit. Lett. 11 (1990) 331–338 .
@@ -201,20 +208,6 @@ Figure 4: Sample visual results
 
 
 aamed
-The boundary of an ellipse are often splitted
-into multiple arcs because of noise, overlap, and occlusion.
-The combination of as many arcs as possible from the same
-ellipse is an effective way to improve the detection accuracy
-
-HT-based ellipse detection is the most popular method.
-HT-based methods need to overcome the problems of huge
-execution time and high memory usage.
-Chia et al. [16]
-used a one-dimensional (1D) accumulator and reduced the
-memory storage and computational complexity by keeping
-the advantages of the HT. Besides, they could achieve a
-shorter execution time by using parallel computation.
-
 In recent years, the methods based on edge-link have greatly
 improved the detection performance. The main problem of
 these methods is how to determine the elliptical arcs that
@@ -248,78 +241,33 @@ It will waste much
 time by traversing all arcs to find all adjacent arcs.
 
 elsd thesis
-A central problem in computer vision is the extraction (detection) of predefined geometric primitives
-from geometric data. A geometric primitive is a curve or surface that can be described
-by an equation with a number of free parameters; here, we are interested especially in ellipse
-detection. Geometric data are an unordered list of points in two- or three-dimensional Cartesian
-space. Such data are obtained through a variety of methods, either directly from images or by
-using an edge detector in the 2D case, or from stereovision in the 3D case. The detection of
-geometric primitives1 could be a prerequisite to solving other higher-level problems, like pose
-determination, object recognition, or 3D scene reconstruction.
 
-Existing geometric primitive detection algorithms can be roughly classified into two categories:
-Hough-based and edge chaining methods. Most of them operate on edge maps, obtained
-using an edge detector [Canny 1986].
-
-Hough-Based Ellipse Detection Methods
-Probably the most popular method for primitive detection is the generalisation of the Hough transform (HT)
-
-The
-basic idea of GHT is to quantise the transformation space into D-dimensional cells, obtaining
-the so-called (grid) accumulators. Each transformed image point Ti is quantised, and then
-votes for one of these cells. Cells whose number of votes yields a local maximum ( spike) in the
-accumulator space and that is superior to some threshold, will be considered as valid detections.
-A major advantage of GHT is its relative insensitivity to imperfect data, that is, noise
-and occlusions can be handled, up to a certain level. However, in practice, this approach is
-computationally inefficient, as the accumulators may become very large, and the execution
-time is important.
-
-randomised HT (RHT) [Xu 1990, McLaughlin 1998],
-which is different from GHT in that it combines voting with geometric properties of analytical
-curves. RHT takes advantage of the fact that some analytical curves can be fully determined by
-a certain number of points on the curve. For example, an ellipse (or a circle) can be determined
-by three points, as detailed in section 3.6.
-
-RHT uses an iterative stochastic process, with a
-fixed number of iterations, and, at each iteration, the algorithm randomly chooses three edge
-points, which will vote for the ellipse passing through the three points. The accumulator array
-in this case is not anymore a D-dimensional (grid) accumulator, but rather a variable-length
-list, where each entry contains the parameters of an already voted ellipse, and a score. With
-a newly estimated ellipse, if a similar3 ellipse is already present in the accumulator array, the
-corresponding entry is updated to the mean of the two ellipses and the score is incremented by
-one; otherwise, a new entry is added to the accumulator array, with the parameters of the new
-ellipse and score one.
 
 In our case, under the hypothesis of a
 quasi-affine homography H, we implicitly assume that H maps circles to ellipses
 
 
-fitting
 
-Informally, conic fitting is the process of constructing a curve that fits well (or best ), according
-to a predefined criterion, to a series of data.
-As there exist methods that
-use a subpixel precision, or normalised pixel coordinates, we will use the generic term points
-when referring to pixel or subpixel measurements.
 
-Many methods have been proposed in the literature to address the conic fitting problem. Two
-important issues need to be considered by the conic fitting techniques, namely accuracy and
-complexity. Usually, accurate methods are iterative, therefore costly, while the computationally
-efficient ones may lack precision to a certain extent.
+\subsection{fitting}
+Ellipse fitting estimates the ellipse parameters by fitting an optimum (with respect to a criterion) ellipse to the input data.
+Many methods have been proposed in the literature to address the ellipse fitting problem. Based on how they solve this problem, they can be classified as analytical or iterative. Generally, iterative methods are more accurate, but less efficient than analytical solutions.
+
+
+
+
 
 In the deterministic category, the simplest methods for conic fitting rely on some
 basic operations performed on the input data. For example, the moment-based method has
 been widely used as it provides a very simple, yet efficient technique for locating circular features
 when images are taken under some favorable conditions.
-This method
-is sensitive to illumination variations, and above all, to occlusions.
+This method is sensitive to illumination variations, and above all, to occlusions.
 
 With the least-squares (LS) formulation, one defines an error distance and tries to minimise
 in a least-squares sense this distance between the input points and the fitted curve. We identify
 two main classes of LS fitting techniques, namely algebraic and geometric fitting.
 
-They are
-differentiated through the definition of the error measure: the former account for methods that
+They are differentiated through the definition of the error measure: the former account for methods that
 seek to minimise an error distance which has a geometric meaning (e.g. Euclidean distance)
 [Ahn 2001], whereas the latter use an algebraic expression
 as error distance [Fitzgibbon 1999].
