@@ -25,33 +25,31 @@
 \begin{document}
 
 \section{Introduction}
-
-
-%%% lu tip
-ELLIPSE detection is a fundamental technique in image processing field and plays an indispensable role in shape
-detection and geometric measurement.
-
-%%% lu tip
-
-\subsection{Ellipse Detection}
 Geometric primitive detection is a fundamental problem in image processing. Among various geometric primitives, ellipse may be the most popular one that exists both in natural and man-made environments, and therefore plays an indispensable role in many applications like traffic signs recognition, 3D scene reconstruction
-
-
-In practice, the presence of noise substantially hinders the localization of the edge pixels on ellipses. Further, partial occlusions splits ellipses' borders into discrete arc segments. These issues complicates the problem 
+In practice, the presence of noise substantially hinders the localization of the edge pixels on ellipses. Further, partial occlusions splits ellipses' borders into discrete arc segments. These issues complicates the problem, which makes detecting ellipses efficiently and accurately a challenging task in practice. 
 %and therefore causes degradation in the 
 %causes degradation in the perfor- mances of the existing ellipse detection methods in terms of either the detection accuracy or the execution time, often both.
 %compromise the detection accuracy
+\subsection{Ellipse Detection}
+There are many studies on ellipse detection found in the literature and they can be classified in two categories, i.e. Hough Transform based and edge linking methods.
 
+Although both approaches have pros and cons, many state-of-the-art algorithms
+are feature-based methods and gives better results in terms of accuracy and
+speed.
 
-There are many studies on ellipse detection found in the literature and
-they are classified in two categories, i.e. Hough-based and edge chaining methods.
+In recent years, preprocessing of arc and line segments with geometrical properties are mostly investigated.
 
+In recent years, the methods based on edge-link have greatly
+improved the detection performance. The main problem of
+these methods is how to determine the elliptical arcs that
+belong to the same ellipse.
+
+\subsubsection{Hough Transform based Methods}
 The earliest method relied on the generalized Hough Transform for detection ellipses. Briefly,
 the key concept of the HT is to cast the detection problem in the image space as a voting problem in the parameter space. More specifically, HT first establishes an accumulator in the parameter space. In the case of ellipse detection, HT needs all pixels to vote in a five dimensional parameter accumulator, i.e. the center, the major axis, the minor axis, and the orientation of the ellipse. Then, each cell of the accumulator will be voted by the pixels who lie on the primitive corresponding to the cell. 
 After voting, the cells whose votes are local maxima and over a threshold correspond to the detected ellipses' parameters.
 %with a certain number votes 
-\todo{a figure}
-
+%\todo{a figure}
 
 Despite its robustness to discontinuous data points, the HT based method is very time and memory consuming. 
 %In light of this,
@@ -59,60 +57,89 @@ To improve the computational efficiency, some variants of HT were proposed with 
 [Xu 1990, McLaughlin 1998].
 RHT alleviates the memory demands by replacing the grid accumulator with a variable-length list which grows its length only when a new entry is inserted.
 %They work by splitting the five dimensional space into two or more subspaces with lesser dimensionality and deal with each of the subspaces in separate steps
+%Chia et al. [16] used a one-dimensional (1D) accumulator and reduced the memory storage and computational complexity by keeping the advantages of the HT. Besides, they could achieve a shorter execution time by using parallel computation.
+Despite these improvements, they are still not efficient enough in practice. 
+% Apart from efficiency,  
+% the performance of all HT based methods rely on the tuning of the quantisation precision of the accumulator array.
+% Second, it requires much effort to tune the model parameters, e.g. bin size and peak threshold.
 
 
 
+% @article{xu1990new,
+%  title={A new curve detection method: randomized Hough transform (RHT)},
+%  author={Xu, Lei and Oja, Erkki and Kultanen, Pekka},
+%  journal={Pattern recognition letters},
+%  volume={11},
+%  number={5},
+%  pages={331--338},
+%  year={1990},
+%  publisher={Elsevier}
+%}
+%@article{mclaughlin1998randomized,
+%  title={Randomized Hough transform: improved ellipse detection with comparison},
+%  author={McLaughlin, Robert A},
+%  journal={Pattern Recognition Letters},
+%  volume={19},
+%  number={3-4},
+%  pages={299--305},
+%  year={1998},
+%  publisher={Elsevier}
+%}
+%@article{duda1972use,
+%  title={Use of the Hough transformation to detect lines and curves in pictures},
+%  author={Duda, Richard O and Hart, Peter E},
+%  journal={Communications of the ACM},
+%  volume={15},
+%  number={1},
+%  pages={11--15},
+%  year={1972},
+%  publisher={ACM New York, NY, USA}
+%}
+%@article{ballard1981generalizing,
+%  title={Generalizing the Hough transform to detect arbitrary shapes},
+%  author={Ballard, Dana H},
+%  journal={Pattern recognition},
+%  volume={13},
+%  number={2},
+%  pages={111--122},
+%  year={1981},
+%  publisher={Elsevier}
+%}
 
-
-The most popular approach in
-these methods was to find the centers of the ellipses using
-geometrical theorems and Hough transform in the first step and
-finding the remaining parameters of the ellipses in the second step.McLaughlin
-
-McLaughlin [10] rely on the randomized version of eHT(RHT)and aim at reducing the memory usage using proper data structures.
-
-Chia et al. [16] used a one-dimensional (1D) accumulator and reduced the memory storage and computational complexity by keeping the advantages of the HT. Besides, they could achieve a shorter execution time by using parallel computation.
-
-
-[11] R.O. Duda , P.E. Hart , Use of the Hough transformation to detect lines and curves in pictures, Commun. ACM 15 (1972) 11–15 .
-[15] L. Xu , E. Oja , P. Kultanen , A new curve detection method: randomized Hough transform (RHT), Pattern Recognit. Lett. 11 (1990) 331–338 .
-[8] R.A.McLaughlin,RandomizedHoughtransform:improvedellipsedetection
-with comparison,PatternRecognitionLetters19(3–4)(1998)299–305
-
-
-Apart from efficiency, the performance of all HT based methods rely on the tuning of the quantisation precision of the accumulator array.
-
+\subsubsection{Edge linking methods}
 %critical parameters
-
-
-In recent years, preprocessing of arc and line segments with geometrical properties are mostly investigated.
-
 Another class of ellipse detection approaches is based on arc segments or edge chaining. 
-Instead of working on each individual pixel, methods in this class work on arcs by linking pixels based on some connectivity principles.
-exploit
-The main steps of these methods are to extract arcs and then group them by exploiting geometric or algebraic properties of ellipses.
-Specifically, edge arcs that may consist of an ellipse are found by variety of techniques such as
 
-Subsequently, these arcs are grouped according to the convexity-concavity [21,28,29] , arc curvature [21] , and geometric constraints [1,30–33] 
+Instead of working on each individual pixel, methods in this class work on arcs by linking pixels or line segments based on some connectivity principles. 
+
+Next, the extracted arcs are grouped by exploiting convexity and positional constraints.
+%Subsequently, these arcs are grouped according to the 
+
+Specifically, edge arcs that may consist of an ellipse are found by variety of techniques such as
+convexity-concavity [21,28,29] , arc curvature [21] , and geometric constraints [1,30–33] 
+%[21] D.K. Prasad , M.K. Leung , S.-Y. Cho , Edge curvature and convexity based ellipse detection method, Pattern Recognit. 45 (2012) 3204–3221 .
+%[28] M. Fornaciari , A. Prati , R. Cucchiara ,A fast and effective ellipse detector for embedded vision applications, Pattern Recognit. 47 (2014) 3693–3708
+%[30] H.I. Cakir , C. Topal , C. Akinlar , An occlusion-resistant ellipse detection method by joining coelliptic arcs, in: European Conference on Computer Vision, 2016, pp. 492–507 .
+
+
+
+
+
+
 
 Lastly, ellipses are fitted on the grouped arc candidates using RANSAC [19,32] or least squares fitting technique [28]
 
-Prasad et al. [21] use arc con- vexity to determine search regions where suitable arc candidates for grouping may be located. Fornaciari et al. [28] use geometric constraints as a selection strategy of arcs belonging to the same ellipse and estimate parameters by decomposing the parameter space.
+The ellipses parameters are obtained using ellipse fitting methods [30,31] on a reduced set of arcs, which are obtained grouping arcs according to their relative position and constraints on the curvature [1,21,22,25,26], or ellipse fitting error [23,24,27–29].
+
+
+exploit
+
 
 effective
 
-[21] D.K. Prasad , M.K. Leung , S.-Y. Cho , Edge curvature and convexity based ellipse detection method, Pattern Recognit. 45 (2012) 3204–3221 .
-[28] M. Fornaciari , A. Prati , R. Cucchiara ,A fast and effective ellipse detector for embedded vision applications, Pattern Recognit. 47 (2014) 3693–3708
-[30] H.I. Cakir , C. Topal , C. Akinlar , An occlusion-resistant ellipse detection method by joining coelliptic arcs, in: European Conference on Computer Vision, 2016, pp. 492–507 .
-
-
-Many algebraic functions or geometric characteristics have been utilized for selection of arc segments to improve the efficiency of ellipse detectors.
-
-Patraucean et al. [40] propose a line segment and elliptical arc detector without any parameter tuning based on a contrario theory
-[40] V. P atr aucean , P. Gurdjos , R.G. von Gioi , Joint A Contrario ellipse and line de- tection, IEEE Trans. Pattern Anal. Mach. Intell. 39 (2017) 788–802 .
-
-Jia et al. [42] use a projective invariant operator to significantly prune the undesired candidates and pick out elliptical ones. 
-[42] Q. Jia , X. Fan , Z. Luo , L. Song , T. Qiu ,A fast ellipse detector using projective invariant pruning, IEEE Trans. Image Process. (2017) .
+%[40] V. P atr aucean , P. Gurdjos , R.G. von Gioi , Joint A Contrario ellipse and line de- tection, IEEE Trans. Pattern Anal. Mach. Intell. 39 (2017) 788–802 .
+%
+%[42] Q. Jia , X. Fan , Z. Luo , L. Song , T. Qiu ,A fast ellipse detector using projective invariant pruning, IEEE Trans. Image Process. (2017) .
 
 guarantees the effectiveness of ellipse detection
 
@@ -120,23 +147,28 @@ Based on the considerations above, we propose a new approach
 
 
 
-Although both approaches have pros and cons, many state-of-the-art algorithms
-are feature-based methods and gives better results in terms of accuracy and
-speed.
+Prasad et al. [18] proposed to extract arcs by chaining line segments within a tolerate curvature change and then group detected arcs using convexity constraint. 
+But it also suffers from a long computation time,
+  
+
+%(YAED)
+More recently, Fornaciari et al. [5] propose a very fast method which first extracts arc contours and split them into four quadrants based on their edge direction and convexity. Then, they establish valid triplets (i.e. three different arcs) by grouping arcs from proper quadrants and checking some positional constraints. HT is used to estimate the ellipse parameters for all valid triplets. Finally, the candidate ellipses are validated based on the algebraic fitting error. To suppress duplicate detections, they cluster similar ellipses by only keeping the one with the minimum fitting error. This method was later improved by Jia et al. [12] where they proposed two projective invariants that can be used to prune invalid groups of arcs before estimating parameters using HT.%CNED
+In addition, both [13] and [14] require at least three arc segments to recover the ellipse model, which might disable the algorithms when handling the incomplete ellipses.
 
 
-Prasad et al. propose a heuristic ellipse detector based on convexity and edge curvature properties [21]. Fornaciari et al. choose arcs strategically and compute parameters of ellipses with HT [6]. Arcs are classified according to their convexity and then grouped to test if they compose an ellipse or not
+Many algebraic functions or geometric characteristics have been utilized for selection of arc segments to improve the efficiency of ellipse detectors.
 
-A better characterization could be achieved using sets of
-connected edge pixels,i.e. arcs, which can be generated by linking
-short straight lines [1,21–24], splitting the edge contour [25–28],
-or validating connected edge pixels [29].
+%By extending LSD [26], 
+Patraucean et al. [26] proposed an ellipse detection algorithm named ELSD. After extracting line segments, they chain neighbouring line segments to form arcs based on a smoothness rule. After that, ellipses are fitted and validated by a-contrario technique.  
+% a convexity rule and a smoothness rule
 
-The ellipses parameters
-are obtained using ellipse fitting methods [30,31] on a reduced set
-of arcs, which are obtained grouping arcs according to their
-relative position and constraints on the curvature [1,21,22,25,26],
-or ellipse fitting error [23,24,27–29].
+
+Lu et al. [31] proposed an accurate and efficient ellipse detector by arc-support line segments. The arc-support groups were formed by iteratively linking the arc-support line segments that may belong to the same ellipse. 
+
+
+% Another stream of edge following methods tries
+
+
 
 \section{Method}
 briefly
@@ -149,7 +181,7 @@ For n elliptical arcs extracted in the previous step, there are obviously 2n-1 p
 Therefore, it becomes a troublesome procedure to test all arc combinations as the number of arcs grows
 
 To reduce the number of arc combinations to test, we follow a proactive way by analyzing all arcs in pairwise to determine whether any pair can be part of the same ellipse or not. In other words, we try to find out whether any
-two arcs are coelliptic or non-coelliptic. Once we determine any non-coelliptic arc pair, we remove all arc subsets which includes that pair from entire 2n − 1 combinations to reduce the computation time.
+two arcs are coelliptic or non-coelliptic. Once we determine any non-coelliptic arc pair, we remove all arc subsets which includes that pair from entire 2n-1 combinations to reduce the computation time.
 
 Determining whether an arc pair is non-coelliptic can be done in different ways.
 
@@ -157,7 +189,7 @@ To avoid the combinatorial explosion
 
 
 First, ellipse fit is applied to all arc pixels in the current arc group and fitting error is computed. 
-If the resulted error is small, i.e. ≤ 2.0 pixels, we test the current arc group for the spanned angle ratio
+If the resulted error is small, i.e. <= 2.0 pixels, we test the current arc group for the spanned angle ratio
 (SAR) which is the ratio of the total length of arcs in the group over the perimeter of the yielded ellipse.
 
 
@@ -175,66 +207,16 @@ Yaed
 
 The selection strategy first selects pairs whose arcs satisfy constraints on(i)convexity and(ii)mutual position
 
-
-
-bmvc integral chain
-
-Prasad et al. [18] propose an edge curvature and convexity
-based ellipse detection method which first extracts the canny edge map of an image
-and chains the edge points into edge segments, and then fits line segments on each edge
-segment to approximately represent the edge segments. After that, they use the convexity of
-line segments to get elliptic arcs and further combine elliptic arcs into ellipses. 
-
-Patraucean
-et al. [17] propose an ellipse detection algorithm named ELSD. They first exploit a seed
-growing scheme to find line-support regions, and further chain the line-support regions into
-curve regions based on a convexity rule and a smoothness rule. After that, they estimate an
-ellipse for each curve region with a fitting technique which merges the algebraic distance
-with the gradient orientation. And finally, false detections are further eliminated by a contrario
-validation technique. 
-
-More recently, Fornaciari et al. [5] propose a very fast method
-to detect ellipses which first splits the canny edge map into many short elliptic arcs, and then
-classify these elliptic arcs into four types by their edge direction and convexity. They define
-a candidate ellipse as a triplet, i.e. a set of three arcs that satisfy a set of criteria, then use
-HT to determine the parameters of the ellipses. Finally, they validate the candidate ellipses
-using a criterion based on the algebraic fitting error, and perform a clustering procedure to
-deal with multiple detections.
-
-
 Figure 4: Sample visual results
 
 
-
+Wang et al. [10] proposed a top-down fitting strategy to combine edges into
+ellipses. The fitting process was sped up by an integral
+chain.
 
 aamed
-In recent years, the methods based on edge-link have greatly
-improved the detection performance. The main problem of
-these methods is how to determine the elliptical arcs that
-belong to the same ellipse.
 
-Prasad et al. [25] proposed a method
-based on edge curvature and convexity. The search region was
-provided to find eligible contours for grouping the current
-contour. Pˇatrˇaucean et al. [26] proposed a parameterless line
-segment and elliptical arc detector with enhanced ellipse fitting
-(ELSD). The number of false alarm (NFA) method in ELSD,
-inspired by Von Gioi et al. [27], was used to control the false
-elliptical arcs. Fornaciar et al. [9] provided a novel algorithm
-called yet another ellipse detector (YAED). YAED segmented
-edge contours into four quadrants and selected three arcs
-from different quadrants to construct a candidate combination
-with an innovative arc selection strategy. Wang et al. [10]
-proposed a top-down fitting strategy to combine edges into
-ellipses. The fitting process was sped up by an integral
-chain. Jia et al. [12] proposed an ellipse
-detection method based on the characteristic number (CNED),
-which used a modified projective invariant to get rid of the
-useless candidates. It performed well in execution time and
-detection accuracy. Lu et al. [31] proposed an accurate and efficient ellipse detector
-by arc-support line segments. The arc-support groups were
-formed by iteratively linking the arc-support line segments that
-may belong to the same ellipse. 
+
 
 Given an arc , all the arcs that are adjacent to A(i) must be found. KD-Tree is used to find
 It will waste much
@@ -251,36 +233,17 @@ quasi-affine homography H, we implicitly assume that H maps circles to ellipses
 
 \subsection{fitting}
 Ellipse fitting estimates the ellipse parameters by fitting an optimum (with respect to a criterion) ellipse to the input data.
-Many methods have been proposed in the literature to address the ellipse fitting problem. Based on how they solve this problem, they can be classified as analytical or iterative. Generally, iterative methods are more accurate, but less efficient than analytical solutions.
+Most ellipse fitting methods in the literature use 2 Norm as the criterion, which forms a least-squares problem.
+%Many methods have been proposed in the literature to address the ellipse fitting problem. 
+Based on how they solve this problem, they can be classified as analytical or iterative. Generally, iterative methods are more accurate, but less efficient than analytical solutions.
+Depending on how the error is defined, they can be categorized into two classes: methods minimizing the algebraic distance and methods minimizing the geometric distance. Fitting with geometric distance is generally believed to be more accurate than fitting with algebraic distance.
+%under some favorable conditions
+[Fitzgibbon 1999]
+[Ahn 2001]
+%minimise an error distance which has a geometric meaning
+% whereas the latter use an algebraic expression
+Ahn et al. [Ahn 2001] describe non-parametric algorithms for circle and ellipse fitting.
 
-
-
-
-
-In the deterministic category, the simplest methods for conic fitting rely on some
-basic operations performed on the input data. For example, the moment-based method has
-been widely used as it provides a very simple, yet efficient technique for locating circular features
-when images are taken under some favorable conditions.
-This method is sensitive to illumination variations, and above all, to occlusions.
-
-With the least-squares (LS) formulation, one defines an error distance and tries to minimise
-in a least-squares sense this distance between the input points and the fitted curve. We identify
-two main classes of LS fitting techniques, namely algebraic and geometric fitting.
-
-They are differentiated through the definition of the error measure: the former account for methods that
-seek to minimise an error distance which has a geometric meaning (e.g. Euclidean distance)
-[Ahn 2001], whereas the latter use an algebraic expression
-as error distance [Fitzgibbon 1999].
-
-In the last decades, tremendous research work was concentrated on the LS formulation (3.5-3.6)
-of the circle and ellipse fitting in images, and the problem seems to be settled from a theoretical
-point of view.
-
-Geometric Fitting of Circles and Ellipses
-a) Geometric fitting of circles
-Geometric fitting algorithms for circles commonly use the Euclidean distance as error-of-fit
-in the minimisation problem
-Ahn et al. [Ahn 2001] describe non-parametric algorithms for circle and ellipse fitting,
 
 Solving a non-linear least-squares problem is costly, as in general, no closed-form solution
 exists, and therefore an iterative procedure needs to be used. In the case of ellipse fitting,
@@ -290,95 +253,16 @@ Ahn et al. [Ahn 2001] solve simultaneously two quadratic equations through
 an iterative procedure. 
 
 Fitzgibbon et al. [Fitzgibbon 1999] were the first to propose a direct (non-iterative) ellipsespecific
-fitting. They show that the ellipticity constraint 4ac − b2 > 0 can be conveniently
-incorporated into the constraint h(θ) in the quadratic form
+fitting. They show that the ellipticity constraint 4ac-b2>0 can be conveniently
+incorporated into the constraint in the quadratic form
 The drawback of Fitzgibbon et al.’
 approach is its tendency to underestimate the eccentricity of the ellipse when the estimation is
 done on incomplete data.
 
 
 
-Existing commonly used methods for ellipse detection can
-be briefly grouped into two categories: 1) Hough Transform;
-2) Edge Following.
 
-The basic idea of HT for ellipse
-detection is voting arbitrary edge pixels into 5D parameter
-space. The local peak will occur when the corresponding bin
-of accumulator exceeds a threshold of votes, which implies
-for detecting an ellipse. But it is almost impractical to directly
-apply HT in practice due to the heavy computation burden and
-excessive consumption of memory. To alleviate these issues,
-considerable improved methods are put forward.
 
-Instead of transforming each edge point into
-a 5D parameter space, Xu et al. [20] proposed a Randomized
-Hough Transform (RHT) to detect curves, which randomly
-chooses five edge pixels each time and maps them into a point
-of the ellipse parameter space. McLaughlin [11] combined the
-aforementioned two-stage decomposition method and RHT
-at the aim of reducing the computation time and improving
-the detection performance compared with the standard HT,
-which becomes a baseline of ellipse detection method in the
-literature (Fig. 1(c)).
-
-c)). However, it is still not efficient enough in
-practice and always generates false detections due to the lack
-of novel validation strategies. Despite the simplicity of HT,
-HT based ellipse detection methods suffer from the following
-legacy problems: First, it is vulnerable in front of substantial
-image noise and complicated real-world background due to
-false peaks; Second, it requires much effort to tune the model
-parameters, e.g. bin size and peak threshold.
-
-The second well-known family of ellipse detection methods
-is edge following, in which the connectivity between edge
-pixels, convexity of arc segments and geometric constraints are
-used. The general idea of edge following always starts from
-computing the binary edge map and corresponding gradients
-acquired by Canny or Sobel detector [21], [22] and then
-refining the arc segments from the binary edge for the ellipse
-fitting.
-
-The
-ellipse detector proposed by Prasad et al. [12] incorporates the
-edge curvature and convexity to extract smooth edge contours
-and performs a 2D HT to rank the edge contours in a group
-by the relationship scores for the better generation of ellipse
-hypotheses. But it also suffers from a long computation time,
-as shown in Fig. 1(d).
-Another stream of edge following methods tries to extract
-arc segments from binary edge directly and prunes straight
-edges for the purpose of fast detection speed. The ellipse
-detector proposed by Fornaciari et al. [13] assigns a bounding
-box for each arc, removes the straight edges and determines
-the convexity of the arc by comparing the areas of region
-under and over the arc. In addition, this method accelerates
-the detection process by utilizing the property of that ellipse
-center should be colinear to the midpoints of parallel chords.
-However, it raises the detection speed at the cost of localization
-accuracy and robustness (Fig. 1(e)). Recently, the method
-presented by Jia et al. [14] inherits [13] and uses the similar
-convexity classification approach, but the difference lies in
-that [14] filters straight edges efficiently by calculating the
-edge connected component’s characteristic number, which is a
-kind of projective invariant being able to distinguish the lines
-and conic curves within images. [14] is fast and yet prone
-to generate duplicates due to the absence of novel clustering
-(Fig. 1(f)). In addition, both [13] and [14] require at least three
-arc segments to recover the ellipse model, which might disable
-the algorithms when handling the incomplete ellipses.
-
-Some researchers generalize the LS detection method to be
-a multi-functional detector which can jointly detect the LS
-and elliptic arcs. ELSDc proposed by P˘atr˘aucean et al. [15]
-uses an improved LSD [26] version for detecting LS, and
-then iteratively searches the remaining LSs from the start and
-end points of the detected LS. Eventually, both LS detection
-and grouping tasks are established simultaneously. Notably,
-ELSDc stands out other methods by detecting LSs from the
-greyscale image instead of binary edge such that abundant
-gradient and geometric cues can be fully exploited.
 
 \bibliography{gdop} 
 \bibliographystyle{ieeetr}
