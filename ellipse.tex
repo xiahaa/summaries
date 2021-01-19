@@ -27,8 +27,6 @@
 \section{Introduction}
 
 
-
-
 %%% lu tip
 ELLIPSE detection is a fundamental technique in image processing field and plays an indispensable role in shape
 detection and geometric measurement.
@@ -46,6 +44,8 @@ In practice, the presence of noise substantially hinders the localization of the
 
 
 The earliest method relied on the generalized Hough Transform for detection ellipses. 
+
+
 Regardless of the robustness, the standard Hough transform [11] involves a large amount of computational cost.
 To improve the computational efficiency of HT, various HT- based approaches [12–16] , such as Randomized Hough Transform (RHT)
 
@@ -86,42 +86,25 @@ guarantees the effectiveness of ellipse detection
 
 Based on the considerations above, we propose a new approach
 
-
-
-
-1d rht
-Since five parameters are required to fully define an
-ellipse, a generalized Hough Transform (HT) needs a five
-dimensional parameter space to detect an ellipse. That is very
-memory and time consuming.
-
-another 1d rht from ntu
-
-Extracting elliptical objects from digital images is of fundamental
-importance in shape recognition [1]. One of the best known methods
-in extracting ellipses from images is the Hough Transform (HT).
-The key concept behind the standard HT in extracting ellipses is to
-define a mapping between the two dimensional image space and the
-five dimensional parameter space. These five parameters are the coordinates
+The key concept of the HT is to cast the detection problem in image space as a voting problem in parameter space. In the case of ellipse detection, HT votes in a five dimensional parameter space (the coordinates
 of the center point of the ellipse, the lengths of the major
 and minor axes of the ellipse and the orientation of the major axis
-with respect to the x-axis. Each data point of the image space is map
-onto specific cells of the five dimensional accumulator, whereby the
-associated parameters of the specific cells are chosen such that the
-curve defined by these parameters passes through the data point. In
-this aspect, the data points can be seen as voting for the parameters
-of the ellipses found in the image. The votes in the cells are then accumulated.
+with respect to the x-axis).
+
 After all data points of the image have been considered,
 the local maxima of the accumulator correspond to the parameters
 of the ellipses that are detected in the image.
+
 The main advantage of the HT in extracting ellipse is its robustness
 against discontinuous or missing data points. This is because
 the HT does not require the connectivity of all the contour points
-of an ellipse. Owing to this, the HT is well suited to detect ellipses
-in the presence of moderate noise or in images having a cluttered
-background. Unfortunately, the requirement for the five dimensional
+of an ellipse. 
+
+Unfortunately, the requirement for the five dimensional
 accumulator places huge computational and storage constrains and
 hence precludes practical applications. In light of this,
+
+
 
 Prasad
 
