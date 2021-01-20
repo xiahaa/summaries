@@ -31,18 +31,7 @@ In practice, the presence of noise substantially hinders the localization of the
 %causes degradation in the perfor- mances of the existing ellipse detection methods in terms of either the detection accuracy or the execution time, often both.
 %compromise the detection accuracy
 \subsection{Ellipse Detection}
-There are many studies on ellipse detection found in the literature and they can be classified in two categories, i.e. Hough Transform based and edge linking methods.
-
-Although both approaches have pros and cons, many state-of-the-art algorithms
-are feature-based methods and gives better results in terms of accuracy and
-speed.
-
-In recent years, preprocessing of arc and line segments with geometrical properties are mostly investigated.
-
-In recent years, the methods based on edge-link have greatly
-improved the detection performance. The main problem of
-these methods is how to determine the elliptical arcs that
-belong to the same ellipse.
+There are many studies on ellipse detection found in the literature and they can be classified in two categories, i.e. Hough Transform based and edge linking methods. Generally speaking, edge linking methods are nowadays the mainstream choice as they bypass Hough Transform based methods both in accuracy and efficiency, which has been revealed by most of recent works.
 
 \subsubsection{Hough Transform based Methods}
 The earliest method relied on the generalized Hough Transform for detection ellipses. Briefly,
@@ -108,61 +97,32 @@ Despite these improvements, they are still not efficient enough in practice.
 
 \subsubsection{Edge linking methods}
 %critical parameters
-Another class of ellipse detection approaches is based on arc segments or edge chaining. 
+%Many algebraic functions or geometric characteristics have been utilized for selection of arc segments to improve the efficiency of ellipse detectors.
 
-Instead of working on each individual pixel, methods in this class work on arcs by linking pixels or line segments based on some connectivity principles. 
-
-Next, the extracted arcs are grouped by exploiting convexity and positional constraints.
+Instead of working on each individual pixel, edge linking methods work on arcs by linking pixels or line segments based on the principles such as convexity[21,28,30], curvature[21], and proximal connectivity. Subsequently, the extracted arcs are grouped by exploiting convexity positional constraints.
 %Subsequently, these arcs are grouped according to the 
+Finally, ellipses are fitted and validated on the grouped arc candidates. Generally, speaking, there are three mainstream types of algorithms.
+%using RANSAC [19,32] or least squares fitting technique [28]
 
-Specifically, edge arcs that may consist of an ellipse are found by variety of techniques such as
-convexity-concavity [21,28,29] , arc curvature [21] , and geometric constraints [1,30–33] 
 %[21] D.K. Prasad , M.K. Leung , S.-Y. Cho , Edge curvature and convexity based ellipse detection method, Pattern Recognit. 45 (2012) 3204–3221 .
 %[28] M. Fornaciari , A. Prati , R. Cucchiara ,A fast and effective ellipse detector for embedded vision applications, Pattern Recognit. 47 (2014) 3693–3708
 %[30] H.I. Cakir , C. Topal , C. Akinlar , An occlusion-resistant ellipse detection method by joining coelliptic arcs, in: European Conference on Computer Vision, 2016, pp. 492–507 .
-
-
-
-
-
-
-
-Lastly, ellipses are fitted on the grouped arc candidates using RANSAC [19,32] or least squares fitting technique [28]
-
-The ellipses parameters are obtained using ellipse fitting methods [30,31] on a reduced set of arcs, which are obtained grouping arcs according to their relative position and constraints on the curvature [1,21,22,25,26], or ellipse fitting error [23,24,27–29].
-
-
-exploit
-
-
-effective
-
 %[40] V. P atr aucean , P. Gurdjos , R.G. von Gioi , Joint A Contrario ellipse and line de- tection, IEEE Trans. Pattern Anal. Mach. Intell. 39 (2017) 788–802 .
-%
 %[42] Q. Jia , X. Fan , Z. Luo , L. Song , T. Qiu ,A fast ellipse detector using projective invariant pruning, IEEE Trans. Image Process. (2017) .
 
-guarantees the effectiveness of ellipse detection
-
-Based on the considerations above, we propose a new approach
-
-
-
-Prasad et al. [18] proposed to extract arcs by chaining line segments within a tolerate curvature change and then group detected arcs using convexity constraint. 
-But it also suffers from a long computation time,
+The first type of algorithms was originated from the work by Prasad et al. [18]. Prasad et al. [18] proposed to extract arcs by chaining line segments within a tolerate curvature change and then group detected arcs using convexity constraint. 
+%But it also suffers from a long computation time,
+cite dong  
   
 
 %(YAED)
-More recently, Fornaciari et al. [5] propose a very fast method which first extracts arc contours and split them into four quadrants based on their edge direction and convexity. Then, they establish valid triplets (i.e. three different arcs) by grouping arcs from proper quadrants and checking some positional constraints. HT is used to estimate the ellipse parameters for all valid triplets. Finally, the candidate ellipses are validated based on the algebraic fitting error. To suppress duplicate detections, they cluster similar ellipses by only keeping the one with the minimum fitting error. This method was later improved by Jia et al. [12] where they proposed two projective invariants that can be used to prune invalid groups of arcs before estimating parameters using HT.%CNED
+More recently, Fornaciari et al. [5] propose a very fast method, which is the ground for the second type of algorithms. It first extracts arc contours and split them into four quadrants based on their edge direction and convexity. Then, they establish valid triplets (i.e. three different arcs) by grouping arcs from proper quadrants and checking some positional constraints. HT is used to estimate the ellipse parameters for all valid triplets. Finally, the candidate ellipses are validated based on the algebraic fitting error. To suppress duplicate detections, they cluster similar ellipses by only keeping the one with the minimum fitting error. This method was later improved by Jia et al. [12] where they proposed two projective invariants that can be used to prune invalid groups of arcs before estimating parameters using HT.%CNED
 In addition, both [13] and [14] require at least three arc segments to recover the ellipse model, which might disable the algorithms when handling the incomplete ellipses.
 
 
-Many algebraic functions or geometric characteristics have been utilized for selection of arc segments to improve the efficiency of ellipse detectors.
-
 %By extending LSD [26], 
-Patraucean et al. [26] proposed an ellipse detection algorithm named ELSD. After extracting line segments, they chain neighbouring line segments to form arcs based on a smoothness rule. After that, ellipses are fitted and validated by a-contrario technique.  
+Patraucean et al. [26] proposed an ellipse detection algorithm named ELSD, which serves as the base of the third type of methods. After extracting line segments, they chain neighbouring line segments to form arcs based on a smoothness rule. After that, ellipses are fitted and validated by a-contrario technique.  
 % a convexity rule and a smoothness rule
-
-
 Lu et al. [31] proposed an accurate and efficient ellipse detector by arc-support line segments. The arc-support groups were formed by iteratively linking the arc-support line segments that may belong to the same ellipse. 
 
 
@@ -171,6 +131,20 @@ Lu et al. [31] proposed an accurate and efficient ellipse detector by arc-suppor
 
 
 \section{Method}
+
+guarantees the effectiveness of ellipse detection
+
+Based on the considerations above, we propose a new approach
+
+exploit
+
+
+effective
+
+The main problem of
+these methods is how to determine the elliptical arcs that
+belong to the same ellipse.
+
 briefly
 
 In this way, detection of ellipses can be achieved even though arcs forming them are spread around the image.
@@ -238,30 +212,40 @@ Most ellipse fitting methods in the literature use 2 Norm as the criterion, whic
 Based on how they solve this problem, they can be classified as analytical or iterative. Generally, iterative methods are more accurate, but less efficient than analytical solutions.
 Depending on how the error is defined, they can be categorized into two classes: methods minimizing the algebraic distance and methods minimizing the geometric distance. Fitting with geometric distance is generally believed to be more accurate than fitting with algebraic distance.
 %under some favorable conditions
-[Fitzgibbon 1999]
-[Ahn 2001]
+%[Fitzgibbon 1999]
+%[Ahn 2001]
 %minimise an error distance which has a geometric meaning
 % whereas the latter use an algebraic expression
-Ahn et al. [Ahn 2001] describe non-parametric algorithms for circle and ellipse fitting.
 
 
-Solving a non-linear least-squares problem is costly, as in general, no closed-form solution
-exists, and therefore an iterative procedure needs to be used. In the case of ellipse fitting,
-another difficulty arises, namely the computation of the error-of-fit. Finding the orthogonal
-distance between a point and an ellipse requires solving a high degree polynomial.
-Ahn et al. [Ahn 2001] solve simultaneously two quadratic equations through
-an iterative procedure. 
-
-Fitzgibbon et al. [Fitzgibbon 1999] were the first to propose a direct (non-iterative) ellipsespecific
-fitting. They show that the ellipticity constraint 4ac-b2>0 can be conveniently
-incorporated into the constraint in the quadratic form
-The drawback of Fitzgibbon et al.’
-approach is its tendency to underestimate the eccentricity of the ellipse when the estimation is
+The most representative approach for direct ellipse fitting was proposed by Fitzgibbon et al. [13]. The authors formulated the ellipse fitting problem as a least square problem with an ellipticity constrain, which can be solved using generalized eigenvalue decomposition. This method is very efficient, but tends to underestimate the eccentricity of the ellipse when the estimation is
 done on incomplete data.
 
 
+To tackle the weaknesses of algebraic fitting, fitting by minimizing geometric distances was developed. Unfortunately, determine the geometric distance of a point to an ellipse is not easy. There is not a closed-form solution for the orthogonal distance from one point to the ellipse. Therefore, the geometric fitting has to be done iteratively. 
+The most well known method was proposed by Ahn et al. [Ahn 2001].
+Ahn’s method uses two nested
+iterative loops.The outer loop considers the data of pixels as a
+whole and uses gradient descent approach to optimize the esti-
+mated geometric parameters(namely,coordinates of the center,
+angle made by the major axis with x- axis, and the lengths of
+semimajor and semiminor axes).The inner loop is executed for each
+pixel and the estimation of a point on the ellipse that is nearest to
+the considered pixel is optimized iteratively.Ahn’s method uses
+geometric parameters as the driving factors of the algorithmin both
+the loops.
+
+While being effective and
+robust, Anh’smethod is computationally expensive owing to the iterative optimization for each pixel with in the outer loop.
+%[1] Ahn, S.J., Rauh, W., Warnecke, H.J.: Least-squares orthogonal distances fitting of
+%circle, sphere, ellipse, hyperbola, and parabola. Pattern Recogn. 34(12), 2283–2303
+%(2001)
+%
+%[2] P.L.Rosin,Anoteontheleastsquaresfittingofellipses,PatternRecognition
+%Letters 14(1993)799–808.
 
 
+On these grounds, in this thesis, we use the direct method~\cite{fitzgibbon1999direct}  for fast fitting in almost all cases and only switch to iterative method  
 
 
 \bibliography{gdop} 
