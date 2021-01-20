@@ -19,6 +19,9 @@
 \usepackage{pbox}
 \usepackage{siunitx,booktabs,etoolbox}
 
+\usepackage{lscape}
+\usepackage{afterpage}
+\usepackage{multirow}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
@@ -26,9 +29,31 @@
 
 
 
-
-
-
+\afterpage{
+\begin{landscape}
+\begin{table}[p]
+    \centering
+        \begin{tabular}{p{1.5cm} | p{3cm}  | p{1.5cm}  | p{2.7cm}  | p{2.5cm}  | p{4cm} }\toprule
+           \multicolumn{2}{c|}{\textbf{Technology}} & \textbf{Accuracy} & \textbf{Coverage Type} & \textbf{Principle} & \textbf{Limitations} \\\midrule 
+           \multirow{2}{*}{}& GNSS & cm-m & Global & Ranging by pseudo range or Carrier Phase & \cellcolor{yellow!20}Magnetic Inference \\ \cline{2-6}
+           & MEMS INS & m & N/A & Dead Reckoning & \cellcolor{green!20}Low accuracy \\ \midrule 
+            \multirow{3}{*}{\textbf{Ranging}} & LiDAR & cm-dm & Long & ToF & \cellcolor{orange!20} Power consumption and Weight
+            \\ \cline{1-6}
+            & RADAR & cm-dm & Long & ToF & \cellcolor{yellow!20}Magnetic Inference, Power consumption
+            \\ \cline{2-6}
+            & Ultrasonic sensor & cm-dm & Short & ToF & \cellcolor{cyan!20}Working Range\\ \midrule 
+            \multirow{3}{*}{\textbf{Radio}} & UWB & cm-m  & Middle & ToA & \cellcolor{yellow!20}Limited Geometric distribution, Magnetic Inference\\ \cline{2-6}
+            & Magnetic Field & dm-m & Short & Fingerprinting & \cellcolor{red!20}Not applicable \\ \cline{2-6}
+            & Other RF methods & m & Short to Middle & RF or Fingerprinting & \cellcolor{green!20}Low accuracy\\ \midrule 
+            \multicolumn{2}{c|}{Visual light positioning} & cm – m & middle & PnP &  \cellcolor{yellow!20}Magnetic Inference
+            \\ \bottomrule 
+        \end{tabular}
+    \caption[Overview of alternative positioning technologies.]{ Overview of alternative positioning technologies: the values specified for accuracy are given in form of intervals wherein most approaches reside. Coverage is categorized into short (within a few meters), middle (meters to tens of meters), and long (up to hundreds of meters) since the coverage often depends on price, size, power, etc. Only the main principles are mentioned in the table.}
+    % \caption{ }
+    \label{myTable1}
+\end{table}
+\end{landscape}
+}
 
 
 
