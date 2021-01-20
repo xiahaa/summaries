@@ -24,38 +24,6 @@
 
 \begin{document}
 
-\subsubsection{Edge linking methods}
-%critical parameters
-%Many algebraic functions or geometric characteristics have been utilized for selection of arc segments to improve the efficiency of ellipse detectors.
-
-Instead of working on each individual pixel, edge linking methods work on arcs by linking pixels or line segments based on the principles such as convexity[21,28,30], curvature[21], and proximal connectivity. Subsequently, the extracted arcs are grouped by exploiting convexity positional constraints.
-%Subsequently, these arcs are grouped according to the 
-Finally, ellipses are fitted and validated on the grouped arc candidates. Generally, speaking, there are three mainstream types of algorithms.
-%using RANSAC [19,32] or least squares fitting technique [28]
-
-%[21] D.K. Prasad , M.K. Leung , S.-Y. Cho , Edge curvature and convexity based ellipse detection method, Pattern Recognit. 45 (2012) 3204–3221 .
-%[28] M. Fornaciari , A. Prati , R. Cucchiara ,A fast and effective ellipse detector for embedded vision applications, Pattern Recognit. 47 (2014) 3693–3708
-%[30] H.I. Cakir , C. Topal , C. Akinlar , An occlusion-resistant ellipse detection method by joining coelliptic arcs, in: European Conference on Computer Vision, 2016, pp. 492–507 .
-%[40] V. P atr aucean , P. Gurdjos , R.G. von Gioi , Joint A Contrario ellipse and line de- tection, IEEE Trans. Pattern Anal. Mach. Intell. 39 (2017) 788–802 .
-%[42] Q. Jia , X. Fan , Z. Luo , L. Song , T. Qiu ,A fast ellipse detector using projective invariant pruning, IEEE Trans. Image Process. (2017) .
-
-The first type of algorithms was originated from the work by Prasad et al. [18]. Prasad et al. [18] proposed to extract arcs by chaining line segments within a tolerate curvature change and then group detected arcs using convexity constraint. 
-%But it also suffers from a long computation time,
-cite dong  
-  
-
-%(YAED)
-More recently, Fornaciari et al. [5] propose a very fast method, which is the ground for the second type of algorithms. It first extracts arc contours and split them into four quadrants based on their edge direction and convexity. Then, they establish valid triplets (i.e. three different arcs) by grouping arcs from proper quadrants and checking some positional constraints. HT is used to estimate the ellipse parameters for all valid triplets. Finally, the candidate ellipses are validated based on the algebraic fitting error. To suppress duplicate detections, they cluster similar ellipses by only keeping the one with the minimum fitting error. This method was later improved by Jia et al. [12] where they proposed two projective invariants that can be used to prune invalid groups of arcs before estimating parameters using HT.%CNED
-In addition, both [13] and [14] require at least three arc segments to recover the ellipse model, which might disable the algorithms when handling the incomplete ellipses.
-
-
-%By extending LSD [26], 
-Patraucean et al. [26] proposed an ellipse detection algorithm named ELSD, which serves as the base of the third type of methods. After extracting line segments, they chain neighbouring line segments to form arcs based on a smoothness rule. After that, ellipses are fitted and validated by a-contrario technique.  
-% a convexity rule and a smoothness rule
-Lu et al. [31] proposed an accurate and efficient ellipse detector by arc-support line segments. The arc-support groups were formed by iteratively linking the arc-support line segments that may belong to the same ellipse. 
-
-
-% Another stream of edge following methods tries
 
 
 
